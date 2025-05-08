@@ -296,31 +296,206 @@
 
 ### 环境搭建
 - [x] 安装JDK 11
+  - 安装路径: D:\Java\JDK
+  - 版本: java version "11.0.26" 2025-01-21 LTS
+  - Java HotSpot(TM) 64-Bit Server VM 18.9 (build 11.0.26+7-LTS-187, mixed mode)
 - [x] 安装Maven 3.6+
+  - 安装路径: D:\Maven\apache-maven-3.6.1
+  - 版本: Apache Maven 3.6.1 (d66c9c0b3152b2e69ee9bac180bb8fcc8e6af555; 2019-04-05T03:00:29+08:00)
 - [x] 安装MySQL 8.0+
+  - 版本: 8.0.40 MySQL Community Server - GPL
+  - 连接: mysql -u root -proot
 - [x] 安装微信开发者工具
-- [x] 安装开发IDE（IntelliJ IDEA/Eclipse）
+- [x] 安装开发IDE（VSCode）
 
 ### 后端初始化
 - [x] 创建Spring Boot项目（使用Spring Initializr）
+  - Spring Boot 版本: 2.7.14
+  - 项目结构: com.studyseat.reserve
+  - 主要依赖: 
+    - MyBatis-Plus 3.5.3.1
+    - JWT 0.9.1
+    - Druid 1.2.16
+    - Spring Security
+    - Knife4j 2.0.9
+    - Lombok
+    - FastJSON 2.0.32
 - [x] 配置pom.xml添加所需依赖（Spring Web, MyBatis-Plus, MySQL, JWT等）
 - [x] 创建项目基础结构（controller/service/mapper/entity/dto等包）
+  - controller: 控制层，处理HTTP请求
+  - service: 业务逻辑层
+  - mapper: 数据访问层
+  - entity: 实体类
+  - dto: 数据传输对象
+  - vo: 视图对象
+  - config: 配置类
+  - exception: 异常处理
+  - common: 通用工具类
+  - util: 工具类
 - [x] 配置application.yml（数据库连接、服务器端口等）
+  - 服务端口: 8080
+  - 数据库URL: jdbc:mysql://localhost:3306/studyseat
+  - 数据库用户名: root
+  - 数据库密码: root
 - [x] 配置MyBatis-Plus
+  - 主键策略: ASSIGN_ID
+  - 逻辑删除: 已配置
+  - 类型别名包: com.studyseat.reserve.entity
+  - Mapper XML位置: classpath*:/mapper/**/*.xml
 - [x] 配置跨域支持
 - [x] 创建统一响应格式类
 - [x] 创建全局异常处理器
 
 ### 数据库设计与初始化
-- [ ] 设计用户表（User/Admin/Student）
-- [ ] 设计自习室表（StudyRoom）
-- [ ] 设计座位表（Seat）
-- [ ] 设计预约表（Reservation）
-- [ ] 设计签到表（CheckIn）
-- [ ] 设计系统参数表（SystemParam）
-- [ ] 设计通知消息表（Notification）
-- [ ] 编写数据库初始化脚本（init.sql）
-- [ ] 创建数据库并导入初始数据
+- [x] 设计用户表（User/Admin/Student）
+  - 用户表(user): 存储所有用户基本信息
+    - id: 用户ID，主键，自动递增
+    - username: 用户名，唯一
+    - password: 密码(加密存储)
+    - real_name: 真实姓名
+    - phone: 手机号
+    - email: 邮箱
+    - avatar: 头像URL
+    - open_id: 微信OpenID，唯一
+    - user_type: 用户类型，1-管理员，2-学生
+    - status: 状态，0-禁用，1-正常
+    - create_time: 创建时间
+    - update_time: 更新时间
+  
+  - 管理员表(admin): 存储管理员特有信息
+    - id: 管理员ID，主键，自动递增
+    - user_id: 关联用户ID，外键
+    - admin_type: 管理员类型，1-系统管理员，2-自习室管理员
+    - department: 所属部门
+    - create_time: 创建时间
+    - update_time: 更新时间
+  
+  - 学生表(student): 存储学生特有信息
+    - id: 学生ID，主键，自动递增
+    - user_id: 关联用户ID，外键
+    - student_id: 学号，唯一
+    - college: 学院
+    - major: 专业
+    - grade: 年级
+    - class_name: 班级
+    - violation_count: 违约次数
+    - create_time: 创建时间
+    - update_time: 更新时间
+  
+- [x] 设计自习室表（StudyRoom）
+  - 自习室表(study_room): 存储自习室信息
+    - id: 自习室ID，主键，自动递增
+    - name: 自习室名称
+    - location: 位置描述
+    - building: 所在建筑
+    - floor: 所在楼层
+    - room_number: 房间号
+    - capacity: 座位容量
+    - description: 详细描述
+    - open_time: 开放时间(开始)
+    - close_time: 开放时间(结束)
+    - belongs_to: 归属(全校/特定院系)
+    - is_active: 是否开放，0-关闭，1-开放
+    - admin_id: 管理员ID，外键
+    - create_time: 创建时间
+    - update_time: 更新时间
+  
+- [x] 设计座位表（Seat）
+  - 座位表(seat): 存储座位信息
+    - id: 座位ID，主键，自动递增
+    - study_room_id: 所属自习室ID，外键
+    - seat_number: 座位编号
+    - row_number: 行号
+    - column_number: 列号
+    - has_power: 是否有电源，0-无，1-有
+    - is_window: 是否靠窗，0-否，1-是
+    - is_corner: 是否角落，0-否，1-是
+    - status: 状态，0-停用，1-正常
+    - create_time: 创建时间
+    - update_time: 更新时间
+  
+- [x] 设计预约表（Reservation）
+  - 预约表(reservation): 存储预约信息
+    - id: 预约ID，主键，自动递增
+    - student_id: 学生ID，外键
+    - seat_id: 座位ID，外键
+    - start_time: 开始时间
+    - end_time: 结束时间
+    - status: 状态，0-已取消，1-待签到，2-使用中，3-已完成，4-已违约
+    - create_time: 创建时间
+    - update_time: 更新时间
+  
+- [x] 设计签到表（CheckIn）
+  - 签到表(check_in): 存储签到信息
+    - id: 签到ID，主键，自动递增
+    - reservation_id: 预约ID，外键
+    - check_in_time: 签到时间
+    - check_in_type: 签到类型，1-扫码签到，2-手动输入编码
+    - check_out_time: 签退时间(可为空，表示未签退)
+    - check_code: 签到码
+    - create_time: 创建时间
+    - update_time: 更新时间
+  
+  - 违约记录表(violation): 存储违约信息
+    - id: 违约ID，主键，自动递增
+    - student_id: 学生ID，外键
+    - reservation_id: 预约ID，外键
+    - violation_type: 违约类型，1-未签到，2-迟到，3-提前离开
+    - description: 违约描述
+    - create_time: 创建时间
+    - update_time: 更新时间
+  
+- [x] 设计系统参数表（SystemParam）
+  - 系统参数表(system_param): 存储系统配置参数
+    - id: 参数ID，主键，自动递增
+    - param_key: 参数键，唯一
+    - param_value: 参数值
+    - description: 参数描述
+    - create_time: 创建时间
+    - update_time: 更新时间
+  
+- [x] 设计通知消息表（Notification）
+  - 通知消息表(notification): 存储通知消息
+    - id: 通知ID，主键，自动递增
+    - user_id: 接收用户ID，外键
+    - title: 通知标题
+    - content: 通知内容
+    - type: 通知类型，1-系统通知，2-预约提醒，3-迟到提醒，4-违约通知
+    - is_read: 是否已读，0-未读，1-已读
+    - create_time: 创建时间
+    - update_time: 更新时间
+  
+  - 收藏表(favorite): 存储收藏的自习室和座位
+    - id: 收藏ID，主键，自动递增
+    - student_id: 学生ID，外键
+    - favorite_type: 收藏类型，1-自习室，2-座位
+    - study_room_id: 自习室ID(当收藏类型为1时有值)，外键
+    - seat_id: 座位ID(当收藏类型为2时有值)，外键
+    - create_time: 创建时间
+    - update_time: 更新时间
+  
+  - 签到码表(check_code): 存储每天的签到码
+    - id: ID，主键，自动递增
+    - study_room_id: 自习室ID，外键
+    - code: 签到码
+    - valid_date: 有效日期
+    - is_active: 是否有效，0-无效，1-有效
+    - create_time: 创建时间
+    - update_time: 更新时间
+  
+- [x] 编写数据库初始化脚本（init.sql）
+  - 脚本位置: E:\Git\StudySeatReserve\init.sql
+  - 包含: 所有表创建语句和初始数据插入
+- [x] 创建数据库并导入初始数据
+  - 数据库名: study_seat_reserve
+  - 字符集: utf8mb4
+  - 排序规则: utf8mb4_unicode_ci
+  - 初始数据: 
+    - 管理员用户: admin/roomadmin1/roomadmin2
+    - 学生用户: student1/student2/student3
+    - 自习室: 4个示例自习室
+    - 座位: 多个示例座位
+    - 系统参数: 6个基础系统参数
 
 ### 前端初始化
 - [ ] 创建微信小程序项目
