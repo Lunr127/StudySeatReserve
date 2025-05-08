@@ -1,4 +1,34 @@
 <view class="container">
-  <view class="login-title">登录页面</view>
-  <view class="login-description">登录页面开发中...</view>
+  <view class="logo-container">
+    <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
+    <view class="app-name">自习座位预约系统</view>
+  </view>
+
+  <view class="login-container">
+    <block wx:if="{{showPasswordLogin}}">
+      <!-- 账号密码登录表单 -->
+      <view class="form-container">
+        <view class="input-group">
+          <input class="input" placeholder="请输入用户名" value="{{username}}" bindinput="inputUsername" />
+        </view>
+        <view class="input-group">
+          <input class="input" placeholder="请输入密码" password="true" value="{{password}}" bindinput="inputPassword" />
+        </view>
+        <button class="login-btn" bindtap="handlePasswordLogin">登录</button>
+        <view class="switch-login-type" bindtap="switchLoginType">使用微信登录</view>
+      </view>
+    </block>
+    <block wx:else>
+      <!-- 微信登录按钮 -->
+      <button class="wx-login-btn" bindtap="handleWxLogin">
+        <image class="wx-icon" src="/images/wechat.png" mode="aspectFit"></image>
+        微信快捷登录
+      </button>
+      <view class="switch-login-type" bindtap="switchLoginType">使用账号密码登录</view>
+    </block>
+  </view>
+
+  <view class="footer">
+    <view class="agreement">登录即表示您同意<text class="link">用户协议</text>和<text class="link">隐私政策</text></view>
+  </view>
 </view> 

@@ -47,6 +47,11 @@ spring:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
       
+# 微信小程序配置
+wx:
+  appid: wxc6fccec452e4f0c2
+  secret: cb304768896e6e7a707203ab96660580
+  
 # MyBatis Plus配置
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
@@ -94,6 +99,6 @@ server:
 
 # Knife4j配置
 knife4j:
-  enable: false
+  enable: true
   setting:
     language: zh-CN 

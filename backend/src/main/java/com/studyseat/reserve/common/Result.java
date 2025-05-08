@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 通用返回结果
+ * 通用响应结果类
  */
 @Data
 public class Result<T> implements Serializable {
@@ -13,12 +13,7 @@ public class Result<T> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 成功标志
-     */
-    private boolean success;
-
-    /**
-     * 返回代码
+     * 状态码
      */
     private Integer code;
 
@@ -32,63 +27,76 @@ public class Result<T> implements Serializable {
      */
     private T data;
 
-    /**
-     * 私有构造函数，不允许外部直接实例化
-     */
     private Result() {
     }
 
+    private Result(Integer code, String message, T data) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
+
     /**
-     * 成功静态方法，无数据
+     * 成功结果
      */
     public static <T> Result<T> success() {
-        Result<T> result = new Result<>();
-        result.setSuccess(true);
-        result.setCode(ResultCode.SUCCESS);
-        result.setMessage("操作成功");
-        return result;
+        return new Result<>(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMessage(), null);
     }
 
     /**
-     * 成功静态方法，带数据
+     * 成功结果（带数据）
      */
     public static <T> Result<T> success(T data) {
-        Result<T> result = new Result<>();
-        result.setSuccess(true);
-        result.setCode(ResultCode.SUCCESS);
-        result.setMessage("操作成功");
-        result.setData(data);
-        return result;
+        return new Result<>(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMessage(), data);
     }
 
     /**
-     * 成功静态方法，带消息和数据
+     * 成功结果（带消息和数据）
      */
     public static <T> Result<T> success(String message, T data) {
-        Result<T> result = new Result<>();
-        result.setSuccess(true);
-        result.setCode(ResultCode.SUCCESS);
-        result.setMessage(message);
-        result.setData(data);
-        return result;
+        return new Result<>(ResultCode.SUCCESS.getCode(), message, data);
     }
 
     /**
-     * 失败静态方法，带失败码和消息
+     * 失败结果
      */
-    public static <T> Result<T> error(Integer code, String message) {
-        Result<T> result = new Result<>();
-        result.setSuccess(false);
-        result.setCode(code);
-        result.setMessage(message);
-        return result;
+    public static <T> Result<T> failure() {
+        return new Result<>(ResultCode.FAILURE.getCode(), ResultCode.FAILURE.getMessage(), null);
     }
 
     /**
-     * 失败静态方法，默认错误码
+     * 失败结果（带消息）
      */
-    public static <T> Result<T> error(String message) {
-        return error(ResultCode.ERROR, message);
+    public static <T> Result<T> failure(String message) {
+        return new Result<>(ResultCode.FAILURE.getCode(), message, null);
+    }
+
+    /**
+     * 失败结果（带状态码和消息）
+     */
+    public static <T> Result<T> failure(Integer code, String message) {
+        return new Result<>(code, message, null);
+    }
+
+    /**
+     * 失败结果（带状态码、消息和数据）
+     */
+    public static <T> Result<T> failure(Integer code, String message, T data) {
+        return new Result<>(code, message, data);
+    }
+
+    /**
+     * 根据指定ResultCode返回结果
+     */
+    public static <T> Result<T> response(ResultCode resultCode) {
+        return new Result<>(resultCode.getCode(), resultCode.getMessage(), null);
+    }
+
+    /**
+     * 根据指定ResultCode返回结果（带数据）
+     */
+    public static <T> Result<T> response(ResultCode resultCode, T data) {
+        return new Result<>(resultCode.getCode(), resultCode.getMessage(), data);
     }
 
     /**

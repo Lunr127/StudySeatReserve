@@ -1,67 +1,41 @@
 package com.studyseat.reserve.common;
 
+import lombok.Getter;
+
 /**
- * 返回状态码
+ * 响应状态码枚举
  */
-public class ResultCode {
+@Getter
+public enum ResultCode {
     
-    /**
-     * 成功
-     */
-    public static final int SUCCESS = 200;
+    SUCCESS(200, "操作成功"),
+    FAILURE(400, "操作失败"),
+    UNAUTHORIZED(401, "暂未登录或token已经过期"),
+    FORBIDDEN(403, "没有相关权限"),
+    NOT_FOUND(404, "请求的资源不存在"),
+    ERROR(500, "系统内部错误"),
     
-    /**
-     * 失败
-     */
-    public static final int ERROR = 500;
+    // 用户相关错误码 1000-1999
+    USER_NOT_FOUND(1000, "用户不存在"),
+    USERNAME_OR_PASSWORD_ERROR(1001, "用户名或密码错误"),
+    ACCOUNT_DISABLED(1002, "账号已被禁用"),
+    USER_ALREADY_EXISTS(1003, "用户已存在"),
+    WX_LOGIN_ERROR(1004, "微信登录失败"),
     
-    /**
-     * 参数错误
-     */
-    public static final int PARAM_ERROR = 400;
+    // 参数相关错误码 2000-2999
+    PARAM_ERROR(2000, "参数错误"),
+    PARAM_MISSING(2001, "参数缺失"),
     
-    /**
-     * 未授权
-     */
-    public static final int UNAUTHORIZED = 401;
+    // 业务相关错误码 3000-3999
+    OPERATION_FAILED(3000, "操作失败"),
+    DATA_ALREADY_EXISTS(3001, "数据已存在"),
+    DATA_NOT_EXISTS(3002, "数据不存在");
     
-    /**
-     * 禁止访问
-     */
-    public static final int FORBIDDEN = 403;
+    private final Integer code;
+    private final String message;
     
-    /**
-     * 资源不存在
-     */
-    public static final int NOT_FOUND = 404;
-    
-    /**
-     * 业务异常
-     */
-    public static final int BUSINESS_ERROR = 501;
-    
-    /**
-     * 数据库操作异常
-     */
-    public static final int DB_ERROR = 502;
-    
-    /**
-     * 验证码错误
-     */
-    public static final int CAPTCHA_ERROR = 503;
-    
-    /**
-     * 账号异常
-     */
-    public static final int ACCOUNT_ERROR = 504;
-    
-    /**
-     * 系统限制
-     */
-    public static final int SYSTEM_LIMIT = 505;
-    
-    /**
-     * 数据冲突
-     */
-    public static final int DATA_CONFLICT = 506;
+    ResultCode(Integer code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 } 

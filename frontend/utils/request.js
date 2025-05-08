@@ -1,124 +1,162 @@
-// 封装网络请求
-const app = getApp();
+/**
+ * 请求封装
+ */
+
+// 接口基础路径
+const baseURL = 'http://localhost:8080';
 
 /**
  * 封装wx.request为Promise
- * @param {Object} options 请求选项
- * @returns {Promise} Promise对象
+ * @param {Object} options - 请求选项
+ * @returns {Promise} - 返回Promise对象
  */
-function request(options) {
-  // 获取应用实例
-  const baseUrl = app ? app.globalData.baseUrl : 'http://localhost:8080';
-  // 获取token
-  const token = app ? app.globalData.token : '';
-  
+const request = (options) => {
   return new Promise((resolve, reject) => {
-    // 拼接url
-    const url = options.url.startsWith('http') ? options.url : baseUrl + options.url;
+    // 获取token
+    const token = wx.getStorageSync('token');
     
-    // 设置请求头
-    const header = {
-      'Content-Type': 'application/json',
-      ...options.header
-    };
-    
-    // 如果有token则添加到请求头
-    if (token) {
-      header['Authorization'] = 'Bearer ' + token;
-    }
-    
-    wx.request({
-      url: url,
-      data: options.data,
+    // 公共参数
+    const params = {
+      url: baseURL + options.url,
       method: options.method || 'GET',
-      header: header,
+      data: options.data,
+      header: {
+        'Content-Type': options.contentType || 'application/json',
+        ...options.header
+      },
       success: (res) => {
-        // 根据后端的响应格式可能需要调整
-        if (res.statusCode === 200) {
-          // 假设后端返回格式为 { code: 0, data: any, message: '' }
-          if (res.data.code === 0 || res.data.code === 200) {
+        // 请求成功，检查状态码和业务码
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          // 成功
+          if (res.data.code === 200) {
             resolve(res.data);
           } else {
-            // 业务逻辑错误
+            // 业务错误
+            reject({
+              code: res.data.code,
+              message: res.data.message || '请求失败'
+            });
+            // 显示错误提示
             wx.showToast({
               title: res.data.message || '请求失败',
-              icon: 'none'
+              icon: 'none',
+              duration: 2000
             });
-            reject(res.data);
           }
         } else if (res.statusCode === 401) {
-          // 未授权，清除本地token，跳转登录
-          wx.removeStorageSync('token');
-          if (app) {
-            app.globalData.token = '';
-          }
+          // 未授权
+          reject({
+            code: 401,
+            message: '登录已过期，请重新登录'
+          });
+          // 跳转到登录页
           wx.showToast({
             title: '登录已过期，请重新登录',
             icon: 'none',
-            complete: () => {
-              // 跳转到登录页
-              wx.navigateTo({
-                url: '/pages/login/login',
-              });
-            }
+            duration: 2000
           });
-          reject({ message: '登录已过期，请重新登录' });
+          wx.removeStorageSync('token');
+          wx.removeStorageSync('userInfo');
+          setTimeout(() => {
+            wx.redirectTo({
+              url: '/pages/login/login'
+            });
+          }, 2000);
         } else {
           // 其他错误
-          wx.showToast({
-            title: '服务器错误: ' + res.statusCode,
-            icon: 'none'
+          reject({
+            code: res.statusCode,
+            message: '请求失败'
           });
-          reject(res);
+          // 显示错误提示
+          wx.showToast({
+            title: '请求失败，错误码: ' + res.statusCode,
+            icon: 'none',
+            duration: 2000
+          });
         }
       },
       fail: (err) => {
-        wx.showToast({
-          title: '网络请求失败',
-          icon: 'none'
-        });
+        // 请求失败
         reject(err);
+        wx.showToast({
+          title: '网络异常',
+          icon: 'none',
+          duration: 2000
+        });
       }
-    });
+    };
+    
+    // 添加认证头
+    if (token) {
+      params.header['Authorization'] = 'Bearer ' + token;
+    }
+    
+    // 发起请求
+    wx.request(params);
   });
-}
+};
 
-// 封装GET请求
+/**
+ * GET请求
+ * @param {string} url - 请求地址
+ * @param {Object} data - 请求参数
+ * @param {Object} options - 其他配置
+ * @returns {Promise} - 返回Promise对象
+ */
 const get = (url, data = {}, options = {}) => {
   return request({
     url,
-    data,
     method: 'GET',
+    data,
     ...options
   });
 };
 
-// 封装POST请求
+/**
+ * POST请求
+ * @param {string} url - 请求地址
+ * @param {Object} data - 请求参数
+ * @param {Object} options - 其他配置
+ * @returns {Promise} - 返回Promise对象
+ */
 const post = (url, data = {}, options = {}) => {
   return request({
     url,
-    data,
     method: 'POST',
+    data,
     ...options
   });
 };
 
-// 封装PUT请求
+/**
+ * PUT请求
+ * @param {string} url - 请求地址
+ * @param {Object} data - 请求参数
+ * @param {Object} options - 其他配置
+ * @returns {Promise} - 返回Promise对象
+ */
 const put = (url, data = {}, options = {}) => {
   return request({
     url,
-    data,
     method: 'PUT',
+    data,
     ...options
   });
 };
 
-// 封装DELETE请求
+/**
+ * DELETE请求
+ * @param {string} url - 请求地址
+ * @param {Object} data - 请求参数
+ * @param {Object} options - 其他配置
+ * @returns {Promise} - 返回Promise对象
+ */
 const del = (url, data = {}, options = {}) => {
   return request({
     url,
-    data,
     method: 'DELETE',
+    data,
     ...options
   });
 };
@@ -128,5 +166,6 @@ module.exports = {
   get,
   post,
   put,
-  delete: del
+  del,
+  baseURL
 }; 
