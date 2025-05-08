@@ -1,0 +1,7 @@
+{
+  "desc": "自习座位预约系统的sitemap配置",
+  "rules": [{
+    "action": "allow",
+    "page": "*"
+  }]
+} 

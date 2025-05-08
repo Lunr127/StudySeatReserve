@@ -1,0 +1,10 @@
+<!--components/custom-button/custom-button.wxml-->
+<button 
+  class="custom-btn {{classes}}" 
+  bindtap="handleTap" 
+  disabled="{{disabled}}" 
+  loading="{{loading}}"
+>
+  <slot></slot>
+  <text wx:if="{{!loading}}">{{text}}</text>
+</button> 

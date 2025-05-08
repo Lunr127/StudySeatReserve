@@ -1,0 +1,64 @@
+/* components/custom-button/custom-button.wxss */
+.custom-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 15px;
+  font-size: 14px;
+  height: 40px;
+  border-radius: 4px;
+  margin: 0;
+}
+
+/* 按钮类型 */
+.btn-primary {
+  background-color: var(--primary-color, #3A7AF2);
+  color: #fff;
+  border: none;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color, #7FB3F5);
+  color: #fff;
+  border: none;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--primary-color, #3A7AF2);
+  border: 1px solid var(--primary-color, #3A7AF2);
+}
+
+/* 按钮尺寸 */
+.btn-small {
+  height: 32px;
+  font-size: 12px;
+  padding: 0 10px;
+}
+
+.btn-large {
+  height: 46px;
+  font-size: 16px;
+  padding: 0 20px;
+}
+
+/* 禁用状态 */
+.btn-disabled {
+  opacity: 0.5;
+}
+
+/* 块级按钮 */
+.btn-block {
+  display: flex;
+  width: 100%;
+}
+
+/* 圆角按钮 */
+.btn-round {
+  border-radius: 20px;
+}
+
+/* 按下效果 */
+.custom-btn:active {
+  opacity: 0.8;
+} 
