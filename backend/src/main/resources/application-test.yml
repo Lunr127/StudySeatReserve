@@ -1,0 +1,96 @@
+spring:
+  # 数据源配置 - 使用H2内存数据库
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=MySQL
+    username: sa
+    password: 
+  
+  # SQL初始化配置
+  sql:
+    init:
+      schema-locations: classpath:schema-h2.sql
+      data-locations: classpath:data-h2.sql
+      mode: always
+  
+  # 启用H2控制台
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  # Jackson配置
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    serialization:
+      # 格式化输出
+      indent-output: true
+      # 忽略无法转换的对象
+      fail-on-empty-beans: false
+    deserialization:
+      # 允许对象忽略json中不存在的属性
+      fail-on-unknown-properties: false
+      
+  # 自定义JWT配置
+  jwt:
+    # JWT存储的请求头
+    tokenHeader: Authorization
+    # JWT加解密使用的密钥
+    secret: studyseat-secret-test
+    # JWT的超期限时间(60*60*24)
+    expiration: 86400
+    # JWT负载中拿到开头
+    tokenHead: Bearer
+
+  # 自定义系统配置  
+  system:
+    # 签到有效时间（分钟）
+    checkinTimeout: 5
+    # 默认最大预约时长（小时）
+    maxReserveHours: 2
+    # 是否启用违约记录
+    enableViolation: false
+    # 允许提前预约的天数
+    advanceReserveDays: 3
+    
+  # SpringFox配置
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+      
+# MyBatis Plus配置
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  # 实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: com.studyseat.reserve.entity
+  global-config:
+    # 数据库相关配置
+    db-config:
+      # 主键类型 AUTO:"数据库ID自增", NONE:"未设置主键", INPUT:"用户输入ID", ASSIGN_ID:"全局唯一ID (数字类型默认使用 雪花算法)"
+      id-type: ASSIGN_ID
+      # 逻辑删除配置
+      logic-delete-field: delFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  # 原生配置
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# 日志配置 - 测试环境显示更多日志
+logging:
+  level:
+    com.studyseat.reserve: debug
+    org.springframework: info
+    org.h2: debug
+    org.hibernate.SQL: debug
+
+# Knife4j配置
+knife4j:
+  enable: false
+  setting:
+    language: zh-CN 
