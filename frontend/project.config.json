@@ -49,6 +49,7 @@
     "tabIndent": "insertSpaces",
     "tabSize": 2
   },
-  "appid": "wx123456789abc",
-  "projectname": "StudySeatReserve"
-} 
+  "appid": "wxc6fccec452e4f0c2",
+  "projectname": "StudySeatReserve",
+  "libVersion": "3.8.3"
+}
