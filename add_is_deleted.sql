@@ -1,0 +1,11 @@
+ALTER TABLE admin ADD COLUMN is_deleted TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除';
+ALTER TABLE check_code ADD COLUMN is_deleted TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除';
+ALTER TABLE check_in ADD COLUMN is_deleted TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除';
+ALTER TABLE favorite ADD COLUMN is_deleted TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除';
+ALTER TABLE notification ADD COLUMN is_deleted TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除';
+ALTER TABLE reservation ADD COLUMN is_deleted TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除';
+ALTER TABLE seat ADD COLUMN is_deleted TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除';
+ALTER TABLE student ADD COLUMN is_deleted TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除';
+ALTER TABLE study_room ADD COLUMN is_deleted TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除';
+ALTER TABLE system_param ADD COLUMN is_deleted TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除';
+ALTER TABLE violation ADD COLUMN is_deleted TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除'; 
