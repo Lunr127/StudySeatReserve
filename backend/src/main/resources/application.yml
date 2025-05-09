@@ -20,17 +20,6 @@ spring:
       # 允许对象忽略json中不存在的属性
       fail-on-unknown-properties: false
   
-  # 自定义JWT配置
-  jwt:
-    # JWT存储的请求头
-    tokenHeader: Authorization
-    # JWT加解密使用的密钥
-    secret: studyseat-secret
-    # JWT的超期限时间(60*60*24)
-    expiration: 86400
-    # JWT负载中拿到开头
-    tokenHead: Bearer
-
   # 自定义系统配置  
   system:
     # 签到有效时间（分钟）
@@ -46,6 +35,17 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
+
+# JWT配置
+jwt:
+  # JWT存储的请求头
+  tokenHeader: Authorization
+  # JWT加解密使用的密钥
+  secret: studyseat-secret
+  # JWT的超期限时间(60*60*24)
+  expiration: 86400
+  # JWT负载中拿到开头
+  tokenHead: Bearer
       
 # 微信小程序配置
 wx:

@@ -100,6 +100,13 @@ public class Result<T> implements Serializable {
     }
 
     /**
+     * 通用错误响应
+     */
+    public static <T> Result<T> error(ResultCode resultCode, String message) {
+        return new Result<>(resultCode.getCode(), message, null);
+    }
+
+    /**
      * 参数错误
      */
     public static <T> Result<T> paramError(String message) {

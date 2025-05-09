@@ -1,11 +1,9 @@
-com\studyseat\reserve\config\SystemProperties.class
-com\studyseat\reserve\exception\GlobalExceptionHandler.class
 META-INF\spring-configuration-metadata.json
-com\studyseat\reserve\ReserveApplication.class
-com\studyseat\reserve\common\Result.class
 com\studyseat\reserve\common\ResultCode.class
 com\studyseat\reserve\config\JwtProperties.class
 com\studyseat\reserve\config\SpringfoxConfig.class
-com\studyseat\reserve\config\SecurityConfig.class
 com\studyseat\reserve\config\CorsConfig.class
 com\studyseat\reserve\exception\BusinessException.class
+com\studyseat\reserve\config\SystemProperties.class
+com\studyseat\reserve\ReserveApplication.class
+com\studyseat\reserve\config\SecurityConfig.class
