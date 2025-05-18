@@ -1,0 +1,114 @@
+<view class="container">
+  <!-- 基本信息 -->
+  <view class="header">
+    <view class="header-content">
+      <view class="room-name">{{room.name}}</view>
+      <view class="room-status" wx:if="{{room.isActive === 1}}">开放中</view>
+      <view class="room-status inactive" wx:else>已关闭</view>
+    </view>
+    <view class="room-info">
+      <view class="info-item">
+        <image src="/images/location.png" class="info-icon"></image>
+        <text>{{room.building}} {{room.floor}}楼 {{room.roomNumber}}</text>
+      </view>
+      <view class="info-item">
+        <image src="/images/time.png" class="info-icon"></image>
+        <text>{{room.openTime}} - {{room.closeTime}}</text>
+      </view>
+      <view class="info-item">
+        <image src="/images/user.png" class="info-icon"></image>
+        <text>归属: {{room.belongsTo || '全校'}}</text>
+      </view>
+      <view class="info-item">
+        <image src="/images/admin.png" class="info-icon"></image>
+        <text>管理员: {{room.adminName || '未指定'}}</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 座位使用情况 -->
+  <view class="section">
+    <view class="section-title">座位使用</view>
+    <view class="section-content">
+      <view class="capacity-info">
+        <view class="capacity-item">
+          <view class="capacity-value">{{room.capacity || 0}}</view>
+          <view class="capacity-label">总座位数</view>
+        </view>
+        <view class="capacity-divider"></view>
+        <view class="capacity-item">
+          <view class="capacity-value">{{room.usedCapacity || 0}}</view>
+          <view class="capacity-label">已使用</view>
+        </view>
+        <view class="capacity-divider"></view>
+        <view class="capacity-item">
+          <view class="capacity-value">{{(room.capacity || 0) - (room.usedCapacity || 0)}}</view>
+          <view class="capacity-label">空闲</view>
+        </view>
+      </view>
+      <view class="capacity-progress">
+        <view class="progress-bar">
+          <view class="progress-inner" style="width: {{room.capacity ? (room.usedCapacity / room.capacity * 100) : 0}}%"></view>
+        </view>
+        <view class="progress-text">使用率: {{room.capacity ? (Math.round(room.usedCapacity / room.capacity * 100)) : 0}}%</view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 详细描述 -->
+  <view class="section">
+    <view class="section-title">详细描述</view>
+    <view class="section-content">
+      <view class="description">{{room.description || '暂无详细描述'}}</view>
+    </view>
+  </view>
+  
+  <!-- 位置信息 -->
+  <view class="section">
+    <view class="section-title">位置信息</view>
+    <view class="section-content">
+      <view class="location-detail">{{room.location || '暂无详细位置信息'}}</view>
+    </view>
+  </view>
+  
+  <!-- 操作区域 -->
+  <view class="action-area">
+    <view wx:if="{{isAdmin}}" class="action-btns admin-btns">
+      <view class="btn btn-edit" bindtap="editRoom">编辑</view>
+      <view class="btn btn-status" bindtap="toggleStatus">
+        {{room.isActive === 1 ? '关闭自习室' : '开放自习室'}}
+      </view>
+      <view class="btn btn-delete" bindtap="deleteRoom">删除</view>
+    </view>
+    <view wx:else class="action-btns">
+      <view class="btn btn-primary" bindtap="goToReservation">预约座位</view>
+      <view class="btn btn-outline" bindtap="addToFavorite" wx:if="{{!isFavorite}}">收藏</view>
+      <view class="btn btn-outline-active" bindtap="removeFromFavorite" wx:else>已收藏</view>
+    </view>
+  </view>
+  
+  <!-- 座位列表预览 -->
+  <view class="section">
+    <view class="section-title seat-title">
+      <text>座位列表</text>
+      <view class="view-all" bindtap="goToReservation">查看全部</view>
+    </view>
+    <view class="section-content">
+      <view class="seat-layout" wx:if="{{seats.length > 0}}">
+        <view class="seat-tip">以下是部分座位预览，点击"查看全部"可进行完整选座</view>
+        <view class="seat-grid">
+          <view class="seat-item {{item.status === 0 ? 'disabled' : (item.isReserved ? 'reserved' : '')}}" 
+            wx:for="{{seats}}" wx:key="id">
+            {{item.seatNumber}}
+          </view>
+        </view>
+      </view>
+      <view class="empty-seats" wx:else>
+        <text>暂无座位信息</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 底部空白，防止被操作区域遮挡 -->
+<view class="bottom-spacing"></view> 

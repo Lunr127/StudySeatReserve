@@ -1,0 +1,56 @@
+<view class="container">
+  <!-- 顶部控制栏 -->
+  <view class="control-bar">
+    <view class="search-box">
+      <input class="search-input" placeholder="搜索自习室名称" bindinput="onSearchInput" value="{{searchKeyword}}" />
+      <icon class="search-icon" type="search" size="18"></icon>
+    </view>
+    <view class="add-btn" bindtap="goToAddRoom">新增</view>
+  </view>
+  
+  <!-- 筛选区域 -->
+  <view class="filter-bar">
+    <view class="filter-item {{filterType === 'all' ? 'active' : ''}}" bindtap="switchFilter" data-type="all">全部</view>
+    <view class="filter-item {{filterType === 'active' ? 'active' : ''}}" bindtap="switchFilter" data-type="active">开放中</view>
+    <view class="filter-item {{filterType === 'inactive' ? 'active' : ''}}" bindtap="switchFilter" data-type="inactive">已关闭</view>
+  </view>
+  
+  <!-- 管理列表 -->
+  <view class="room-list" wx:if="{{rooms.length > 0}}">
+    <view class="room-item" wx:for="{{rooms}}" wx:key="id">
+      <view class="room-info" bindtap="goToDetail" data-id="{{item.id}}">
+        <view class="room-name">{{item.name}}</view>
+        <view class="room-location">{{item.building}} {{item.floor}}楼 {{item.roomNumber}}</view>
+        <view class="room-status {{item.isActive === 1 ? 'active' : 'inactive'}}">
+          {{item.isActive === 1 ? '开放中' : '已关闭'}}
+        </view>
+      </view>
+      <view class="room-actions">
+        <view class="action-btn" bindtap="goToEditRoom" data-id="{{item.id}}">编辑</view>
+        <view class="action-btn" bindtap="toggleStatus" data-id="{{item.id}}" data-status="{{item.isActive}}">
+          {{item.isActive === 1 ? '关闭' : '开放'}}
+        </view>
+        <view class="action-btn delete" bindtap="deleteRoom" data-id="{{item.id}}">删除</view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 无数据提示 -->
+  <view class="empty-container" wx:else>
+    <image src="/images/empty.png" mode="aspectFit" class="empty-image"></image>
+    <text class="empty-text">暂无自习室数据</text>
+    <view class="empty-btn" bindtap="goToAddRoom">添加自习室</view>
+  </view>
+  
+  <!-- 加载更多 -->
+  <view class="loading-more" wx:if="{{hasMore && !loading && rooms.length > 0}}">
+    <view class="loading-btn" bindtap="loadMore">加载更多</view>
+  </view>
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+  <view class="no-more" wx:if="{{!hasMore && rooms.length > 0}}">
+    <text>没有更多了</text>
+  </view>
+</view> 

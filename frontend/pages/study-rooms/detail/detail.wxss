@@ -1,0 +1,265 @@
+/* detail.wxss */
+.container {
+  padding: 0 0 30rpx 0;
+  background-color: var(--background-color);
+}
+
+/* 头部基本信息 */
+.header {
+  background-color: #ffffff;
+  padding: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  margin-bottom: 20rpx;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.room-name {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: var(--font-color);
+  flex: 1;
+}
+
+.room-status {
+  padding: 8rpx 20rpx;
+  background-color: rgba(82, 196, 26, 0.1);
+  color: #52c41a;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+}
+
+.room-status.inactive {
+  background-color: rgba(153, 153, 153, 0.1);
+  color: var(--font-color-lighter);
+}
+
+.room-info {
+  margin-top: 20rpx;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+  font-size: 28rpx;
+  color: var(--font-color-light);
+}
+
+.info-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 16rpx;
+}
+
+/* 内容区域 */
+.section {
+  background-color: #ffffff;
+  margin-bottom: 20rpx;
+  padding: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+  color: var(--font-color);
+  position: relative;
+}
+
+.section-content {
+  color: var(--font-color-light);
+  font-size: 28rpx;
+}
+
+/* 座位使用信息 */
+.capacity-info {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.capacity-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.capacity-value {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-bottom: 10rpx;
+}
+
+.capacity-label {
+  font-size: 24rpx;
+  color: var(--font-color-light);
+}
+
+.capacity-divider {
+  width: 2rpx;
+  height: 60rpx;
+  background-color: var(--border-color);
+}
+
+.capacity-progress {
+  margin-top: 20rpx;
+}
+
+.progress-bar {
+  height: 16rpx;
+  background-color: #f0f0f0;
+  border-radius: 8rpx;
+  overflow: hidden;
+  margin-bottom: 10rpx;
+}
+
+.progress-inner {
+  height: 100%;
+  background-color: var(--primary-color);
+  border-radius: 8rpx;
+  transition: width 0.3s;
+}
+
+.progress-text {
+  text-align: right;
+  font-size: 24rpx;
+  color: var(--font-color-light);
+}
+
+/* 描述和位置信息 */
+.description, .location-detail {
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+/* 座位列表 */
+.seat-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.view-all {
+  font-size: 26rpx;
+  color: var(--primary-color);
+}
+
+.seat-tip {
+  font-size: 24rpx;
+  color: var(--font-color-lighter);
+  margin-bottom: 20rpx;
+}
+
+.seat-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.seat-item {
+  width: 80rpx;
+  height: 80rpx;
+  background-color: #f0f0f0;
+  margin: 10rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10rpx;
+  font-size: 24rpx;
+  color: var(--font-color);
+}
+
+.seat-item.disabled {
+  background-color: #eeeeee;
+  color: var(--font-color-lighter);
+  text-decoration: line-through;
+}
+
+.seat-item.reserved {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
+.empty-seats {
+  padding: 40rpx 0;
+  text-align: center;
+  color: var(--font-color-lighter);
+}
+
+/* 操作区域 */
+.action-area {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ffffff;
+  padding: 20rpx 30rpx;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+  z-index: 100;
+}
+
+.action-btns {
+  display: flex;
+}
+
+.btn {
+  flex: 1;
+  height: 80rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  margin: 0 10rpx;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
+.btn-outline {
+  background-color: #ffffff;
+  color: var(--primary-color);
+  border: 2rpx solid var(--primary-color);
+}
+
+.btn-outline-active {
+  background-color: rgba(58, 122, 242, 0.1);
+  color: var(--primary-color);
+  border: 2rpx solid var(--primary-color);
+}
+
+/* 管理员按钮 */
+.admin-btns .btn {
+  flex: 1;
+}
+
+.btn-edit {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
+.btn-status {
+  background-color: var(--warning-color);
+  color: #ffffff;
+}
+
+.btn-delete {
+  background-color: var(--error-color);
+  color: #ffffff;
+}
+
+/* 底部空白区域 */
+.bottom-spacing {
+  height: 120rpx;
+} 

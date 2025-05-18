@@ -1,4 +1,110 @@
 <view class="container">
-  <view class="page-title">自习室列表</view>
-  <view class="page-description">自习室列表页面开发中...</view>
+  <!-- 搜索筛选区域 -->
+  <view class="search-area">
+    <view class="search-box">
+      <input class="search-input" placeholder="搜索自习室名称" bindinput="onSearchInput" value="{{searchKeyword}}" />
+      <icon class="search-icon" type="search" size="18"></icon>
+    </view>
+    <view class="filter-btn" bindtap="showFilterModal">
+      <image src="/images/filter.png" mode="aspectFit" class="filter-icon"></image>
+      <text>筛选</text>
+    </view>
+  </view>
+  
+  <!-- 筛选条件显示区域 -->
+  <view class="filter-tags" wx:if="{{activeFilters.length > 0}}">
+    <view class="tag" wx:for="{{activeFilters}}" wx:key="index" bindtap="removeFilter" data-index="{{index}}">
+      {{item.label}}: {{item.value}}
+      <icon type="clear" size="12"></icon>
+    </view>
+    <view class="tag clear-all" bindtap="clearAllFilters">清除全部</view>
+  </view>
+  
+  <!-- 自习室列表 -->
+  <view class="room-list" wx:if="{{rooms.length > 0}}">
+    <view class="room-card" wx:for="{{rooms}}" wx:key="id" bindtap="goToRoomDetail" data-id="{{item.id}}">
+      <view class="room-info">
+        <view class="room-name">{{item.name}}</view>
+        <view class="room-location">{{item.building}} {{item.floor}}楼 {{item.roomNumber}}</view>
+        <view class="room-capacity">
+          <text class="capacity-text">座位：{{item.usedCapacity || 0}}/{{item.capacity}}</text>
+          <view class="capacity-bar">
+            <view class="capacity-used" style="width: {{item.capacity > 0 ? (item.usedCapacity || 0) / item.capacity * 100 : 0}}%"></view>
+          </view>
+        </view>
+        <view class="room-tags">
+          <view class="tag-item" wx:if="{{item.isActive === 1}}">开放中</view>
+          <view class="tag-item tag-inactive" wx:else>已关闭</view>
+          <view class="tag-item">{{item.belongsTo || '全校'}}</view>
+          <view class="tag-item">{{item.openTime}} - {{item.closeTime}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 无数据提示 -->
+  <view class="empty-container" wx:else>
+    <image src="/images/empty.png" mode="aspectFit" class="empty-image"></image>
+    <text class="empty-text">暂无自习室数据</text>
+  </view>
+  
+  <!-- 加载更多 -->
+  <view class="loading-more" wx:if="{{hasMore && !loading && rooms.length > 0}}">
+    <view class="loading-btn" bindtap="loadMore">加载更多</view>
+  </view>
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+  <view class="no-more" wx:if="{{!hasMore && rooms.length > 0}}">
+    <text>没有更多了</text>
+  </view>
+  
+  <!-- 筛选弹窗 -->
+  <view class="filter-modal {{showFilter ? 'show' : ''}}">
+    <view class="filter-content">
+      <view class="filter-header">
+        <text class="filter-title">筛选条件</text>
+        <view class="filter-close" bindtap="hideFilterModal">×</view>
+      </view>
+      <view class="filter-body">
+        <view class="filter-item">
+          <view class="filter-label">所在建筑</view>
+          <view class="filter-options">
+            <view class="filter-option {{filter.building === '' ? 'active' : ''}}" bindtap="selectFilter" data-type="building" data-value="">全部</view>
+            <view class="filter-option {{filter.building === '图书馆' ? 'active' : ''}}" bindtap="selectFilter" data-type="building" data-value="图书馆">图书馆</view>
+            <view class="filter-option {{filter.building === '教学楼' ? 'active' : ''}}" bindtap="selectFilter" data-type="building" data-value="教学楼">教学楼</view>
+            <view class="filter-option {{filter.building === '实验楼' ? 'active' : ''}}" bindtap="selectFilter" data-type="building" data-value="实验楼">实验楼</view>
+          </view>
+        </view>
+        <view class="filter-item">
+          <view class="filter-label">归属</view>
+          <view class="filter-options">
+            <view class="filter-option {{filter.belongsTo === '' ? 'active' : ''}}" bindtap="selectFilter" data-type="belongsTo" data-value="">全部</view>
+            <view class="filter-option {{filter.belongsTo === '全校' ? 'active' : ''}}" bindtap="selectFilter" data-type="belongsTo" data-value="全校">全校</view>
+            <view class="filter-option {{filter.belongsTo === '计算机学院' ? 'active' : ''}}" bindtap="selectFilter" data-type="belongsTo" data-value="计算机学院">计算机学院</view>
+            <view class="filter-option {{filter.belongsTo === '文学院' ? 'active' : ''}}" bindtap="selectFilter" data-type="belongsTo" data-value="文学院">文学院</view>
+          </view>
+        </view>
+        <view class="filter-item">
+          <view class="filter-label">状态</view>
+          <view class="filter-options">
+            <view class="filter-option {{filter.isActive === null ? 'active' : ''}}" bindtap="selectFilter" data-type="isActive" data-value="null">全部</view>
+            <view class="filter-option {{filter.isActive === 1 ? 'active' : ''}}" bindtap="selectFilter" data-type="isActive" data-value="1">开放中</view>
+            <view class="filter-option {{filter.isActive === 0 ? 'active' : ''}}" bindtap="selectFilter" data-type="isActive" data-value="0">已关闭</view>
+          </view>
+        </view>
+      </view>
+      <view class="filter-footer">
+        <view class="filter-reset" bindtap="resetFilter">重置</view>
+        <view class="filter-confirm" bindtap="confirmFilter">确定</view>
+      </view>
+    </view>
+    <view class="filter-mask" bindtap="hideFilterModal"></view>
+  </view>
+  
+  <!-- 管理员功能悬浮按钮 -->
+  <view class="admin-fab" wx:if="{{isAdmin}}" bindtap="goToManage">
+    <image src="/images/manage.png" class="admin-fab-icon"></image>
+  </view>
 </view> 

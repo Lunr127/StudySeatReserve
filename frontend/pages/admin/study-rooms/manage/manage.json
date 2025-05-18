@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "自习室列表",
+  "navigationBarTitleText": "自习室管理",
   "enablePullDownRefresh": true,
   "backgroundColor": "#F5F5F5",
   "usingComponents": {}

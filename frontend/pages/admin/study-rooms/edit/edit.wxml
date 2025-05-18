@@ -1,0 +1,113 @@
+<view class="container">
+  <view class="page-title">{{isEdit ? '编辑' : '新增'}}自习室</view>
+  
+  <view class="form-container">
+    <form bindsubmit="submitForm">
+      <!-- 基本信息部分 -->
+      <view class="form-section">
+        <view class="section-title">基本信息</view>
+        
+        <view class="form-item">
+          <view class="form-label">自习室名称 <text class="required">*</text></view>
+          <input class="form-input" name="name" value="{{formData.name}}" placeholder="请输入自习室名称" />
+        </view>
+        
+        <view class="form-item">
+          <view class="form-label">所在建筑 <text class="required">*</text></view>
+          <input class="form-input" name="building" value="{{formData.building}}" placeholder="请输入所在建筑" />
+        </view>
+        
+        <view class="form-item">
+          <view class="form-label">所在楼层</view>
+          <input class="form-input" name="floor" value="{{formData.floor}}" placeholder="请输入所在楼层" />
+        </view>
+        
+        <view class="form-item">
+          <view class="form-label">房间号</view>
+          <input class="form-input" name="roomNumber" value="{{formData.roomNumber}}" placeholder="请输入房间号" />
+        </view>
+        
+        <view class="form-item">
+          <view class="form-label">位置描述 <text class="required">*</text></view>
+          <input class="form-input" name="location" value="{{formData.location}}" placeholder="请输入位置描述" />
+        </view>
+      </view>
+      
+      <!-- 座位信息部分 -->
+      <view class="form-section">
+        <view class="section-title">座位信息</view>
+        
+        <view class="form-item">
+          <view class="form-label">座位容量 <text class="required">*</text></view>
+          <input class="form-input" type="number" name="capacity" value="{{formData.capacity}}" placeholder="请输入座位容量" />
+        </view>
+      </view>
+      
+      <!-- 开放信息部分 -->
+      <view class="form-section">
+        <view class="section-title">开放信息</view>
+        
+        <view class="form-item">
+          <view class="form-label">开放时间 <text class="required">*</text></view>
+          <view class="time-picker-container">
+            <picker mode="time" value="{{formData.openTime}}" start="00:00" end="23:59" bindchange="bindOpenTimeChange">
+              <view class="time-picker">
+                <text>{{formData.openTime || '请选择'}}</text>
+                <image src="/images/arrow_down.png" class="picker-arrow"></image>
+              </view>
+            </picker>
+            <text class="time-separator">至</text>
+            <picker mode="time" value="{{formData.closeTime}}" start="00:00" end="23:59" bindchange="bindCloseTimeChange">
+              <view class="time-picker">
+                <text>{{formData.closeTime || '请选择'}}</text>
+                <image src="/images/arrow_down.png" class="picker-arrow"></image>
+              </view>
+            </picker>
+          </view>
+        </view>
+        
+        <view class="form-item">
+          <view class="form-label">归属</view>
+          <picker mode="selector" range="{{belongsToOptions}}" value="{{belongsToIndex}}" bindchange="bindBelongsToChange">
+            <view class="picker">
+              <text>{{formData.belongsTo || '全校'}}</text>
+              <image src="/images/arrow_down.png" class="picker-arrow"></image>
+            </view>
+          </picker>
+        </view>
+        
+        <view class="form-item">
+          <view class="form-label">是否开放</view>
+          <switch checked="{{formData.isActive === 1}}" bindchange="bindIsActiveChange" color="var(--primary-color)" />
+        </view>
+      </view>
+      
+      <!-- 管理员部分 -->
+      <view class="form-section">
+        <view class="section-title">管理信息</view>
+        
+        <view class="form-item">
+          <view class="form-label">管理员</view>
+          <picker mode="selector" range="{{adminOptions}}" range-key="name" value="{{adminIndex}}" bindchange="bindAdminChange">
+            <view class="picker">
+              <text>{{formData.adminName || '请选择管理员'}}</text>
+              <image src="/images/arrow_down.png" class="picker-arrow"></image>
+            </view>
+          </picker>
+        </view>
+        
+        <view class="form-item">
+          <view class="form-label">详细描述</view>
+          <textarea class="form-textarea" name="description" value="{{formData.description}}" placeholder="请输入详细描述" maxlength="200" />
+          <view class="textarea-counter">{{formData.description.length || 0}}/200</view>
+        </view>
+      </view>
+      
+      <!-- 提交按钮 -->
+      <view class="form-actions">
+        <button class="btn-cancel" bindtap="cancelEdit">取消</button>
+        <button class="btn-submit" form-type="submit">保存</button>
+      </view>
+    </form>
+  </view>
+</view> 

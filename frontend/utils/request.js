@@ -105,10 +105,18 @@ const request = (options) => {
  * @returns {Promise} - 返回Promise对象
  */
 const get = (url, data = {}, options = {}) => {
+  // 处理参数中的null值，避免传递"null"字符串
+  const processedData = {};
+  for (const key in data) {
+    if (data[key] !== null && data[key] !== undefined) {
+      processedData[key] = data[key];
+    }
+  }
+  
   return request({
     url,
     method: 'GET',
-    data,
+    data: processedData,
     ...options
   });
 };

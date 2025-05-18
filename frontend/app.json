@@ -3,9 +3,12 @@
     "pages/index/index",
     "pages/login/login",
     "pages/study-rooms/study-rooms",
+    "pages/study-rooms/detail/detail",
     "pages/seat-reservation/seat-reservation",
     "pages/user-center/user-center",
-    "pages/notifications/notifications"
+    "pages/notifications/notifications",
+    "pages/admin/study-rooms/manage/manage",
+    "pages/admin/study-rooms/edit/edit"
   ],
   "window": {
     "backgroundTextStyle": "light",

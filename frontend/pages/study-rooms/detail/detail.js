@@ -1,0 +1,234 @@
+const { studyRoomApi, seatApi } = require('../../../utils/api');
+const { getUser } = require('../../../utils/auth');
+
+Page({
+  data: {
+    room: {},
+    seats: [],
+    loading: true,
+    isAdmin: false,
+    isFavorite: false
+  },
+  
+  onLoad: function(options) {
+    // 获取传入的自习室ID
+    if (options.id) {
+      this.setData({
+        roomId: options.id
+      });
+      this.loadRoomDetail(options.id);
+      this.loadSeatPreview(options.id);
+      this.checkIsAdmin();
+      this.checkIsFavorite(options.id);
+    } else {
+      wx.showToast({
+        title: '自习室ID不能为空',
+        icon: 'none'
+      });
+      setTimeout(() => {
+        wx.navigateBack();
+      }, 1500);
+    }
+  },
+  
+  onPullDownRefresh: function() {
+    // 下拉刷新
+    this.loadRoomDetail(this.data.roomId);
+    this.loadSeatPreview(this.data.roomId);
+    wx.stopPullDownRefresh();
+  },
+  
+  // 检查用户是否为管理员
+  checkIsAdmin: function() {
+    const userInfo = getUser();
+    if (userInfo && userInfo.userType === 1) {
+      this.setData({
+        isAdmin: true
+      });
+    }
+  },
+  
+  // 检查自习室是否已收藏（此处仅为示例，需要后端实现）
+  checkIsFavorite: function(roomId) {
+    this.setData({
+      isFavorite: false
+    });
+  },
+  
+  // 加载自习室详情
+  loadRoomDetail: function(id) {
+    this.setData({ loading: true });
+    
+    studyRoomApi.getStudyRoomDetail(id)
+      .then(res => {
+        if (res.code === 200 && res.data) {
+          // 格式化时间显示
+          const roomData = res.data;
+          if (roomData.openTime) {
+            roomData.openTime = roomData.openTime.substring(0, 5);
+          }
+          if (roomData.closeTime) {
+            roomData.closeTime = roomData.closeTime.substring(0, 5);
+          }
+          
+          this.setData({
+            room: roomData,
+            loading: false
+          });
+          
+          // 设置导航栏标题
+          wx.setNavigationBarTitle({
+            title: roomData.name || '自习室详情'
+          });
+        } else {
+          wx.showToast({
+            title: '自习室不存在或已删除',
+            icon: 'none'
+          });
+          setTimeout(() => {
+            wx.navigateBack();
+          }, 1500);
+        }
+      })
+      .catch(err => {
+        console.error('加载自习室详情失败', err);
+        this.setData({ loading: false });
+        wx.showToast({
+          title: '加载失败，请重试',
+          icon: 'none'
+        });
+      });
+  },
+  
+  // 加载座位预览
+  loadSeatPreview: function(roomId) {
+    seatApi.getSeatsByRoomId(roomId, { current: 1, size: 12 })
+      .then(res => {
+        if (res.code === 200 && res.data) {
+          const seats = res.data.records || [];
+          this.setData({
+            seats: seats
+          });
+        }
+      })
+      .catch(err => {
+        console.error('加载座位预览失败', err);
+      });
+  },
+  
+  // 编辑自习室（管理员功能）
+  editRoom: function() {
+    wx.navigateTo({
+      url: `/pages/admin/study-rooms/edit/edit?id=${this.data.roomId}`
+    });
+  },
+  
+  // 切换自习室状态（管理员功能）
+  toggleStatus: function() {
+    const newStatus = this.data.room.isActive === 1 ? 0 : 1;
+    wx.showModal({
+      title: '确认操作',
+      content: `确定要${newStatus === 1 ? '开放' : '关闭'}该自习室吗？`,
+      success: (res) => {
+        if (res.confirm) {
+          studyRoomApi.updateStatus(this.data.roomId, newStatus)
+            .then(res => {
+              if (res.code === 200) {
+                wx.showToast({
+                  title: '操作成功',
+                  icon: 'success'
+                });
+                
+                // 更新本地状态
+                const room = { ...this.data.room };
+                room.isActive = newStatus;
+                this.setData({
+                  room
+                });
+              } else {
+                wx.showToast({
+                  title: res.message || '操作失败',
+                  icon: 'none'
+                });
+              }
+            })
+            .catch(err => {
+              console.error('更新自习室状态失败', err);
+              wx.showToast({
+                title: '操作失败，请重试',
+                icon: 'none'
+              });
+            });
+        }
+      }
+    });
+  },
+  
+  // 删除自习室（管理员功能）
+  deleteRoom: function() {
+    wx.showModal({
+      title: '警告',
+      content: '确定要删除此自习室吗？此操作不可恢复！',
+      confirmColor: '#f5222d',
+      success: (res) => {
+        if (res.confirm) {
+          studyRoomApi.deleteStudyRoom(this.data.roomId)
+            .then(res => {
+              if (res.code === 200) {
+                wx.showToast({
+                  title: '删除成功',
+                  icon: 'success'
+                });
+                setTimeout(() => {
+                  wx.navigateBack();
+                }, 1500);
+              } else {
+                wx.showToast({
+                  title: res.message || '删除失败',
+                  icon: 'none'
+                });
+              }
+            })
+            .catch(err => {
+              console.error('删除自习室失败', err);
+              wx.showToast({
+                title: '删除失败，请重试',
+                icon: 'none'
+              });
+            });
+        }
+      }
+    });
+  },
+  
+  // 跳转到预约座位页面
+  goToReservation: function() {
+    wx.navigateTo({
+      url: `/pages/seat-reservation/seat-reservation?roomId=${this.data.roomId}`
+    });
+  },
+  
+  // 收藏自习室
+  addToFavorite: function() {
+    // 此处需要调用后端API添加收藏
+    this.setData({
+      isFavorite: true
+    });
+    wx.showToast({
+      title: '收藏成功',
+      icon: 'success'
+    });
+  },
+  
+  // 取消收藏
+  removeFromFavorite: function() {
+    // 此处需要调用后端API取消收藏
+    this.setData({
+      isFavorite: false
+    });
+    wx.showToast({
+      title: '已取消收藏',
+      icon: 'success'
+    });
+  }
+}) 

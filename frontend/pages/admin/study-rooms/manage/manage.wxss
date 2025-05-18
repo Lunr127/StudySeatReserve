@@ -1,0 +1,245 @@
+/* manage.wxss */
+.container {
+  padding: 20rpx 30rpx;
+  min-height: 100vh;
+  background-color: var(--background-color);
+}
+
+/* 控制栏 */
+.control-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.search-box {
+  flex: 1;
+  position: relative;
+  margin-right: 20rpx;
+}
+
+.search-input {
+  height: 70rpx;
+  background-color: #ffffff;
+  border-radius: 35rpx;
+  padding: 0 60rpx 0 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  right: 20rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--font-color-lighter);
+}
+
+.add-btn {
+  height: 70rpx;
+  padding: 0 30rpx;
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border-radius: 35rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+}
+
+/* 筛选栏 */
+.filter-bar {
+  display: flex;
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.filter-item {
+  flex: 1;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  color: var(--font-color-light);
+  position: relative;
+}
+
+.filter-item.active {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.filter-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60rpx;
+  height: 6rpx;
+  background-color: var(--primary-color);
+  border-radius: 3rpx;
+}
+
+/* 自习室列表 */
+.room-list {
+  margin-top: 10rpx;
+}
+
+.room-item {
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  padding: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.room-info {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20rpx;
+}
+
+.room-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: var(--font-color);
+  margin-bottom: 10rpx;
+}
+
+.room-location {
+  font-size: 26rpx;
+  color: var(--font-color-light);
+}
+
+.room-status {
+  position: absolute;
+  top: 30rpx;
+  right: 30rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+}
+
+.room-status.active {
+  background-color: rgba(82, 196, 26, 0.1);
+  color: #52c41a;
+}
+
+.room-status.inactive {
+  background-color: rgba(153, 153, 153, 0.1);
+  color: var(--font-color-lighter);
+}
+
+.room-actions {
+  display: flex;
+  border-top: 1rpx solid var(--border-color);
+  padding-top: 20rpx;
+}
+
+.action-btn {
+  flex: 1;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  color: var(--font-color-light);
+  position: relative;
+}
+
+.action-btn:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: 1rpx;
+  background-color: var(--border-color);
+}
+
+.action-btn.delete {
+  color: var(--error-color);
+}
+
+/* 空数据状态 */
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+}
+
+.empty-image {
+  width: 240rpx;
+  height: 240rpx;
+  margin-bottom: 30rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: var(--font-color-lighter);
+  margin-bottom: 30rpx;
+}
+
+.empty-btn {
+  padding: 16rpx 40rpx;
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+}
+
+/* 加载更多 */
+.loading-more {
+  text-align: center;
+  margin: 30rpx 0;
+}
+
+.loading-btn {
+  display: inline-block;
+  font-size: 28rpx;
+  color: var(--font-color-light);
+  padding: 15rpx 30rpx;
+  border-radius: 30rpx;
+  background-color: #f0f0f0;
+}
+
+/* 加载中 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30rpx 0;
+}
+
+.loading {
+  width: 40rpx;
+  height: 40rpx;
+  border: 4rpx solid #f0f0f0;
+  border-top: 4rpx solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 20rpx;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: var(--font-color-light);
+}
+
+.no-more {
+  text-align: center;
+  font-size: 28rpx;
+  color: var(--font-color-lighter);
+  padding: 30rpx 0;
+} 

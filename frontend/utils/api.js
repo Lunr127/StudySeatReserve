@@ -1,7 +1,7 @@
 /**
  * API服务模块
  */
-const { post, get } = require('./request');
+const { post, get, put, del } = require('./request');
 
 /**
  * 用户认证相关API
@@ -55,7 +55,37 @@ const studyRoomApi = {
    * @param {number} id 自习室ID
    * @returns {Promise} Promise对象
    */
-  getStudyRoomDetail: (id) => get(`/api/study-rooms/${id}`)
+  getStudyRoomDetail: (id) => get(`/api/study-rooms/${id}`),
+  
+  /**
+   * 创建自习室
+   * @param {Object} data 自习室数据
+   * @returns {Promise} Promise对象
+   */
+  createStudyRoom: (data) => post('/api/study-rooms', data),
+  
+  /**
+   * 更新自习室
+   * @param {number} id 自习室ID
+   * @param {Object} data 自习室数据
+   * @returns {Promise} Promise对象
+   */
+  updateStudyRoom: (id, data) => put(`/api/study-rooms/${id}`, data),
+  
+  /**
+   * 删除自习室
+   * @param {number} id 自习室ID
+   * @returns {Promise} Promise对象
+   */
+  deleteStudyRoom: (id) => del(`/api/study-rooms/${id}`),
+  
+  /**
+   * 更新自习室状态
+   * @param {number} id 自习室ID
+   * @param {number} status 状态值
+   * @returns {Promise} Promise对象
+   */
+  updateStatus: (id, status) => put(`/api/study-rooms/${id}/status`, { isActive: status })
 };
 
 /**
@@ -104,10 +134,48 @@ const reservationApi = {
   cancelReservation: (id) => post(`/api/reservations/${id}/cancel`)
 };
 
+/**
+ * 收藏相关API
+ */
+const favoriteApi = {
+  /**
+   * 添加收藏
+   * @param {Object} data 收藏数据
+   * @returns {Promise} Promise对象
+   */
+  addFavorite: (data) => post('/api/favorites', data),
+  
+  /**
+   * 获取我的收藏列表
+   * @returns {Promise} Promise对象
+   */
+  getMyFavorites: () => get('/api/favorites/my'),
+  
+  /**
+   * 删除收藏
+   * @param {number} id 收藏ID
+   * @returns {Promise} Promise对象
+   */
+  deleteFavorite: (id) => del(`/api/favorites/${id}`)
+};
+
+/**
+ * 管理员相关API
+ */
+const adminApi = {
+  /**
+   * 获取管理员列表
+   * @returns {Promise} Promise对象
+   */
+  getAdminList: () => get('/api/admins')
+};
+
 module.exports = {
   authApi,
   userApi,
   studyRoomApi,
   seatApi,
-  reservationApi
+  reservationApi,
+  favoriteApi,
+  adminApi
 }; 

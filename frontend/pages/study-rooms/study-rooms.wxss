@@ -1,21 +1,386 @@
 /* study-rooms.wxss */
 .container {
-  padding: 50rpx 30rpx;
+  padding: 20rpx 30rpx;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--background-color);
+}
+
+/* 搜索筛选区域 */
+.search-area {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.search-box {
+  flex: 1;
+  position: relative;
+  margin-right: 20rpx;
+}
+
+.search-input {
+  height: 70rpx;
+  background-color: #ffffff;
+  border-radius: 35rpx;
+  padding: 0 60rpx 0 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  right: 20rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--font-color-lighter);
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  padding: 0 20rpx;
+  height: 70rpx;
+  background-color: #ffffff;
+  border-radius: 35rpx;
+  font-size: 28rpx;
+  color: var(--font-color);
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.filter-icon {
+  width: 28rpx;
+  height: 28rpx;
+  margin-right: 10rpx;
+}
+
+/* 筛选标签区域 */
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20rpx;
+}
+
+.filter-tags .tag {
+  display: flex;
+  align-items: center;
+  padding: 10rpx 20rpx;
+  margin-right: 20rpx;
+  margin-bottom: 20rpx;
+  background-color: rgba(58, 122, 242, 0.1);
+  color: var(--primary-color);
+  border-radius: 30rpx;
+  font-size: 24rpx;
+}
+
+.filter-tags .tag icon {
+  margin-left: 10rpx;
+}
+
+.filter-tags .clear-all {
+  background-color: #f0f0f0;
+  color: var(--font-color-light);
+}
+
+/* 自习室列表 */
+.room-list {
+  margin-top: 10rpx;
+}
+
+.room-card {
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  padding: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+}
+
+.room-card:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.room-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.room-name {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: var(--font-color);
+  margin-bottom: 10rpx;
+}
+
+.room-location {
+  font-size: 28rpx;
+  color: var(--font-color-light);
+  margin-bottom: 20rpx;
+}
+
+.room-capacity {
+  margin-bottom: 20rpx;
+}
+
+.capacity-text {
+  font-size: 26rpx;
+  color: var(--font-color-light);
+  margin-bottom: 8rpx;
+  display: block;
+}
+
+.capacity-bar {
+  height: 10rpx;
+  background-color: #f0f0f0;
+  border-radius: 5rpx;
+  overflow: hidden;
+}
+
+.capacity-used {
+  height: 100%;
+  background-color: var(--primary-color);
+  border-radius: 5rpx;
+  transition: width 0.3s;
+}
+
+.room-tags {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tag-item {
+  font-size: 24rpx;
+  padding: 6rpx 16rpx;
+  margin-right: 16rpx;
+  margin-bottom: 10rpx;
+  background-color: rgba(58, 122, 242, 0.1);
+  color: var(--primary-color);
+  border-radius: 20rpx;
+}
+
+.tag-inactive {
+  background-color: rgba(153, 153, 153, 0.1);
+  color: var(--font-color-lighter);
+}
+
+/* 空数据状态 */
+.empty-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 80vh;
+  padding: 100rpx 0;
 }
 
-.page-title {
-  font-size: 36rpx;
-  font-weight: bold;
+.empty-image {
+  width: 240rpx;
+  height: 240rpx;
   margin-bottom: 30rpx;
-  color: var(--primary-color);
 }
 
-.page-description {
+.empty-text {
+  font-size: 28rpx;
+  color: var(--font-color-lighter);
+}
+
+/* 加载更多 */
+.loading-more {
+  text-align: center;
+  margin: 30rpx 0;
+}
+
+.loading-btn {
+  display: inline-block;
   font-size: 28rpx;
   color: var(--font-color-light);
+  padding: 15rpx 30rpx;
+  border-radius: 30rpx;
+  background-color: #f0f0f0;
+}
+
+/* 加载中 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30rpx 0;
+}
+
+.loading {
+  width: 40rpx;
+  height: 40rpx;
+  border: 4rpx solid #f0f0f0;
+  border-top: 4rpx solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 20rpx;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: var(--font-color-light);
+}
+
+.no-more {
+  text-align: center;
+  font-size: 28rpx;
+  color: var(--font-color-lighter);
+  padding: 30rpx 0;
+}
+
+/* 筛选弹窗 */
+.filter-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  visibility: hidden;
+}
+
+.filter-modal.show {
+  visibility: visible;
+}
+
+.filter-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.filter-modal.show .filter-mask {
+  opacity: 1;
+}
+
+.filter-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  border-radius: 30rpx 30rpx 0 0;
+  transform: translateY(100%);
+  transition: transform 0.3s;
+}
+
+.filter-modal.show .filter-content {
+  transform: translateY(0);
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid var(--border-color);
+}
+
+.filter-title {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.filter-close {
+  font-size: 40rpx;
+  color: var(--font-color-light);
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.filter-body {
+  padding: 30rpx;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.filter-item {
+  margin-bottom: 30rpx;
+}
+
+.filter-label {
+  font-size: 30rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+}
+
+.filter-options {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.filter-option {
+  padding: 12rpx 24rpx;
+  background-color: #f5f5f5;
+  border-radius: 30rpx;
+  margin-right: 20rpx;
+  margin-bottom: 20rpx;
+  font-size: 26rpx;
+  color: var(--font-color);
+  transition: all 0.3s;
+}
+
+.filter-option.active {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
+.filter-footer {
+  display: flex;
+  border-top: 1rpx solid var(--border-color);
+}
+
+.filter-reset,
+.filter-confirm {
+  flex: 1;
+  text-align: center;
+  padding: 30rpx;
+  font-size: 30rpx;
+}
+
+.filter-reset {
+  color: var(--font-color-light);
+  background-color: #f5f5f5;
+  border-bottom-left-radius: 30rpx;
+}
+
+.filter-confirm {
+  color: #ffffff;
+  background-color: var(--primary-color);
+  border-bottom-right-radius: 30rpx;
+}
+
+/* 管理员悬浮按钮 */
+.admin-fab {
+  position: fixed;
+  right: 40rpx;
+  bottom: 40rpx;
+  width: 100rpx;
+  height: 100rpx;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4rpx 20rpx rgba(58, 122, 242, 0.4);
+  z-index: 100;
+}
+
+.admin-fab-icon {
+  width: 50rpx;
+  height: 50rpx;
 } 
