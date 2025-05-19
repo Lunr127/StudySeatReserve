@@ -304,5 +304,30 @@ Page({
     wx.navigateTo({
       url: '/pages/admin/study-rooms/manage/manage'
     });
+  },
+  
+  // 刷新自习室列表
+  refreshRooms: function() {
+    wx.showLoading({
+      title: '刷新中...',
+      mask: true
+    });
+    
+    this.setData({
+      rooms: [],
+      current: 1,
+      hasMore: true
+    }, () => {
+      this.loadRooms().then(() => {
+        wx.hideLoading();
+        wx.showToast({
+          title: '刷新成功',
+          icon: 'success',
+          duration: 1500
+        });
+      }).catch(() => {
+        wx.hideLoading();
+      });
+    });
   }
 }) 

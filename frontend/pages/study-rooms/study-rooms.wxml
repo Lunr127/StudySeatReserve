@@ -5,6 +5,10 @@
       <input class="search-input" placeholder="搜索自习室名称" bindinput="onSearchInput" value="{{searchKeyword}}" />
       <icon class="search-icon" type="search" size="18"></icon>
     </view>
+    <!-- 刷新按钮 -->
+    <view class="refresh-btn" bindtap="refreshRooms">
+      <image src="/images/refresh.png" mode="aspectFit" class="refresh-icon"></image>
+    </view>
     <view class="filter-btn" bindtap="showFilterModal">
       <image src="/images/filter.png" mode="aspectFit" class="filter-icon"></image>
       <text>筛选</text>

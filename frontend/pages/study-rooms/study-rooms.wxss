@@ -54,6 +54,24 @@
   margin-right: 10rpx;
 }
 
+/* 刷新按钮 */
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70rpx;
+  height: 70rpx;
+  background-color: #ffffff;
+  border-radius: 35rpx;
+  margin-right: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.refresh-icon {
+  width: 38rpx;
+  height: 38rpx;
+}
+
 /* 筛选标签区域 */
 .filter-tags {
   display: flex;
