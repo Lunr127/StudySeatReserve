@@ -338,7 +338,7 @@
   - 数据库用户名: root
   - 数据库密码: root
 - [x] 配置MyBatis-Plus
-  - 主键策略: ASSIGN_ID
+  - 主键策略: AUTO
   - 逻辑删除: 已配置
   - 类型别名包: com.studyseat.reserve.entity
   - Mapper XML位置: classpath*:/mapper/**/*.xml
@@ -496,6 +496,21 @@
     - 自习室: 4个示例自习室
     - 座位: 多个示例座位
     - 系统参数: 6个基础系统参数
+
+### 解决的问题
+- [x] 解决JavaScript大整数精度问题
+  - 问题描述: JavaScript的安全整数范围是-(2^53-1)到2^53-1，即-9007199254740991到9007199254740991，而MyBatis-Plus默认使用的雪花算法生成的ID超出了这个范围，导致前端处理ID时出现精度丢失问题
+  - 解决方案: 
+    1. 修改MyBatis-Plus的ID生成策略从ASSIGN_ID(雪花算法)改为AUTO(数据库自增)
+    2. 重置数据库表的AUTO_INCREMENT值为较小的数值(100)
+    3. 确保所有实体类使用@TableId(type = IdType.AUTO)注解
+    4. 前端代码中始终使用字符串处理ID
+  - 涉及文件:
+    - backend/src/main/resources/application.yml: 修改id-type为AUTO
+    - backend/src/main/java/com/studyseat/reserve/entity/StudyRoom.java: 修改@TableId(type = IdType.AUTO)
+    - frontend/utils/api.js: 确保ID作为字符串处理
+    - frontend/pages/study-rooms/detail/detail.js: 确保ID作为字符串处理
+    - update_db.sql: 数据库脚本重置AUTO_INCREMENT并清理大ID记录
 
 ### 前端初始化
 - [x] 创建微信小程序项目

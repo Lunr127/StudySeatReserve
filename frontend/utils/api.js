@@ -55,7 +55,11 @@ const studyRoomApi = {
    * @param {string|number} id 自习室ID
    * @returns {Promise} Promise对象
    */
-  getStudyRoomDetail: (id) => get(`/api/study-rooms/${String(id)}`, { _t: new Date().getTime() }),
+  getStudyRoomDetail: (id) => {
+    // 确保ID以字符串形式传递到URL中，并防止JS大整数精度问题
+    const stringId = String(id);
+    return get(`/api/study-rooms/${stringId}`, { _t: new Date().getTime() });
+  },
   
   /**
    * 创建自习室

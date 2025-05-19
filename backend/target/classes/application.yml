@@ -60,12 +60,14 @@ mybatis-plus:
   global-config:
     # 数据库相关配置
     db-config:
-      # 主键类型 AUTO:"数据库ID自增", NONE:"未设置主键", INPUT:"用户输入ID", ASSIGN_ID:"全局唯一ID (数字类型默认使用 雪花算法)"
-      id-type: ASSIGN_ID
+      # 主键类型 AUTO:"数据库ID自增"
+      id-type: AUTO
       # 逻辑删除配置
       logic-delete-field: isDeleted
       logic-delete-value: 1
       logic-not-delete-value: 0
+    # 关闭字段验证
+    banner: false
   # 原生配置
   configuration:
     map-underscore-to-camel-case: true

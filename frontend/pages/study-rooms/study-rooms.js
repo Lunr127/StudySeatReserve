@@ -292,8 +292,10 @@ Page({
   // 跳转到自习室详情页
   goToRoomDetail: function(e) {
     const id = e.currentTarget.dataset.id;
+    // 确保ID以字符串形式传递，防止JS大整数精度问题
+    const stringId = String(id);
     wx.navigateTo({
-      url: `/pages/study-rooms/detail/detail?id=${String(id)}`
+      url: `/pages/study-rooms/detail/detail?id=${stringId}`
     });
   },
   

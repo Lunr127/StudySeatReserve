@@ -20,7 +20,7 @@ public class StudyRoom {
     /**
      * 自习室ID
      */
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
     
     /**

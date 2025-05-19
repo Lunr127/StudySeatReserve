@@ -13,7 +13,10 @@ Page({
   onLoad: function(options) {
     // 获取传入的自习室ID
     if (options.id) {
-      const roomId = String(options.id); // 确保ID以字符串形式处理
+      // 确保ID以字符串形式处理，防止JS大整数精度问题
+      const roomId = String(options.id);
+      console.log('获取到自习室ID:', roomId);
+      
       this.setData({
         roomId: roomId
       });
@@ -63,10 +66,12 @@ Page({
   loadRoomDetail: function(id) {
     this.setData({ loading: true });
     
-    console.log('正在加载自习室详情, ID:', id);
+    // 确保ID为字符串，防止JS大整数精度问题
+    const stringId = String(id);
+    console.log('正在加载自习室详情, ID:', stringId);
     
-    // 确保ID以字符串形式传递
-    studyRoomApi.getStudyRoomDetail(String(id))
+    // 明确以字符串形式传递
+    studyRoomApi.getStudyRoomDetail(stringId)
       .then(res => {
         console.log('自习室详情返回数据:', res);
         if (res.code === 200 && res.data) {
@@ -142,8 +147,9 @@ Page({
   
   // 加载座位预览
   loadSeatPreview: function(roomId) {
-    // 确保ID以字符串形式传递
-    seatApi.getSeatsByRoomId(String(roomId), { current: 1, size: 12 })
+    // 确保ID以字符串形式传递，防止JS大整数精度问题
+    const stringId = String(roomId);
+    seatApi.getSeatsByRoomId(stringId, { current: 1, size: 12 })
       .then(res => {
         if (res.code === 200 && res.data) {
           const seats = res.data.records || [];
@@ -168,8 +174,10 @@ Page({
   
   // 编辑自习室（管理员功能）
   editRoom: function() {
+    // 确保ID以字符串形式传递，防止JS大整数精度问题
+    const stringId = String(this.data.roomId);
     wx.navigateTo({
-      url: `/pages/admin/study-rooms/edit/edit?id=${String(this.data.roomId)}`
+      url: `/pages/admin/study-rooms/edit/edit?id=${stringId}`
     });
   },
   
@@ -181,7 +189,9 @@ Page({
       content: `确定要${newStatus === 1 ? '开放' : '关闭'}该自习室吗？`,
       success: (res) => {
         if (res.confirm) {
-          studyRoomApi.updateStatus(this.data.roomId, newStatus)
+          // 确保ID以字符串形式传递，防止JS大整数精度问题
+          const stringId = String(this.data.roomId);
+          studyRoomApi.updateStatus(stringId, newStatus)
             .then(res => {
               if (res.code === 200) {
                 wx.showToast({
@@ -222,7 +232,9 @@ Page({
       confirmColor: '#f5222d',
       success: (res) => {
         if (res.confirm) {
-          studyRoomApi.deleteStudyRoom(String(this.data.roomId))
+          // 确保ID以字符串形式传递，防止JS大整数精度问题
+          const stringId = String(this.data.roomId);
+          studyRoomApi.deleteStudyRoom(stringId)
             .then(res => {
               if (res.code === 200) {
                 wx.showToast({
@@ -253,8 +265,10 @@ Page({
   
   // 跳转到预约座位页面
   goToReservation: function() {
+    // 确保ID以字符串形式传递，防止JS大整数精度问题
+    const stringId = String(this.data.roomId);
     wx.navigateTo({
-      url: `/pages/seat-reservation/seat-reservation?roomId=${this.data.roomId}`
+      url: `/pages/seat-reservation/seat-reservation?roomId=${stringId}`
     });
   },
   

@@ -1,11 +1,13 @@
--- 使用数据库
+-- 创建并使用数据库
+DROP DATABASE IF EXISTS study_seat_reserve;
+CREATE DATABASE study_seat_reserve DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE study_seat_reserve;
 
 -- 用户表：存储所有用户的基本信息
 CREATE TABLE IF NOT EXISTS `user` (
     `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '用户ID',
     `username` VARCHAR(50) NOT NULL COMMENT '用户名',
-    `password` VARCHAR(100) NOT NULL COMMENT '密码（加密存储）',
+    `password` VARCHAR(100) NOT NULL COMMENT '密码（明文存储）',
     `real_name` VARCHAR(50) COMMENT '真实姓名',
     `phone` VARCHAR(20) COMMENT '手机号',
     `email` VARCHAR(100) COMMENT '邮箱',
@@ -19,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `user` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_username` (`username`),
     UNIQUE KEY `uk_open_id` (`open_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 
 -- 管理员表：存储管理员特有信息
 CREATE TABLE IF NOT EXISTS `admin` (
@@ -33,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `admin` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_user_id` (`user_id`),
     CONSTRAINT `fk_admin_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='管理员表';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='管理员表';
 
 -- 学生表：存储学生特有信息
 CREATE TABLE IF NOT EXISTS `student` (
@@ -52,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `student` (
     UNIQUE KEY `uk_user_id` (`user_id`),
     UNIQUE KEY `uk_student_id` (`student_id`),
     CONSTRAINT `fk_student_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='学生表';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='学生表';
 
 -- 自习室表：存储自习室信息
 CREATE TABLE IF NOT EXISTS `study_room` (
@@ -75,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `study_room` (
     PRIMARY KEY (`id`),
     KEY `idx_admin_id` (`admin_id`),
     CONSTRAINT `fk_study_room_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='自习室表';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='自习室表';
 
 -- 座位表：存储座位信息
 CREATE TABLE IF NOT EXISTS `seat` (
@@ -88,12 +90,13 @@ CREATE TABLE IF NOT EXISTS `seat` (
     `is_window` TINYINT NOT NULL DEFAULT 0 COMMENT '是否靠窗：0-否，1-是',
     `is_corner` TINYINT NOT NULL DEFAULT 0 COMMENT '是否角落：0-否，1-是',
     `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：0-停用，1-正常',
+    `is_deleted` TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_room_seat` (`study_room_id`, `seat_number`),
     CONSTRAINT `fk_seat_study_room` FOREIGN KEY (`study_room_id`) REFERENCES `study_room` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='座位表';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='座位表';
 
 -- 预约表：存储预约信息
 CREATE TABLE IF NOT EXISTS `reservation` (
@@ -103,6 +106,7 @@ CREATE TABLE IF NOT EXISTS `reservation` (
     `start_time` DATETIME NOT NULL COMMENT '开始时间',
     `end_time` DATETIME NOT NULL COMMENT '结束时间',
     `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：0-已取消，1-待签到，2-使用中，3-已完成，4-已违约',
+    `is_deleted` TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
@@ -111,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `reservation` (
     KEY `idx_time` (`start_time`, `end_time`),
     CONSTRAINT `fk_reservation_student` FOREIGN KEY (`student_id`) REFERENCES `student` (`id`) ON DELETE CASCADE,
     CONSTRAINT `fk_reservation_seat` FOREIGN KEY (`seat_id`) REFERENCES `seat` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='预约表';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='预约表';
 
 -- 签到表：存储签到信息
 CREATE TABLE IF NOT EXISTS `check_in` (
@@ -121,12 +125,13 @@ CREATE TABLE IF NOT EXISTS `check_in` (
     `check_in_type` TINYINT NOT NULL COMMENT '签到类型：1-扫码签到，2-手动输入编码',
     `check_out_time` DATETIME COMMENT '签退时间（可为空，表示未签退）',
     `check_code` VARCHAR(50) COMMENT '签到码',
+    `is_deleted` TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_reservation_id` (`reservation_id`),
     CONSTRAINT `fk_check_in_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='签到表';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='签到表';
 
 -- 违约记录表：存储违约信息
 CREATE TABLE IF NOT EXISTS `violation` (
@@ -135,6 +140,7 @@ CREATE TABLE IF NOT EXISTS `violation` (
     `reservation_id` BIGINT NOT NULL COMMENT '预约ID',
     `violation_type` TINYINT NOT NULL COMMENT '违约类型：1-未签到，2-迟到，3-提前离开',
     `description` VARCHAR(255) COMMENT '违约描述',
+    `is_deleted` TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
@@ -142,7 +148,7 @@ CREATE TABLE IF NOT EXISTS `violation` (
     KEY `idx_reservation_id` (`reservation_id`),
     CONSTRAINT `fk_violation_student` FOREIGN KEY (`student_id`) REFERENCES `student` (`id`) ON DELETE CASCADE,
     CONSTRAINT `fk_violation_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='违约记录表';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='违约记录表';
 
 -- 系统参数表：存储系统配置参数
 CREATE TABLE IF NOT EXISTS `system_param` (
@@ -150,11 +156,12 @@ CREATE TABLE IF NOT EXISTS `system_param` (
     `param_key` VARCHAR(50) NOT NULL COMMENT '参数键',
     `param_value` VARCHAR(255) NOT NULL COMMENT '参数值',
     `description` VARCHAR(255) COMMENT '参数描述',
+    `is_deleted` TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_param_key` (`param_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统参数表';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='系统参数表';
 
 -- 通知消息表：存储通知消息
 CREATE TABLE IF NOT EXISTS `notification` (
@@ -164,13 +171,14 @@ CREATE TABLE IF NOT EXISTS `notification` (
     `content` TEXT NOT NULL COMMENT '通知内容',
     `type` TINYINT NOT NULL COMMENT '通知类型：1-系统通知，2-预约提醒，3-迟到提醒，4-违约通知',
     `is_read` TINYINT NOT NULL DEFAULT 0 COMMENT '是否已读：0-未读，1-已读',
+    `is_deleted` TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
     KEY `idx_user_id` (`user_id`),
     KEY `idx_create_time` (`create_time`),
     CONSTRAINT `fk_notification_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='通知消息表';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='通知消息表';
 
 -- 收藏表：存储收藏的自习室和座位
 CREATE TABLE IF NOT EXISTS `favorite` (
@@ -179,6 +187,7 @@ CREATE TABLE IF NOT EXISTS `favorite` (
     `favorite_type` TINYINT NOT NULL COMMENT '收藏类型：1-自习室，2-座位',
     `study_room_id` BIGINT COMMENT '自习室ID（当收藏类型为1时有值）',
     `seat_id` BIGINT COMMENT '座位ID（当收藏类型为2时有值）',
+    `is_deleted` TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
@@ -188,7 +197,7 @@ CREATE TABLE IF NOT EXISTS `favorite` (
     CONSTRAINT `fk_favorite_student` FOREIGN KEY (`student_id`) REFERENCES `student` (`id`) ON DELETE CASCADE,
     CONSTRAINT `fk_favorite_study_room` FOREIGN KEY (`study_room_id`) REFERENCES `study_room` (`id`) ON DELETE CASCADE,
     CONSTRAINT `fk_favorite_seat` FOREIGN KEY (`seat_id`) REFERENCES `seat` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='收藏表';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='收藏表';
 
 -- 签到码表：存储每天的签到码
 CREATE TABLE IF NOT EXISTS `check_code` (
@@ -197,73 +206,77 @@ CREATE TABLE IF NOT EXISTS `check_code` (
     `code` VARCHAR(20) NOT NULL COMMENT '签到码',
     `valid_date` DATE NOT NULL COMMENT '有效日期',
     `is_active` TINYINT NOT NULL DEFAULT 1 COMMENT '是否有效：0-无效，1-有效',
+    `is_deleted` TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_room_date` (`study_room_id`, `valid_date`),
     CONSTRAINT `fk_check_code_study_room` FOREIGN KEY (`study_room_id`) REFERENCES `study_room` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='签到码表';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='签到码表';
 
 -- 插入初始数据 --
 
 -- 插入管理员用户
 INSERT INTO `user` (`username`, `password`, `real_name`, `phone`, `email`, `user_type`, `status`) VALUES
-('admin', '$2a$10$1/WZqYiRyM5ORfeZk.Hqae2Fh1g9EJP1y0Sv7F5Y9cO0Z5.j7T8aC', '系统管理员', '13800138000', 'admin@example.com', 1, 1),
-('roomadmin1', '$2a$10$1/WZqYiRyM5ORfeZk.Hqae2Fh1g9EJP1y0Sv7F5Y9cO0Z5.j7T8aC', '自习室管理员1', '13800138001', 'roomadmin1@example.com', 1, 1),
-('roomadmin2', '$2a$10$1/WZqYiRyM5ORfeZk.Hqae2Fh1g9EJP1y0Sv7F5Y9cO0Z5.j7T8aC', '自习室管理员2', '13800138002', 'roomadmin2@example.com', 1, 1);
+('admin', 'admin123', '系统管理员', '13800138000', 'admin@example.com', 1, 1),
+('roomadmin1', 'admin123', '自习室管理员1', '13800138001', 'roomadmin1@example.com', 1, 1),
+('roomadmin2', 'admin123', '自习室管理员2', '13800138002', 'roomadmin2@example.com', 1, 1);
 
 -- 插入管理员信息
 INSERT INTO `admin` (`user_id`, `admin_type`, `department`) VALUES
-(1, 1, '信息中心'),
-(2, 2, '图书馆'),
-(3, 2, '学生处');
+(100, 1, '信息中心'),
+(101, 2, '图书馆'),
+(102, 2, '学生处');
 
 -- 插入示例学生用户
 INSERT INTO `user` (`username`, `password`, `real_name`, `phone`, `email`, `user_type`, `status`) VALUES
-('student1', '$2a$10$1/WZqYiRyM5ORfeZk.Hqae2Fh1g9EJP1y0Sv7F5Y9cO0Z5.j7T8aC', '张三', '13900139000', 'student1@example.com', 2, 1),
-('student2', '$2a$10$1/WZqYiRyM5ORfeZk.Hqae2Fh1g9EJP1y0Sv7F5Y9cO0Z5.j7T8aC', '李四', '13900139001', 'student2@example.com', 2, 1),
-('student3', '$2a$10$1/WZqYiRyM5ORfeZk.Hqae2Fh1g9EJP1y0Sv7F5Y9cO0Z5.j7T8aC', '王五', '13900139002', 'student3@example.com', 2, 1);
+('student1', 'student123', '张三', '13900139000', 'student1@example.com', 2, 1),
+('student2', 'student123', '李四', '13900139001', 'student2@example.com', 2, 1),
+('student3', 'student123', '王五', '13900139002', 'student3@example.com', 2, 1);
 
 -- 插入学生信息
 INSERT INTO `student` (`user_id`, `student_id`, `college`, `major`, `grade`, `class_name`) VALUES
-(4, '2023001', '计算机学院', '计算机科学与技术', '2023级', '计科1班'),
-(5, '2023002', '经济管理学院', '工商管理', '2023级', '工管1班'),
-(6, '2023003', '文学院', '汉语言文学', '2023级', '汉文1班');
+(103, '2023001', '计算机学院', '计算机科学与技术', '2023级', '计科1班'),
+(104, '2023002', '经济管理学院', '工商管理', '2023级', '工管1班'),
+(105, '2023003', '文学院', '汉语言文学', '2023级', '汉文1班');
 
 -- 插入示例自习室
 INSERT INTO `study_room` (`name`, `location`, `building`, `floor`, `room_number`, `capacity`, `description`, `open_time`, `close_time`, `belongs_to`, `is_active`, `admin_id`) VALUES
-('图书馆主自习室', '图书馆一楼西侧', '图书馆', '1', '101', 100, '图书馆主自习室，环境宽敞明亮，适合长时间学习', '08:00:00', '22:00:00', '全校', 1, 2),
-('图书馆安静自习室', '图书馆二楼北侧', '图书馆', '2', '201', 50, '图书馆安静自习室，禁止交谈，适合需要高度专注的学习', '08:00:00', '22:00:00', '全校', 1, 2),
-('工学院自习室', '工学院教学楼三楼', '工学院教学楼', '3', '301', 80, '工学院专用自习室，环境舒适', '08:30:00', '21:30:00', '工学院', 1, 3),
-('计算机学院机房', '计算机学院一楼', '计算机学院大楼', '1', '108', 40, '计算机学院机房，配有高性能电脑', '09:00:00', '21:00:00', '计算机学院', 1, 3);
+('图书馆主自习室', '图书馆一楼西侧', '图书馆', '1', '101', 100, '图书馆主自习室，环境宽敞明亮，适合长时间学习', '08:00:00', '22:00:00', '全校', 1, 101),
+('图书馆安静自习室', '图书馆二楼北侧', '图书馆', '2', '201', 50, '图书馆安静自习室，禁止交谈，适合需要高度专注的学习', '08:00:00', '22:00:00', '全校', 1, 101),
+('工学院自习室', '工学院教学楼三楼', '工学院教学楼', '3', '301', 80, '工学院专用自习室，环境舒适', '08:30:00', '21:30:00', '工学院', 1, 102),
+('计算机学院机房', '计算机学院一楼', '计算机学院大楼', '1', '108', 40, '计算机学院机房，配有高性能电脑', '09:00:00', '21:00:00', '计算机学院', 1, 102);
 
 -- 为自习室1添加座位
-INSERT INTO `seat` (`study_room_id`, `seat_number`, `row_number`, `column_number`, `has_power`, `is_window`, `is_corner`, `status`) VALUES
-(1, 'A1', 1, 1, 1, 0, 1, 1),
-(1, 'A2', 1, 2, 1, 0, 0, 1),
-(1, 'A3', 1, 3, 1, 0, 0, 1),
-(1, 'A4', 1, 4, 1, 0, 0, 1),
-(1, 'A5', 1, 5, 1, 1, 0, 1),
-(1, 'B1', 2, 1, 1, 0, 0, 1),
-(1, 'B2', 2, 2, 0, 0, 0, 1),
-(1, 'B3', 2, 3, 0, 0, 0, 1),
-(1, 'B4', 2, 4, 0, 0, 0, 1),
-(1, 'B5', 2, 5, 1, 1, 0, 1);
+INSERT INTO `seat` (`study_room_id`, `seat_number`, `row_number`, `column_number`, `has_power`, `is_window`, `is_corner`) VALUES
+(100, 'A1', 1, 1, 1, 1, 1),
+(100, 'A2', 1, 2, 1, 1, 0),
+(100, 'A3', 1, 3, 1, 1, 0),
+(100, 'A4', 1, 4, 1, 1, 0),
+(100, 'A5', 1, 5, 1, 1, 1),
+(100, 'B1', 2, 1, 1, 0, 0),
+(100, 'B2', 2, 2, 1, 0, 0),
+(100, 'B3', 2, 3, 1, 0, 0),
+(100, 'B4', 2, 4, 1, 0, 0),
+(100, 'B5', 2, 5, 1, 0, 0);
 
 -- 为自习室2添加座位
-INSERT INTO `seat` (`study_room_id`, `seat_number`, `row_number`, `column_number`, `has_power`, `is_window`, `is_corner`, `status`) VALUES
-(2, 'A1', 1, 1, 1, 0, 1, 1),
-(2, 'A2', 1, 2, 1, 0, 0, 1),
-(2, 'A3', 1, 3, 1, 1, 0, 1),
-(2, 'B1', 2, 1, 0, 0, 0, 1),
-(2, 'B2', 2, 2, 0, 0, 0, 1),
-(2, 'B3', 2, 3, 1, 1, 0, 1);
+INSERT INTO `seat` (`study_room_id`, `seat_number`, `row_number`, `column_number`, `has_power`, `is_window`, `is_corner`) VALUES
+(101, 'A1', 1, 1, 1, 1, 1),
+(101, 'A2', 1, 2, 1, 1, 0),
+(101, 'A3', 1, 3, 1, 1, 0),
+(101, 'A4', 1, 4, 1, 1, 0),
+(101, 'A5', 1, 5, 1, 1, 1),
+(101, 'B1', 2, 1, 1, 0, 0),
+(101, 'B2', 2, 2, 1, 0, 0),
+(101, 'B3', 2, 3, 1, 0, 0),
+(101, 'B4', 2, 4, 1, 0, 0),
+(101, 'B5', 2, 5, 1, 0, 0);
 
 -- 插入系统参数
 INSERT INTO `system_param` (`param_key`, `param_value`, `description`) VALUES
-('MAX_RESERVATION_HOURS', '4', '最大预约时长（小时）'),
-('MAX_ACTIVE_RESERVATIONS', '2', '同时活跃预约数量上限'),
-('CHECKIN_TIMEOUT_MINUTES', '15', '签到超时时间（分钟）'),
-('VIOLATION_PENALTY_DAYS', '3', '违约惩罚天数（天）'),
-('MAX_VIOLATION_COUNT', '5', '最大违约次数（达到后禁止预约）'),
-('RESERVATION_ADVANCE_DAYS', '7', '可提前预约的天数'); 
+('reservation_days_ahead', '7', '提前预约天数'),
+('max_reservation_per_day', '2', '每天最大预约次数'),
+('violation_limit', '3', '违约上限次数'),
+('check_in_time_limit', '15', '签到时间限制（分钟）'),
+('ban_days_after_violation', '7', '违约后禁用天数'); 

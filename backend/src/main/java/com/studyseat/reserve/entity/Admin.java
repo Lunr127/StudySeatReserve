@@ -19,7 +19,7 @@ public class Admin {
     /**
      * 管理员ID
      */
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
     
     /**

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
@@ -19,7 +20,7 @@ public class Seat {
     /**
      * 座位ID
      */
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
     
     /**
@@ -69,6 +70,12 @@ public class Seat {
      */
     @TableField("status")
     private Integer status;
+    
+    /**
+     * 是否删除，0-未删除，1-已删除
+     */
+    @TableLogic
+    private Integer isDeleted;
     
     /**
      * 创建时间
