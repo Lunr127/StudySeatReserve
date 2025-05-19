@@ -170,7 +170,7 @@ Page({
   goToDetail: function(e) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({
-      url: `/pages/study-rooms/detail/detail?id=${id}`
+      url: `/pages/study-rooms/detail/detail?id=${String(id)}`
     });
   },
   
@@ -178,7 +178,7 @@ Page({
   goToEditRoom: function(e) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({
-      url: `/pages/admin/study-rooms/edit/edit?id=${id}`
+      url: `/pages/admin/study-rooms/edit/edit?id=${String(id)}`
     });
   },
   
@@ -200,7 +200,7 @@ Page({
       content: `确定要${newStatus === 1 ? '开放' : '关闭'}该自习室吗？`,
       success: (res) => {
         if (res.confirm) {
-          studyRoomApi.updateStatus(id, newStatus)
+          studyRoomApi.updateStatus(String(id), newStatus)
             .then(res => {
               if (res.code === 200) {
                 wx.showToast({
@@ -246,7 +246,7 @@ Page({
       confirmColor: '#f5222d',
       success: (res) => {
         if (res.confirm) {
-          studyRoomApi.deleteStudyRoom(id)
+          studyRoomApi.deleteStudyRoom(String(id))
             .then(res => {
               if (res.code === 200) {
                 wx.showToast({

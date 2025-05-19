@@ -52,10 +52,10 @@ const studyRoomApi = {
 
   /**
    * 获取自习室详情
-   * @param {number} id 自习室ID
+   * @param {string|number} id 自习室ID
    * @returns {Promise} Promise对象
    */
-  getStudyRoomDetail: (id) => get(`/api/study-rooms/${id}`),
+  getStudyRoomDetail: (id) => get(`/api/study-rooms/${String(id)}`, { _t: new Date().getTime() }),
   
   /**
    * 创建自习室
@@ -66,26 +66,26 @@ const studyRoomApi = {
   
   /**
    * 更新自习室
-   * @param {number} id 自习室ID
+   * @param {string|number} id 自习室ID
    * @param {Object} data 自习室数据
    * @returns {Promise} Promise对象
    */
-  updateStudyRoom: (id, data) => put(`/api/study-rooms/${id}`, data),
+  updateStudyRoom: (id, data) => put(`/api/study-rooms/${String(id)}`, data),
   
   /**
    * 删除自习室
-   * @param {number} id 自习室ID
+   * @param {string|number} id 自习室ID
    * @returns {Promise} Promise对象
    */
-  deleteStudyRoom: (id) => del(`/api/study-rooms/${id}`),
+  deleteStudyRoom: (id) => del(`/api/study-rooms/${String(id)}`),
   
   /**
    * 更新自习室状态
-   * @param {number} id 自习室ID
+   * @param {string|number} id 自习室ID
    * @param {number} status 状态值
    * @returns {Promise} Promise对象
    */
-  updateStatus: (id, status) => put(`/api/study-rooms/${id}/status`, { isActive: status })
+  updateStatus: (id, status) => put(`/api/study-rooms/${String(id)}/status`, { isActive: status })
 };
 
 /**
@@ -94,18 +94,18 @@ const studyRoomApi = {
 const seatApi = {
   /**
    * 根据自习室ID获取座位列表
-   * @param {number} roomId 自习室ID
+   * @param {string|number} roomId 自习室ID
    * @param {Object} params 查询参数
    * @returns {Promise} Promise对象
    */
-  getSeatsByRoomId: (roomId, params) => get(`/api/seats/study-room/${roomId}`, params),
+  getSeatsByRoomId: (roomId, params) => get(`/api/seats/study-room/${String(roomId)}`, params),
 
   /**
    * 获取座位详情
-   * @param {number} id 座位ID
+   * @param {string|number} id 座位ID
    * @returns {Promise} Promise对象
    */
-  getSeatDetail: (id) => get(`/api/seats/${id}`)
+  getSeatDetail: (id) => get(`/api/seats/${String(id)}`)
 };
 
 /**
@@ -128,10 +128,10 @@ const reservationApi = {
 
   /**
    * 取消预约
-   * @param {number} id 预约ID
+   * @param {string|number} id 预约ID
    * @returns {Promise} Promise对象
    */
-  cancelReservation: (id) => post(`/api/reservations/${id}/cancel`)
+  cancelReservation: (id) => post(`/api/reservations/${String(id)}/cancel`)
 };
 
 /**
@@ -153,10 +153,10 @@ const favoriteApi = {
   
   /**
    * 删除收藏
-   * @param {number} id 收藏ID
+   * @param {string|number} id 收藏ID
    * @returns {Promise} Promise对象
    */
-  deleteFavorite: (id) => del(`/api/favorites/${id}`)
+  deleteFavorite: (id) => del(`/api/favorites/${String(id)}`)
 };
 
 /**

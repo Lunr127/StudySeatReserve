@@ -293,7 +293,7 @@ Page({
   goToRoomDetail: function(e) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({
-      url: `/pages/study-rooms/detail/detail?id=${id}`
+      url: `/pages/study-rooms/detail/detail?id=${String(id)}`
     });
   },
   

@@ -13,13 +13,14 @@ Page({
   onLoad: function(options) {
     // 获取传入的自习室ID
     if (options.id) {
+      const roomId = String(options.id); // 确保ID以字符串形式处理
       this.setData({
-        roomId: options.id
+        roomId: roomId
       });
-      this.loadRoomDetail(options.id);
-      this.loadSeatPreview(options.id);
+      this.loadRoomDetail(roomId);
+      this.loadSeatPreview(roomId);
       this.checkIsAdmin();
-      this.checkIsFavorite(options.id);
+      this.checkIsFavorite(roomId);
     } else {
       wx.showToast({
         title: '自习室ID不能为空',
@@ -62,8 +63,12 @@ Page({
   loadRoomDetail: function(id) {
     this.setData({ loading: true });
     
-    studyRoomApi.getStudyRoomDetail(id)
+    console.log('正在加载自习室详情, ID:', id);
+    
+    // 确保ID以字符串形式传递
+    studyRoomApi.getStudyRoomDetail(String(id))
       .then(res => {
+        console.log('自习室详情返回数据:', res);
         if (res.code === 200 && res.data) {
           // 格式化时间显示
           const roomData = res.data;
@@ -103,8 +108,10 @@ Page({
             title: roomData.name || '自习室详情'
           });
         } else {
+          const errorMsg = res.message || '自习室不存在或已删除';
+          console.error('加载自习室详情失败:', errorMsg);
           wx.showToast({
-            title: '自习室不存在或已删除',
+            title: errorMsg,
             icon: 'none'
           });
           setTimeout(() => {
@@ -115,8 +122,19 @@ Page({
       .catch(err => {
         console.error('加载自习室详情失败', err);
         this.setData({ loading: false });
+        
+        // 提取更详细的错误信息
+        let errorMsg = '加载失败，请重试';
+        if (err && err.message) {
+          errorMsg = err.message;
+        } else if (typeof err === 'string') {
+          errorMsg = err;
+        } else if (err && err.code && err.code === 500) {
+          errorMsg = '服务器错误，请联系管理员';
+        }
+        
         wx.showToast({
-          title: '加载失败，请重试',
+          title: errorMsg,
           icon: 'none'
         });
       });
@@ -124,7 +142,8 @@ Page({
   
   // 加载座位预览
   loadSeatPreview: function(roomId) {
-    seatApi.getSeatsByRoomId(roomId, { current: 1, size: 12 })
+    // 确保ID以字符串形式传递
+    seatApi.getSeatsByRoomId(String(roomId), { current: 1, size: 12 })
       .then(res => {
         if (res.code === 200 && res.data) {
           const seats = res.data.records || [];
@@ -150,7 +169,7 @@ Page({
   // 编辑自习室（管理员功能）
   editRoom: function() {
     wx.navigateTo({
-      url: `/pages/admin/study-rooms/edit/edit?id=${this.data.roomId}`
+      url: `/pages/admin/study-rooms/edit/edit?id=${String(this.data.roomId)}`
     });
   },
   
@@ -203,7 +222,7 @@ Page({
       confirmColor: '#f5222d',
       success: (res) => {
         if (res.confirm) {
-          studyRoomApi.deleteStudyRoom(this.data.roomId)
+          studyRoomApi.deleteStudyRoom(String(this.data.roomId))
             .then(res => {
               if (res.code === 200) {
                 wx.showToast({

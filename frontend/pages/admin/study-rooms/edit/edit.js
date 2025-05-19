@@ -37,7 +37,7 @@ Page({
     if (options.id) {
       this.setData({
         isEdit: true,
-        roomId: options.id
+        roomId: String(options.id)  // 确保ID以字符串形式存储
       });
       
       // 设置导航栏标题
@@ -46,7 +46,7 @@ Page({
       });
       
       // 加载自习室详情
-      this.loadRoomDetail(options.id);
+      this.loadRoomDetail(String(options.id));  // 确保ID以字符串形式传递
     } else {
       // 新增模式
       wx.setNavigationBarTitle({
@@ -101,7 +101,7 @@ Page({
       mask: true
     });
     
-    studyRoomApi.getStudyRoomDetail(id)
+    studyRoomApi.getStudyRoomDetail(String(id))
       .then(res => {
         wx.hideLoading();
         
@@ -257,7 +257,7 @@ Page({
     
     if (this.data.isEdit) {
       // 编辑模式
-      studyRoomApi.updateStudyRoom(this.data.roomId, submitData)
+      studyRoomApi.updateStudyRoom(String(this.data.roomId), submitData)
         .then(res => {
           this.handleSubmitResponse(res);
         })
