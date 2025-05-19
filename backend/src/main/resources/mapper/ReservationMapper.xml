@@ -40,8 +40,8 @@
             END as status_text,
             CASE WHEN r.status IN (1, 2) AND r.end_time > NOW() THEN 1 ELSE 0 END as can_cancel,
             CASE WHEN r.status = 2 AND r.end_time > NOW() THEN 1 ELSE 0 END as can_extend,
-            CASE WHEN r.status = 1 AND r.start_time <= NOW() AND 
-                DATE_ADD(r.start_time, INTERVAL 15 MINUTE) >= NOW() THEN 1 ELSE 0 END as can_check_in,
+            CASE WHEN r.status = 1 AND r.start_time &lt;= NOW() AND 
+                DATE_ADD(r.start_time, INTERVAL 15 MINUTE) &gt;= NOW() THEN 1 ELSE 0 END as can_check_in,
             CASE WHEN EXISTS (SELECT 1 FROM check_in ci WHERE ci.reservation_id = r.id) THEN 1 ELSE 0 END as has_checked_in
         FROM reservation r
         LEFT JOIN student st ON r.student_id = st.id
@@ -62,7 +62,7 @@
             AND r.status = #{status}
         </if>
         <if test="startAfter != null">
-            AND r.start_time >= #{startAfter}
+            AND r.start_time &gt;= #{startAfter}
         </if>
         <if test="startBefore != null">
             AND r.start_time &lt;= #{startBefore}
@@ -87,8 +87,8 @@
             END as status_text,
             CASE WHEN r.status IN (1, 2) AND r.end_time > NOW() THEN 1 ELSE 0 END as can_cancel,
             CASE WHEN r.status = 2 AND r.end_time > NOW() THEN 1 ELSE 0 END as can_extend,
-            CASE WHEN r.status = 1 AND r.start_time <= NOW() AND 
-                DATE_ADD(r.start_time, INTERVAL 15 MINUTE) >= NOW() THEN 1 ELSE 0 END as can_check_in,
+            CASE WHEN r.status = 1 AND r.start_time &lt;= NOW() AND 
+                DATE_ADD(r.start_time, INTERVAL 15 MINUTE) &gt;= NOW() THEN 1 ELSE 0 END as can_check_in,
             CASE WHEN EXISTS (SELECT 1 FROM check_in ci WHERE ci.reservation_id = r.id) THEN 1 ELSE 0 END as has_checked_in
         FROM reservation r
         LEFT JOIN student st ON r.student_id = st.id
@@ -105,7 +105,7 @@
         AND status IN (1, 2) 
         AND is_deleted = 0 
         AND (
-            (start_time &lt;= #{endTime} AND end_time >= #{startTime})
+            (start_time &lt;= #{endTime} AND end_time &gt;= #{startTime})
         )
     </select>
     
@@ -115,7 +115,7 @@
         WHERE student_id = #{studentId}
         AND status IN (1, 2, 3)
         AND is_deleted = 0
-        AND start_time >= #{startOfDay}
+        AND start_time &gt;= #{startOfDay}
         AND start_time &lt; #{endOfDay}
     </select>
     

@@ -41,7 +41,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (StringUtils.hasText(jwt)) {
                 String username = jwtUtil.getUsernameFromToken(jwt);
-                Integer userType = jwtUtil.getUserTypeFromToken(jwt);
+                String userTypeStr = jwtUtil.getUserTypeFromToken(jwt);
+                Integer userType = "ADMIN".equals(userTypeStr) ? 1 : 2;
 
                 if (StringUtils.hasText(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
