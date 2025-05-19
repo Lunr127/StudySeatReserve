@@ -81,17 +81,51 @@ Page({
   
   // 加载管理员列表
   loadAdminList: function() {
-    // 此处应调用获取管理员列表的API
-    // 示例数据
-    const adminList = [
-      { id: 1, name: '管理员1' },
-      { id: 2, name: '管理员2' },
-      { id: 3, name: '管理员3' }
-    ];
-    
-    this.setData({
-      adminOptions: adminList
+    wx.showLoading({
+      title: '加载中...',
+      mask: true
     });
+
+    // 调用API获取管理员列表
+    const { adminApi } = require('../../../../utils/api');
+    adminApi.getAdminList()
+      .then(res => {
+        wx.hideLoading();
+        
+        if (res.code === 200 && res.data) {
+          // 格式化管理员数据
+          const adminList = res.data.map(admin => ({
+            id: admin.id,
+            name: admin.realName || `管理员(ID:${admin.id})`
+          }));
+          
+          this.setData({
+            adminOptions: adminList
+          });
+
+          // 如果是编辑模式，且有管理员ID，设置对应的索引
+          if (this.data.isEdit && this.data.formData.adminId) {
+            const adminIndex = adminList.findIndex(item => item.id === this.data.formData.adminId);
+            if (adminIndex !== -1) {
+              this.setData({
+                adminIndex: adminIndex
+              });
+            }
+          }
+        } else {
+          this.setData({
+            adminOptions: []
+          });
+          console.error('获取管理员列表失败', res);
+        }
+      })
+      .catch(err => {
+        wx.hideLoading();
+        console.error('获取管理员列表失败', err);
+        this.setData({
+          adminOptions: []
+        });
+      });
   },
   
   // 加载自习室详情

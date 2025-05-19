@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `user` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_username` (`username`),
     UNIQUE KEY `uk_open_id` (`open_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 
 -- 管理员表：存储管理员特有信息
 CREATE TABLE IF NOT EXISTS `admin` (
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `admin` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_user_id` (`user_id`),
     CONSTRAINT `fk_admin_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='管理员表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='管理员表';
 
 -- 学生表：存储学生特有信息
 CREATE TABLE IF NOT EXISTS `student` (
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `student` (
     UNIQUE KEY `uk_user_id` (`user_id`),
     UNIQUE KEY `uk_student_id` (`student_id`),
     CONSTRAINT `fk_student_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='学生表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='学生表';
 
 -- 自习室表：存储自习室信息
 CREATE TABLE IF NOT EXISTS `study_room` (
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `study_room` (
     PRIMARY KEY (`id`),
     KEY `idx_admin_id` (`admin_id`),
     CONSTRAINT `fk_study_room_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='自习室表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='自习室表';
 
 -- 座位表：存储座位信息
 CREATE TABLE IF NOT EXISTS `seat` (
@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `seat` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_room_seat` (`study_room_id`, `seat_number`),
     CONSTRAINT `fk_seat_study_room` FOREIGN KEY (`study_room_id`) REFERENCES `study_room` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='座位表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='座位表';
 
 -- 预约表：存储预约信息
 CREATE TABLE IF NOT EXISTS `reservation` (
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `reservation` (
     KEY `idx_time` (`start_time`, `end_time`),
     CONSTRAINT `fk_reservation_student` FOREIGN KEY (`student_id`) REFERENCES `student` (`id`) ON DELETE CASCADE,
     CONSTRAINT `fk_reservation_seat` FOREIGN KEY (`seat_id`) REFERENCES `seat` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='预约表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='预约表';
 
 -- 签到表：存储签到信息
 CREATE TABLE IF NOT EXISTS `check_in` (
@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `check_in` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_reservation_id` (`reservation_id`),
     CONSTRAINT `fk_check_in_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='签到表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='签到表';
 
 -- 违约记录表：存储违约信息
 CREATE TABLE IF NOT EXISTS `violation` (
@@ -148,7 +148,7 @@ CREATE TABLE IF NOT EXISTS `violation` (
     KEY `idx_reservation_id` (`reservation_id`),
     CONSTRAINT `fk_violation_student` FOREIGN KEY (`student_id`) REFERENCES `student` (`id`) ON DELETE CASCADE,
     CONSTRAINT `fk_violation_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='违约记录表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='违约记录表';
 
 -- 系统参数表：存储系统配置参数
 CREATE TABLE IF NOT EXISTS `system_param` (
@@ -161,7 +161,7 @@ CREATE TABLE IF NOT EXISTS `system_param` (
     `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_param_key` (`param_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='系统参数表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='系统参数表';
 
 -- 通知消息表：存储通知消息
 CREATE TABLE IF NOT EXISTS `notification` (
@@ -178,7 +178,7 @@ CREATE TABLE IF NOT EXISTS `notification` (
     KEY `idx_user_id` (`user_id`),
     KEY `idx_create_time` (`create_time`),
     CONSTRAINT `fk_notification_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='通知消息表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='通知消息表';
 
 -- 收藏表：存储收藏的自习室和座位
 CREATE TABLE IF NOT EXISTS `favorite` (
@@ -197,7 +197,7 @@ CREATE TABLE IF NOT EXISTS `favorite` (
     CONSTRAINT `fk_favorite_student` FOREIGN KEY (`student_id`) REFERENCES `student` (`id`) ON DELETE CASCADE,
     CONSTRAINT `fk_favorite_study_room` FOREIGN KEY (`study_room_id`) REFERENCES `study_room` (`id`) ON DELETE CASCADE,
     CONSTRAINT `fk_favorite_seat` FOREIGN KEY (`seat_id`) REFERENCES `seat` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='收藏表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='收藏表';
 
 -- 签到码表：存储每天的签到码
 CREATE TABLE IF NOT EXISTS `check_code` (
@@ -212,7 +212,7 @@ CREATE TABLE IF NOT EXISTS `check_code` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_room_date` (`study_room_id`, `valid_date`),
     CONSTRAINT `fk_check_code_study_room` FOREIGN KEY (`study_room_id`) REFERENCES `study_room` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COMMENT='签到码表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='签到码表';
 
 -- 插入初始数据 --
 
@@ -224,9 +224,9 @@ INSERT INTO `user` (`username`, `password`, `real_name`, `phone`, `email`, `user
 
 -- 插入管理员信息
 INSERT INTO `admin` (`user_id`, `admin_type`, `department`) VALUES
-(100, 1, '信息中心'),
-(101, 2, '图书馆'),
-(102, 2, '学生处');
+(1, 1, '信息中心'),
+(2, 2, '图书馆'),
+(3, 2, '学生处');
 
 -- 插入示例学生用户
 INSERT INTO `user` (`username`, `password`, `real_name`, `phone`, `email`, `user_type`, `status`) VALUES
@@ -236,42 +236,42 @@ INSERT INTO `user` (`username`, `password`, `real_name`, `phone`, `email`, `user
 
 -- 插入学生信息
 INSERT INTO `student` (`user_id`, `student_id`, `college`, `major`, `grade`, `class_name`) VALUES
-(103, '2023001', '计算机学院', '计算机科学与技术', '2023级', '计科1班'),
-(104, '2023002', '经济管理学院', '工商管理', '2023级', '工管1班'),
-(105, '2023003', '文学院', '汉语言文学', '2023级', '汉文1班');
+(4, '2023001', '计算机学院', '计算机科学与技术', '2023级', '计科1班'),
+(5, '2023002', '经济管理学院', '工商管理', '2023级', '工管1班'),
+(6, '2023003', '文学院', '汉语言文学', '2023级', '汉文1班');
 
 -- 插入示例自习室
 INSERT INTO `study_room` (`name`, `location`, `building`, `floor`, `room_number`, `capacity`, `description`, `open_time`, `close_time`, `belongs_to`, `is_active`, `admin_id`) VALUES
-('图书馆主自习室', '图书馆一楼西侧', '图书馆', '1', '101', 100, '图书馆主自习室，环境宽敞明亮，适合长时间学习', '08:00:00', '22:00:00', '全校', 1, 101),
-('图书馆安静自习室', '图书馆二楼北侧', '图书馆', '2', '201', 50, '图书馆安静自习室，禁止交谈，适合需要高度专注的学习', '08:00:00', '22:00:00', '全校', 1, 101),
-('工学院自习室', '工学院教学楼三楼', '工学院教学楼', '3', '301', 80, '工学院专用自习室，环境舒适', '08:30:00', '21:30:00', '工学院', 1, 102),
-('计算机学院机房', '计算机学院一楼', '计算机学院大楼', '1', '108', 40, '计算机学院机房，配有高性能电脑', '09:00:00', '21:00:00', '计算机学院', 1, 102);
+('图书馆主自习室', '图书馆一楼西侧', '图书馆', '1', '101', 100, '图书馆主自习室，环境宽敞明亮，适合长时间学习', '08:00:00', '22:00:00', '全校', 1, 2),
+('图书馆安静自习室', '图书馆二楼北侧', '图书馆', '2', '201', 50, '图书馆安静自习室，禁止交谈，适合需要高度专注的学习', '08:00:00', '22:00:00', '全校', 1, 2),
+('工学院自习室', '工学院教学楼三楼', '工学院教学楼', '3', '301', 80, '工学院专用自习室，环境舒适', '08:30:00', '21:30:00', '工学院', 1, 3),
+('计算机学院机房', '计算机学院一楼', '计算机学院大楼', '1', '108', 40, '计算机学院机房，配有高性能电脑', '09:00:00', '21:00:00', '计算机学院', 1, 3);
 
 -- 为自习室1添加座位
 INSERT INTO `seat` (`study_room_id`, `seat_number`, `row_number`, `column_number`, `has_power`, `is_window`, `is_corner`) VALUES
-(100, 'A1', 1, 1, 1, 1, 1),
-(100, 'A2', 1, 2, 1, 1, 0),
-(100, 'A3', 1, 3, 1, 1, 0),
-(100, 'A4', 1, 4, 1, 1, 0),
-(100, 'A5', 1, 5, 1, 1, 1),
-(100, 'B1', 2, 1, 1, 0, 0),
-(100, 'B2', 2, 2, 1, 0, 0),
-(100, 'B3', 2, 3, 1, 0, 0),
-(100, 'B4', 2, 4, 1, 0, 0),
-(100, 'B5', 2, 5, 1, 0, 0);
+(1, 'A1', 1, 1, 1, 1, 1),
+(1, 'A2', 1, 2, 1, 1, 0),
+(1, 'A3', 1, 3, 1, 1, 0),
+(1, 'A4', 1, 4, 1, 1, 0),
+(1, 'A5', 1, 5, 1, 1, 1),
+(1, 'B1', 2, 1, 1, 0, 0),
+(1, 'B2', 2, 2, 1, 0, 0),
+(1, 'B3', 2, 3, 1, 0, 0),
+(1, 'B4', 2, 4, 1, 0, 0),
+(1, 'B5', 2, 5, 1, 0, 0);
 
 -- 为自习室2添加座位
 INSERT INTO `seat` (`study_room_id`, `seat_number`, `row_number`, `column_number`, `has_power`, `is_window`, `is_corner`) VALUES
-(101, 'A1', 1, 1, 1, 1, 1),
-(101, 'A2', 1, 2, 1, 1, 0),
-(101, 'A3', 1, 3, 1, 1, 0),
-(101, 'A4', 1, 4, 1, 1, 0),
-(101, 'A5', 1, 5, 1, 1, 1),
-(101, 'B1', 2, 1, 1, 0, 0),
-(101, 'B2', 2, 2, 1, 0, 0),
-(101, 'B3', 2, 3, 1, 0, 0),
-(101, 'B4', 2, 4, 1, 0, 0),
-(101, 'B5', 2, 5, 1, 0, 0);
+(2, 'A1', 1, 1, 1, 1, 1),
+(2, 'A2', 1, 2, 1, 1, 0),
+(2, 'A3', 1, 3, 1, 1, 0),
+(2, 'A4', 1, 4, 1, 1, 0),
+(2, 'A5', 1, 5, 1, 1, 1),
+(2, 'B1', 2, 1, 1, 0, 0),
+(2, 'B2', 2, 2, 1, 0, 0),
+(2, 'B3', 2, 3, 1, 0, 0),
+(2, 'B4', 2, 4, 1, 0, 0),
+(2, 'B5', 2, 5, 1, 0, 0);
 
 -- 插入系统参数
 INSERT INTO `system_param` (`param_key`, `param_value`, `description`) VALUES

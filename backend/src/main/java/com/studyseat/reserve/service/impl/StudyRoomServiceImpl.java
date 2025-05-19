@@ -43,10 +43,15 @@ public class StudyRoomServiceImpl extends ServiceImpl<StudyRoomMapper, StudyRoom
     public Long createStudyRoom(StudyRoomDTO studyRoomDTO) {
         // 检查管理员是否存在
         if (studyRoomDTO.getAdminId() != null) {
+            log.info("正在检查管理员ID: {}", studyRoomDTO.getAdminId());
             Admin admin = adminMapper.selectById(studyRoomDTO.getAdminId());
             if (admin == null) {
+                log.error("管理员ID: {} 不存在", studyRoomDTO.getAdminId());
                 throw new BusinessException("管理员不存在");
             }
+            log.info("成功找到管理员: {}, 用户ID: {}", admin.getId(), admin.getUserId());
+        } else {
+            log.warn("创建自习室时未提供管理员ID");
         }
         
         // 创建自习室对象
