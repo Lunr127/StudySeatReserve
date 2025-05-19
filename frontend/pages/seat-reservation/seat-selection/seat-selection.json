@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "座位选择",
+  "usingComponents": {
+    "seat-grid": "/components/seat-grid/seat-grid"
+  }
+} 

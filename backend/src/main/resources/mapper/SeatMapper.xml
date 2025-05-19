@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studyseat.reserve.mapper.SeatMapper">
+
+    <!-- 座位VO结果映射 -->
+    <resultMap id="SeatVOMap" type="com.studyseat.reserve.vo.SeatVO">
+        <id column="id" property="id"/>
+        <result column="study_room_id" property="studyRoomId"/>
+        <result column="study_room_name" property="studyRoomName"/>
+        <result column="seat_number" property="seatNumber"/>
+        <result column="row_number" property="rowNumber"/>
+        <result column="column_number" property="columnNumber"/>
+        <result column="has_power" property="hasPower"/>
+        <result column="has_power_text" property="hasPowerText"/>
+        <result column="is_window" property="isWindow"/>
+        <result column="is_window_text" property="isWindowText"/>
+        <result column="is_corner" property="isCorner"/>
+        <result column="is_corner_text" property="isCornerText"/>
+        <result column="status" property="status"/>
+        <result column="status_text" property="statusText"/>
+        <result column="create_time" property="createTime"/>
+        <result column="is_available" property="isAvailable"/>
+    </resultMap>
+
+    <!-- 高级查询座位 -->
+    <select id="querySeatsByCondition" resultMap="SeatVOMap">
+        SELECT 
+            s.id, s.study_room_id, sr.name AS study_room_name, s.seat_number, 
+            s.row_number, s.column_number, s.has_power, 
+            CASE s.has_power WHEN 1 THEN '有' ELSE '无' END AS has_power_text,
+            s.is_window, 
+            CASE s.is_window WHEN 1 THEN '是' ELSE '否' END AS is_window_text,
+            s.is_corner, 
+            CASE s.is_corner WHEN 1 THEN '是' ELSE '否' END AS is_corner_text,
+            s.status, 
+            CASE s.status WHEN 1 THEN '正常' ELSE '停用' END AS status_text,
+            s.create_time,
+            CASE WHEN r.id IS NULL OR r.status IN (0, 3, 4) THEN 1 ELSE 0 END AS is_available
+        FROM seat s
+        LEFT JOIN study_room sr ON s.study_room_id = sr.id
+        LEFT JOIN (
+            SELECT seat_id, id, status
+            FROM reservation 
+            WHERE status IN (1, 2) AND NOW() BETWEEN start_time AND end_time
+        ) r ON s.id = r.seat_id
+        WHERE s.is_deleted = 0
+        <if test="query.studyRoomId != null">
+            AND s.study_room_id = #{query.studyRoomId}
+        </if>
+        <if test="query.seatNumber != null and query.seatNumber != ''">
+            AND s.seat_number LIKE CONCAT('%', #{query.seatNumber}, '%')
+        </if>
+        <if test="query.hasPower != null">
+            AND s.has_power = #{query.hasPower}
+        </if>
+        <if test="query.isWindow != null">
+            AND s.is_window = #{query.isWindow}
+        </if>
+        <if test="query.isCorner != null">
+            AND s.is_corner = #{query.isCorner}
+        </if>
+        <if test="query.status != null">
+            AND s.status = #{query.status}
+        </if>
+        <if test="query.isAvailable != null and query.isAvailable">
+            AND (r.id IS NULL OR r.status IN (0, 3, 4))
+        </if>
+        ORDER BY s.row_number, s.column_number
+    </select>
+
+    <!-- 获取座位详情 -->
+    <select id="getSeatVOById" resultMap="SeatVOMap">
+        SELECT 
+            s.id, s.study_room_id, sr.name AS study_room_name, s.seat_number, 
+            s.row_number, s.column_number, s.has_power, 
+            CASE s.has_power WHEN 1 THEN '有' ELSE '无' END AS has_power_text,
+            s.is_window, 
+            CASE s.is_window WHEN 1 THEN '是' ELSE '否' END AS is_window_text,
+            s.is_corner, 
+            CASE s.is_corner WHEN 1 THEN '是' ELSE '否' END AS is_corner_text,
+            s.status, 
+            CASE s.status WHEN 1 THEN '正常' ELSE '停用' END AS status_text,
+            s.create_time,
+            CASE WHEN r.id IS NULL OR r.status IN (0, 3, 4) THEN 1 ELSE 0 END AS is_available
+        FROM seat s
+        LEFT JOIN study_room sr ON s.study_room_id = sr.id
+        LEFT JOIN (
+            SELECT seat_id, id, status
+            FROM reservation 
+            WHERE status IN (1, 2) AND NOW() BETWEEN start_time AND end_time
+        ) r ON s.id = r.seat_id
+        WHERE s.id = #{id} AND s.is_deleted = 0
+    </select>
+
+    <!-- 批量添加座位 -->
+    <insert id="batchInsertSeats">
+        INSERT INTO seat (
+            study_room_id, seat_number, row_number, column_number, 
+            has_power, is_window, is_corner, status, create_time, update_time
+        ) VALUES 
+        <foreach collection="seats" item="seat" separator=",">
+            (
+                #{seat.studyRoomId}, #{seat.seatNumber}, #{seat.rowNumber}, #{seat.columnNumber},
+                #{seat.hasPower}, #{seat.isWindow}, #{seat.isCorner}, #{seat.status}, 
+                NOW(), NOW()
+            )
+        </foreach>
+    </insert>
+
+    <!-- 更新座位状态 -->
+    <update id="updateSeatStatus">
+        UPDATE seat SET status = #{status}, update_time = NOW() 
+        WHERE id = #{id} AND is_deleted = 0
+    </update>
+
+</mapper> 

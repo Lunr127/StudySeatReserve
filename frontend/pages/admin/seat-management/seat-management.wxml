@@ -1,0 +1,235 @@
+<view class="container">
+  <view class="header">
+    <view class="title">
+      <text>{{studyRoomName}}座位管理</text>
+      <text class="subtitle">座位总数: {{totalSeats}} | 当前显示: {{seats.length}}</text>
+    </view>
+  </view>
+  
+  <!-- 功能按钮区 -->
+  <view class="action-bar">
+    <button class="action-btn primary" bindtap="showGenerateSeats">生成座位</button>
+    <button class="action-btn danger" bindtap="clearAllSeats">清空座位</button>
+  </view>
+  
+  <!-- 筛选区 -->
+  <view class="filter-section">
+    <view class="filter-title">筛选条件</view>
+    <view class="filter-options">
+      <view class="filter-group">
+        <view class="filter-label">电源:</view>
+        <view 
+          class="filter-tag {{seatQuery.hasPower === 1 ? 'active' : ''}}" 
+          bindtap="toggleFilter" 
+          data-type="hasPower" 
+          data-value="1">
+          有电源
+        </view>
+        <view 
+          class="filter-tag {{seatQuery.hasPower === 0 ? 'active' : ''}}" 
+          bindtap="toggleFilter" 
+          data-type="hasPower" 
+          data-value="0">
+          无电源
+        </view>
+      </view>
+      
+      <view class="filter-group">
+        <view class="filter-label">位置:</view>
+        <view 
+          class="filter-tag {{seatQuery.isWindow === 1 ? 'active' : ''}}" 
+          bindtap="toggleFilter" 
+          data-type="isWindow" 
+          data-value="1">
+          靠窗
+        </view>
+        <view 
+          class="filter-tag {{seatQuery.isCorner === 1 ? 'active' : ''}}" 
+          bindtap="toggleFilter" 
+          data-type="isCorner" 
+          data-value="1">
+          角落
+        </view>
+      </view>
+      
+      <view class="filter-group">
+        <view class="filter-label">状态:</view>
+        <view 
+          class="filter-tag {{seatQuery.status === 1 ? 'active' : ''}}" 
+          bindtap="toggleFilter" 
+          data-type="status" 
+          data-value="1">
+          正常
+        </view>
+        <view 
+          class="filter-tag {{seatQuery.status === 0 ? 'active' : ''}}" 
+          bindtap="toggleFilter" 
+          data-type="status" 
+          data-value="0">
+          停用
+        </view>
+      </view>
+    </view>
+    
+    <view class="filter-actions">
+      <button class="reset-btn" bindtap="resetFilters">重置筛选</button>
+    </view>
+  </view>
+  
+  <!-- 座位网格 -->
+  <view class="seat-section">
+    <view wx:if="{{loading}}" class="loading">
+      <view class="loading-icon"></view>
+      <text>加载中...</text>
+    </view>
+    <view wx:elif="{{seats.length === 0}}" class="empty-tip">
+      <text>没有座位，请使用"生成座位"功能创建座位</text>
+    </view>
+    <view wx:else class="seat-container">
+      <seat-grid 
+        seats="{{seats}}" 
+        maxRow="{{maxRow}}" 
+        maxColumn="{{maxColumn}}" 
+        selectable="{{true}}" 
+        size="normal"
+        bind:seatselect="onSeatSelect">
+      </seat-grid>
+    </view>
+  </view>
+  
+  <!-- 生成座位对话框 -->
+  <view class="dialog-overlay" wx:if="{{generateVisible}}">
+    <view class="dialog">
+      <view class="dialog-header">
+        <text class="dialog-title">生成座位</text>
+        <view class="dialog-close" bindtap="hideGenerateSeats">×</view>
+      </view>
+      <view class="dialog-content">
+        <form bindsubmit="generateSeats">
+          <view class="form-item">
+            <label>行数:</label>
+            <input 
+              type="number" 
+              value="{{rows}}" 
+              bindinput="inputChange" 
+              data-field="rows" 
+              class="input" />
+          </view>
+          <view class="form-item">
+            <label>列数:</label>
+            <input 
+              type="number" 
+              value="{{columns}}" 
+              bindinput="inputChange" 
+              data-field="columns" 
+              class="input" />
+          </view>
+          <view class="form-item">
+            <label>是否有电源:</label>
+            <radio-group bindchange="inputChange" data-field="hasPower" class="radio-group">
+              <label class="radio">
+                <radio value="1" checked="{{hasPower === 1}}"/>有
+              </label>
+              <label class="radio">
+                <radio value="0" checked="{{hasPower === 0}}"/>无
+              </label>
+            </radio-group>
+          </view>
+          <view class="form-tip">
+            注意: 生成座位将会清空当前自习室的所有座位！靠窗和角落位置会自动标记。
+          </view>
+          <view class="form-actions">
+            <button class="btn cancel" bindtap="hideGenerateSeats">取消</button>
+            <button class="btn confirm" form-type="submit">生成</button>
+          </view>
+        </form>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 编辑座位对话框 -->
+  <view class="dialog-overlay" wx:if="{{editVisible}}">
+    <view class="dialog">
+      <view class="dialog-header">
+        <text class="dialog-title">编辑座位</text>
+        <view class="dialog-close" bindtap="hideEditSeat">×</view>
+      </view>
+      <view class="dialog-content">
+        <form bindsubmit="saveEditSeat" wx:if="{{currentSeat}}">
+          <view class="form-item">
+            <label>座位编号:</label>
+            <input 
+              type="text" 
+              name="seatNumber" 
+              value="{{currentSeat.seatNumber}}" 
+              class="input" />
+          </view>
+          <view class="form-item">
+            <label>行号:</label>
+            <input 
+              type="number" 
+              name="rowNumber" 
+              value="{{currentSeat.rowNumber}}" 
+              class="input" />
+          </view>
+          <view class="form-item">
+            <label>列号:</label>
+            <input 
+              type="number" 
+              name="columnNumber" 
+              value="{{currentSeat.columnNumber}}" 
+              class="input" />
+          </view>
+          <view class="form-item">
+            <label>是否有电源:</label>
+            <radio-group name="hasPower" class="radio-group">
+              <label class="radio">
+                <radio value="1" checked="{{currentSeat.hasPower === 1}}"/>有
+              </label>
+              <label class="radio">
+                <radio value="0" checked="{{currentSeat.hasPower === 0}}"/>无
+              </label>
+            </radio-group>
+          </view>
+          <view class="form-item">
+            <label>是否靠窗:</label>
+            <radio-group name="isWindow" class="radio-group">
+              <label class="radio">
+                <radio value="1" checked="{{currentSeat.isWindow === 1}}"/>是
+              </label>
+              <label class="radio">
+                <radio value="0" checked="{{currentSeat.isWindow === 0}}"/>否
+              </label>
+            </radio-group>
+          </view>
+          <view class="form-item">
+            <label>是否角落:</label>
+            <radio-group name="isCorner" class="radio-group">
+              <label class="radio">
+                <radio value="1" checked="{{currentSeat.isCorner === 1}}"/>是
+              </label>
+              <label class="radio">
+                <radio value="0" checked="{{currentSeat.isCorner === 0}}"/>否
+              </label>
+            </radio-group>
+          </view>
+          <view class="form-item">
+            <label>状态:</label>
+            <radio-group name="status" class="radio-group">
+              <label class="radio">
+                <radio value="1" checked="{{currentSeat.status === 1}}"/>正常
+              </label>
+              <label class="radio">
+                <radio value="0" checked="{{currentSeat.status === 0}}"/>停用
+              </label>
+            </radio-group>
+          </view>
+          <view class="form-actions">
+            <button class="btn cancel" bindtap="hideEditSeat">取消</button>
+            <button class="btn confirm" form-type="submit">保存</button>
+          </view>
+        </form>
+      </view>
+    </view>
+  </view>
+</view> 

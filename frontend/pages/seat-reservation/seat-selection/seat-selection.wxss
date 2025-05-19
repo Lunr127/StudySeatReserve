@@ -1,0 +1,142 @@
+.container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 30rpx;
+}
+
+.header {
+  padding: 30rpx;
+  background-color: #ffffff;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  margin-bottom: 20rpx;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333333;
+  display: flex;
+  flex-direction: column;
+}
+
+.subtitle {
+  font-size: 24rpx;
+  color: #666666;
+  font-weight: normal;
+  margin-top: 10rpx;
+}
+
+/* 筛选区样式 */
+.filter-section {
+  background-color: #ffffff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  border-radius: 10rpx;
+  margin: 0 20rpx 20rpx 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.filter-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  border-bottom: 1rpx solid #eee;
+  padding-bottom: 10rpx;
+}
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15rpx;
+}
+
+.filter-label {
+  font-size: 26rpx;
+  color: #666;
+  min-width: 80rpx;
+}
+
+.filter-tag {
+  font-size: 24rpx;
+  color: #333;
+  background-color: #f0f0f0;
+  padding: 8rpx 20rpx;
+  border-radius: 30rpx;
+  transition: all 0.3s;
+}
+
+.filter-tag.active {
+  background-color: #1976D2;
+  color: white;
+}
+
+.filter-actions {
+  margin-top: 20rpx;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.reset-btn {
+  font-size: 24rpx;
+  padding: 10rpx 30rpx;
+  background-color: #f5f5f5;
+  color: #666;
+  border: 1rpx solid #ddd;
+  border-radius: 30rpx;
+  line-height: 1.5;
+}
+
+/* 座位区样式 */
+.seat-section {
+  flex: 1;
+  background-color: #ffffff;
+  margin: 0 20rpx;
+  border-radius: 10rpx;
+  padding: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.seat-container {
+  width: 100%;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+}
+
+.loading-icon {
+  width: 60rpx;
+  height: 60rpx;
+  border: 6rpx solid #f3f3f3;
+  border-top: 6rpx solid #1976D2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20rpx;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.empty-tip {
+  text-align: center;
+  padding: 100rpx 0;
+  color: #999;
+  font-size: 28rpx;
+} 

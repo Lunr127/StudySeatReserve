@@ -1,0 +1,84 @@
+<view class="container">
+  <view class="header">
+    <view class="title">
+      <text>{{studyRoomName}}</text>
+      <text class="subtitle">座位总数: {{totalSeats}} | 当前显示: {{seats.length}}</text>
+    </view>
+  </view>
+  
+  <!-- 筛选区 -->
+  <view class="filter-section">
+    <view class="filter-title">筛选条件</view>
+    <view class="filter-options">
+      <view class="filter-group">
+        <view class="filter-label">电源:</view>
+        <view 
+          class="filter-tag {{seatFilters.hasPower === 1 ? 'active' : ''}}" 
+          bindtap="toggleFilter" 
+          data-type="hasPower" 
+          data-value="1">
+          有电源
+        </view>
+        <view 
+          class="filter-tag {{seatFilters.hasPower === 0 ? 'active' : ''}}" 
+          bindtap="toggleFilter" 
+          data-type="hasPower" 
+          data-value="0">
+          无电源
+        </view>
+      </view>
+      
+      <view class="filter-group">
+        <view class="filter-label">位置:</view>
+        <view 
+          class="filter-tag {{seatFilters.isWindow === 1 ? 'active' : ''}}" 
+          bindtap="toggleFilter" 
+          data-type="isWindow" 
+          data-value="1">
+          靠窗
+        </view>
+        <view 
+          class="filter-tag {{seatFilters.isCorner === 1 ? 'active' : ''}}" 
+          bindtap="toggleFilter" 
+          data-type="isCorner" 
+          data-value="1">
+          角落
+        </view>
+      </view>
+      
+      <view class="filter-group">
+        <view class="filter-label">状态:</view>
+        <view 
+          class="filter-tag {{seatFilters.isAvailable ? 'active' : ''}}"
+          bindtap="toggleAvailable">
+          仅显示可用
+        </view>
+      </view>
+    </view>
+    
+    <view class="filter-actions">
+      <button class="reset-btn" bindtap="resetFilters">重置筛选</button>
+    </view>
+  </view>
+  
+  <!-- 座位网格 -->
+  <view class="seat-section">
+    <view wx:if="{{loading}}" class="loading">
+      <view class="loading-icon"></view>
+      <text>加载中...</text>
+    </view>
+    <view wx:elif="{{seats.length === 0}}" class="empty-tip">
+      <text>没有符合条件的座位</text>
+    </view>
+    <view wx:else class="seat-container">
+      <seat-grid 
+        seats="{{seats}}" 
+        maxRow="{{maxRow}}" 
+        maxColumn="{{maxColumn}}" 
+        selectable="{{true}}" 
+        selectedSeatId="{{selectedSeatId}}"
+        bind:seatselect="onSeatSelect">
+      </seat-grid>
+    </view>
+  </view>
+</view> 

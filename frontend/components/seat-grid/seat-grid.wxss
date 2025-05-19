@@ -1,0 +1,145 @@
+.seat-grid-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.scroll-view {
+  width: 100%;
+  overflow: auto;
+  padding: 10px 0;
+}
+
+.seat-grid {
+  position: relative;
+  margin: 20px auto;
+}
+
+/* 讲台样式 */
+.podium {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  height: 30px;
+  background-color: #999;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 14px;
+}
+
+/* 座位基础样式 */
+.seat {
+  position: absolute;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.seat-null {
+  position: absolute;
+  border: 1px dashed #eee;
+  border-radius: 6px;
+  background-color: transparent;
+}
+
+.seat-number {
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+}
+
+.seat-icons {
+  font-size: 10px;
+  margin-top: 3px;
+  display: flex;
+  gap: 3px;
+}
+
+/* 座位状态样式 */
+.seat-available {
+  background-color: #4CAF50;
+  border: 1px solid #45a049;
+  color: white;
+}
+
+.seat-available:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.seat-occupied {
+  background-color: #FF5722;
+  border: 1px solid #E64A19;
+  color: white;
+}
+
+.seat-disabled {
+  background-color: #9E9E9E;
+  border: 1px solid #757575;
+  color: #eee;
+  opacity: 0.7;
+}
+
+.seat-selected {
+  background-color: #2196F3;
+  border: 1px solid #1976D2;
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 4px 10px rgba(33, 150, 243, 0.4);
+  z-index: 10;
+}
+
+/* 特性图标样式 */
+.icon-power {
+  color: #FFC107;
+}
+
+.icon-window {
+  color: #03A9F4;
+}
+
+.icon-corner {
+  color: #9C27B0;
+}
+
+/* 图例样式 */
+.seat-legend {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+  padding: 10px;
+  border-top: 1px solid #eee;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  margin-right: 10px;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  margin-right: 5px;
+}
+
+/* 媒体查询，适应不同设备 */
+@media (max-width: 375px) {
+  .legend-item {
+    font-size: 10px;
+  }
+} 

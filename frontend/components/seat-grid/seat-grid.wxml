@@ -1,0 +1,63 @@
+<view class="seat-grid-container">
+  <scroll-view scroll-x="true" class="scroll-view">
+    <view class="seat-grid" style="width: {{(maxColumn * (seatSize + seatGap))}}px; height: {{(maxRow * (seatSize + seatGap))}}px;">
+      <!-- 教师台/讲台位置 -->
+      <view class="podium" style="width: {{maxColumn * (seatSize + seatGap) - seatGap}}px;">
+        <text>讲台</text>
+      </view>
+      
+      <!-- 座位网格 -->
+      <block wx:for="{{seatMap}}" wx:for-item="row" wx:for-index="rowIndex" wx:key="rowIndex">
+        <block wx:for="{{row}}" wx:for-item="seat" wx:for-index="colIndex" wx:key="colIndex">
+          <view 
+            class="{{getSeatClass(seat)}}" 
+            style="top: {{rowIndex * (seatSize + seatGap)}}px; left: {{colIndex * (seatSize + seatGap)}}px; width: {{seatSize}}px; height: {{seatSize}}px;"
+            data-row="{{rowIndex}}" 
+            data-col="{{colIndex}}" 
+            bindtap="onSeatTap">
+            <block wx:if="{{seat}}">
+              <text class="seat-number">{{seat.seatNumber}}</text>
+              <view class="seat-icons">
+                <text wx:if="{{seat.hasPower === 1}}" class="icon-power">⚡</text>
+                <text wx:if="{{seat.isWindow === 1}}" class="icon-window">🪟</text>
+                <text wx:if="{{seat.isCorner === 1}}" class="icon-corner">📐</text>
+              </view>
+            </block>
+          </view>
+        </block>
+      </block>
+    </view>
+  </scroll-view>
+  
+  <!-- 图例说明 -->
+  <view class="seat-legend">
+    <view class="legend-item">
+      <view class="legend-color seat-available"></view>
+      <text>可用</text>
+    </view>
+    <view class="legend-item">
+      <view class="legend-color seat-occupied"></view>
+      <text>已占用</text>
+    </view>
+    <view class="legend-item">
+      <view class="legend-color seat-disabled"></view>
+      <text>停用</text>
+    </view>
+    <view class="legend-item">
+      <view class="legend-color seat-selected"></view>
+      <text>已选</text>
+    </view>
+    <view class="legend-item">
+      <text class="icon-power">⚡</text>
+      <text>有电源</text>
+    </view>
+    <view class="legend-item">
+      <text class="icon-window">🪟</text>
+      <text>靠窗</text>
+    </view>
+    <view class="legend-item">
+      <text class="icon-corner">📐</text>
+      <text>角落</text>
+    </view>
+  </view>
+</view> 
