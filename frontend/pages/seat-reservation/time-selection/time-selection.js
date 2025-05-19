@@ -140,9 +140,44 @@ Page({
     const month = today.getMonth();
     const day = today.getDate();
     
-    // 解析开放和关闭时间
-    const [openHour, openMinute] = studyRoom.openTime.split(':').map(Number);
-    const [closeHour, closeMinute] = studyRoom.closeTime.split(':').map(Number);
+    // 解析开放和关闭时间 - 处理不同格式的情况
+    let openHour, openMinute, closeHour, closeMinute;
+    
+    try {
+      // 如果是字符串格式 (如 "08:00")
+      if (typeof studyRoom.openTime === 'string') {
+        [openHour, openMinute] = studyRoom.openTime.split(':').map(Number);
+      } 
+      // 如果是对象格式 (如 {hour: 8, minute: 0})
+      else if (typeof studyRoom.openTime === 'object') {
+        openHour = studyRoom.openTime.hour || 0;
+        openMinute = studyRoom.openTime.minute || 0;
+      } else {
+        console.error('无法识别的openTime格式:', studyRoom.openTime);
+        openHour = 8;  // 默认值
+        openMinute = 0;
+      }
+      
+      // 同样处理closeTime
+      if (typeof studyRoom.closeTime === 'string') {
+        [closeHour, closeMinute] = studyRoom.closeTime.split(':').map(Number);
+      } 
+      else if (typeof studyRoom.closeTime === 'object') {
+        closeHour = studyRoom.closeTime.hour || 18;
+        closeMinute = studyRoom.closeTime.minute || 0;
+      } else {
+        console.error('无法识别的closeTime格式:', studyRoom.closeTime);
+        closeHour = 18;  // 默认值
+        closeMinute = 0;
+      }
+    } catch (e) {
+      console.error('解析时间出错:', e);
+      // 使用默认值
+      openHour = 8;
+      openMinute = 0;
+      closeHour = 18;
+      closeMinute = 0;
+    }
     
     const slots = [];
     const now = new Date();
@@ -209,7 +244,27 @@ Page({
     potentialEndTime.setHours(potentialEndTime.getHours() + rules.maxDuration);
     
     // 如果结束时间超过自习室关闭时间，则使用关闭时间
-    const [closeHour, closeMinute] = this.data.studyRoom.closeTime.split(':').map(Number);
+    let closeHour, closeMinute;
+    try {
+      // 如果是字符串格式 (如 "18:00")
+      if (typeof this.data.studyRoom.closeTime === 'string') {
+        [closeHour, closeMinute] = this.data.studyRoom.closeTime.split(':').map(Number);
+      } 
+      // 如果是对象格式 (如 {hour: 18, minute: 0})
+      else if (typeof this.data.studyRoom.closeTime === 'object') {
+        closeHour = this.data.studyRoom.closeTime.hour || 18;
+        closeMinute = this.data.studyRoom.closeTime.minute || 0;
+      } else {
+        console.error('无法识别的closeTime格式:', this.data.studyRoom.closeTime);
+        closeHour = 18;
+        closeMinute = 0;
+      }
+    } catch (e) {
+      console.error('解析时间出错:', e);
+      closeHour = 18;
+      closeMinute = 0;
+    }
+    
     const closeTime = new Date(potentialEndTime);
     closeTime.setHours(closeHour, closeMinute, 0, 0);
     

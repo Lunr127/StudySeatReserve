@@ -16,9 +16,14 @@ spring:
       indent-output: true
       # 忽略无法转换的对象
       fail-on-empty-beans: false
+      # 不将日期写为时间戳
+      write-dates-as-timestamps: false
     deserialization:
       # 允许对象忽略json中不存在的属性
       fail-on-unknown-properties: false
+    # Java8时间类型序列化配置
+    serialization-inclusion: NON_NULL
+    default-property-inclusion: NON_NULL
   
   # 自定义系统配置  
   system:

@@ -81,7 +81,7 @@ Page({
     
     wx.request({
       url: `${app.globalData.baseUrl}/api/seats/query`,
-      method: 'GET',
+      method: 'POST',
       data: {
         studyRoomId: this.data.roomId,
         hasPower: hasPower ? 1 : null,
