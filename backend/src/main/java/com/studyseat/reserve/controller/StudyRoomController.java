@@ -80,11 +80,16 @@ public class StudyRoomController {
     @GetMapping("/{id}")
     public Result<StudyRoomVO> getStudyRoomById(
             @ApiParam(value = "自习室ID", required = true) @PathVariable Long id) {
-        // 检查权限
+        // 获取当前用户ID
         Long userId = SecurityUtil.getCurrentUserId();
-        boolean hasPermission = studyRoomService.checkPermission(id, userId);
-        if (!hasPermission) {
-            return Result.failure("无权访问该自习室");
+        
+        // 如果用户未登录，直接获取自习室信息
+        // 如果用户已登录，则检查权限
+        if (userId != null) {
+            boolean hasPermission = studyRoomService.checkPermission(id, userId);
+            if (!hasPermission) {
+                return Result.failure("无权访问该自习室");
+            }
         }
         
         StudyRoomVO studyRoomVO = studyRoomService.getStudyRoomById(id);

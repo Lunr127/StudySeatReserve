@@ -1,5 +1,5 @@
 const { studyRoomApi, seatApi } = require('../../../utils/api');
-const { getUser } = require('../../../utils/auth');
+const { getUserInfo } = require('../../../utils/auth');
 
 Page({
   data: {
@@ -40,12 +40,15 @@ Page({
   
   // 检查用户是否为管理员
   checkIsAdmin: function() {
-    const userInfo = getUser();
-    if (userInfo && userInfo.userType === 1) {
-      this.setData({
-        isAdmin: true
-      });
-    }
+    getUserInfo().then(userInfo => {
+      if (userInfo && userInfo.userType === 1) {
+        this.setData({
+          isAdmin: true
+        });
+      }
+    }).catch(err => {
+      console.error('获取用户信息失败', err);
+    });
   },
   
   // 检查自习室是否已收藏（此处仅为示例，需要后端实现）
@@ -64,12 +67,31 @@ Page({
         if (res.code === 200 && res.data) {
           // 格式化时间显示
           const roomData = res.data;
+          
+          // 安全处理时间格式
+          let openTimeStr = '';
+          let closeTimeStr = '';
+          
           if (roomData.openTime) {
-            roomData.openTime = roomData.openTime.substring(0, 5);
+            // 处理可能的不同类型
+            if (typeof roomData.openTime === 'string') {
+              openTimeStr = roomData.openTime.substring(0, 5);
+            } else if (roomData.openTime.toString) {
+              openTimeStr = roomData.openTime.toString().substring(0, 5);
+            }
           }
+          
           if (roomData.closeTime) {
-            roomData.closeTime = roomData.closeTime.substring(0, 5);
+            // 处理可能的不同类型
+            if (typeof roomData.closeTime === 'string') {
+              closeTimeStr = roomData.closeTime.substring(0, 5);
+            } else if (roomData.closeTime.toString) {
+              closeTimeStr = roomData.closeTime.toString().substring(0, 5);
+            }
           }
+          
+          roomData.openTime = openTimeStr;
+          roomData.closeTime = closeTimeStr;
           
           this.setData({
             room: roomData,
@@ -106,13 +128,22 @@ Page({
       .then(res => {
         if (res.code === 200 && res.data) {
           const seats = res.data.records || [];
+          console.log('加载座位预览成功', seats);
           this.setData({
             seats: seats
           });
+        } else {
+          console.warn('加载座位预览返回异常数据', res);
         }
       })
       .catch(err => {
         console.error('加载座位预览失败', err);
+        // 座位预览加载失败不影响整体页面显示，只是提示
+        wx.showToast({
+          title: '座位信息加载失败',
+          icon: 'none',
+          duration: 2000
+        });
       });
   },
   

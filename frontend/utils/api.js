@@ -98,7 +98,7 @@ const seatApi = {
    * @param {Object} params 查询参数
    * @returns {Promise} Promise对象
    */
-  getSeatsByRoomId: (roomId, params) => get(`/api/study-rooms/${roomId}/seats`, params),
+  getSeatsByRoomId: (roomId, params) => get(`/api/seats/study-room/${roomId}`, params),
 
   /**
    * 获取座位详情
