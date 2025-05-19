@@ -1,0 +1,72 @@
+<view class="container">
+  <!-- 头部信息 -->
+  <view class="header">
+    <view class="title">确认预约</view>
+    <view class="subtitle">请确认以下预约信息</view>
+  </view>
+  
+  <!-- 预约信息 -->
+  <view class="reservation-info" wx:if="{{!loading}}">
+    <view class="info-card">
+      <view class="info-title">预约信息</view>
+      <view class="info-item">
+        <text class="label">自习室:</text>
+        <text class="value">{{studyRoom.name}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">位置:</text>
+        <text class="value">{{studyRoom.location}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">座位号:</text>
+        <text class="value">{{seat.seatNumber}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">座位特性:</text>
+        <view class="value tags">
+          <text class="tag" wx:if="{{seat.hasPower}}">有电源</text>
+          <text class="tag" wx:if="{{seat.isWindow}}">靠窗</text>
+          <text class="tag" wx:if="{{seat.isCorner}}">角落</text>
+        </view>
+      </view>
+    </view>
+    
+    <view class="info-card">
+      <view class="info-title">时间信息</view>
+      <view class="info-item">
+        <text class="label">开始时间:</text>
+        <text class="value">{{formatDateTime(startTime)}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">结束时间:</text>
+        <text class="value">{{formatDateTime(endTime)}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">预约时长:</text>
+        <text class="value">{{getDuration()}}小时</text>
+      </view>
+    </view>
+    
+    <view class="notice-card">
+      <view class="notice-title">温馨提示</view>
+      <view class="notice-content">
+        <view class="notice-item">1. 预约成功后，需在预约开始时间后15分钟内完成签到，否则系统将自动取消预约。</view>
+        <view class="notice-item">2. 如需取消预约，请至少提前30分钟操作，以便其他学生使用。</view>
+        <view class="notice-item">3. 请遵守自习室规定，保持安静，不要影响他人学习。</view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 加载中 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <text>正在加载预约信息...</text>
+  </view>
+  
+  <!-- 按钮区域 -->
+  <view class="button-group" wx:if="{{!loading}}">
+    <button class="cancel-btn" bindtap="goBack">返回修改</button>
+    <button class="confirm-btn" bindtap="submitReservation" disabled="{{submitting}}">
+      {{submitting ? '提交中...' : '确认预约'}}
+    </button>
+  </view>
+</view> 

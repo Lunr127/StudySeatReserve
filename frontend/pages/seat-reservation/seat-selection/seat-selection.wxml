@@ -1,84 +1,73 @@
 <view class="container">
-  <view class="header">
-    <view class="title">
-      <text>{{studyRoomName}}</text>
-      <text class="subtitle">座位总数: {{totalSeats}} | 当前显示: {{seats.length}}</text>
+  <!-- 自习室信息 -->
+  <view class="room-info">
+    <view class="room-name">{{studyRoom.name}}</view>
+    <view class="room-details">
+      <text>位置: {{studyRoom.location}}</text>
+      <text>开放时间: {{studyRoom.openTime}} - {{studyRoom.closeTime}}</text>
+      <text>可用座位: {{studyRoom.capacity - studyRoom.usedCapacity}}/{{studyRoom.capacity}}</text>
     </view>
   </view>
   
-  <!-- 筛选区 -->
-  <view class="filter-section">
-    <view class="filter-title">筛选条件</view>
-    <view class="filter-options">
-      <view class="filter-group">
-        <view class="filter-label">电源:</view>
-        <view 
-          class="filter-tag {{seatFilters.hasPower === 1 ? 'active' : ''}}" 
-          bindtap="toggleFilter" 
-          data-type="hasPower" 
-          data-value="1">
-          有电源
-        </view>
-        <view 
-          class="filter-tag {{seatFilters.hasPower === 0 ? 'active' : ''}}" 
-          bindtap="toggleFilter" 
-          data-type="hasPower" 
-          data-value="0">
-          无电源
-        </view>
-      </view>
-      
-      <view class="filter-group">
-        <view class="filter-label">位置:</view>
-        <view 
-          class="filter-tag {{seatFilters.isWindow === 1 ? 'active' : ''}}" 
-          bindtap="toggleFilter" 
-          data-type="isWindow" 
-          data-value="1">
-          靠窗
-        </view>
-        <view 
-          class="filter-tag {{seatFilters.isCorner === 1 ? 'active' : ''}}" 
-          bindtap="toggleFilter" 
-          data-type="isCorner" 
-          data-value="1">
-          角落
+  <!-- 筛选按钮 -->
+  <view class="filter-bar">
+    <button class="filter-btn" bindtap="showFilter">
+      <text class="iconfont icon-filter"></text> 筛选
+    </button>
+  </view>
+  
+  <!-- 座位列表 -->
+  <view class="seat-list" wx:if="{{!loading && seats.length > 0}}">
+    <view class="seat-row" wx:for="{{seats}}" wx:key="id" wx:for-item="seat">
+      <view class="seat-item {{seat.isAvailable ? 'available' : 'unavailable'}} {{selectedSeat && selectedSeat.id === seat.id ? 'selected' : ''}}" 
+            bindtap="onSeatSelect" 
+            data-seat="{{seat}}">
+        <view class="seat-number">{{seat.seatNumber}}</view>
+        <view class="seat-tags">
+          <text class="tag power" wx:if="{{seat.hasPower}}">电源</text>
+          <text class="tag window" wx:if="{{seat.isWindow}}">靠窗</text>
+          <text class="tag corner" wx:if="{{seat.isCorner}}">角落</text>
         </view>
       </view>
-      
-      <view class="filter-group">
-        <view class="filter-label">状态:</view>
-        <view 
-          class="filter-tag {{seatFilters.isAvailable ? 'active' : ''}}"
-          bindtap="toggleAvailable">
-          仅显示可用
-        </view>
-      </view>
-    </view>
-    
-    <view class="filter-actions">
-      <button class="reset-btn" bindtap="resetFilters">重置筛选</button>
     </view>
   </view>
   
-  <!-- 座位网格 -->
-  <view class="seat-section">
-    <view wx:if="{{loading}}" class="loading">
-      <view class="loading-icon"></view>
-      <text>加载中...</text>
-    </view>
-    <view wx:elif="{{seats.length === 0}}" class="empty-tip">
-      <text>没有符合条件的座位</text>
-    </view>
-    <view wx:else class="seat-container">
-      <seat-grid 
-        seats="{{seats}}" 
-        maxRow="{{maxRow}}" 
-        maxColumn="{{maxColumn}}" 
-        selectable="{{true}}" 
-        selectedSeatId="{{selectedSeatId}}"
-        bind:seatselect="onSeatSelect">
-      </seat-grid>
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{!loading && seats.length === 0}}">
+    <image src="/images/empty-seats.png" mode="aspectFit"></image>
+    <text>没有找到符合条件的座位</text>
+  </view>
+  
+  <!-- 加载中 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <text>正在加载座位...</text>
+  </view>
+  
+  <!-- 筛选弹窗 -->
+  <view class="filter-modal {{showFilterModal ? 'show' : ''}}" catchtouchmove="preventDefault">
+    <view class="filter-content">
+      <view class="filter-header">
+        <text>座位筛选</text>
+        <text class="close-btn" bindtap="hideFilter">×</text>
+      </view>
+      <view class="filter-body">
+        <view class="filter-item">
+          <text class="filter-label">电源座位</text>
+          <switch checked="{{filters.hasPower}}" bindtap="toggleFilter" data-type="hasPower"></switch>
+        </view>
+        <view class="filter-item">
+          <text class="filter-label">靠窗座位</text>
+          <switch checked="{{filters.isWindow}}" bindtap="toggleFilter" data-type="isWindow"></switch>
+        </view>
+        <view class="filter-item">
+          <text class="filter-label">角落座位</text>
+          <switch checked="{{filters.isCorner}}" bindtap="toggleFilter" data-type="isCorner"></switch>
+        </view>
+      </view>
+      <view class="filter-footer">
+        <button class="btn-reset" bindtap="resetFilter">重置</button>
+        <button class="btn-apply" bindtap="applyFilter">应用</button>
+      </view>
     </view>
   </view>
 </view> 

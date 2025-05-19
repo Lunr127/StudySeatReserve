@@ -4,8 +4,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -22,6 +25,12 @@ public class JwtUtil {
 
     @Value("${jwt.expiration}")
     private Long expiration;
+    
+    @Value("${jwt.tokenHeader}")
+    private String tokenHeader;
+    
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
 
     /**
      * 从token中获取用户名
@@ -131,13 +140,66 @@ public class JwtUtil {
     }
 
     /**
-     * 从token中获取用户类型
+     * 从token中获取用户类型（数字）
      * 
      * @param token
-     * @return
+     * @return 1-管理员，2-学生
      */
-    public Integer getUserTypeFromToken(String token) {
+    public Integer getUserTypeNumberFromToken(String token) {
         Claims claims = getAllClaimsFromToken(token);
         return Integer.parseInt(claims.get("userType").toString());
+    }
+    
+    /**
+     * 从token中获取用户类型（字符串形式，适用于Security角色）
+     * 
+     * @param token
+     * @return "ADMIN" 或 "STUDENT"
+     */
+    public String getUserTypeFromToken(String token) {
+        Integer userType = getUserTypeNumberFromToken(token);
+        return userType == 1 ? "ADMIN" : "STUDENT";
+    }
+    
+    /**
+     * 从请求中获取token
+     * 
+     * @param request
+     * @return
+     */
+    public String getTokenFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader(tokenHeader);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(tokenHead + " ")) {
+            return bearerToken.substring(tokenHead.length() + 1);
+        }
+        return null;
+    }
+    
+    /**
+     * 从请求中获取用户ID
+     * 
+     * @param request
+     * @return
+     */
+    public Long getUserIdFromToken(HttpServletRequest request) {
+        String token = getTokenFromRequest(request);
+        if (token != null) {
+            return getUserIdFromToken(token);
+        }
+        return null;
+    }
+    
+    /**
+     * 从请求中获取用户类型
+     * 
+     * @param request
+     * @return
+     */
+    public String getUserTypeFromToken(HttpServletRequest request) {
+        String token = getTokenFromRequest(request);
+        if (token != null) {
+            return getUserTypeFromToken(token);
+        }
+        return null;
     }
 } 

@@ -1,0 +1,147 @@
+<view class="container">
+  <!-- 标签切换 -->
+  <view class="tabs">
+    <view 
+      class="tab-item {{activeTab === 0 ? 'active' : ''}}" 
+      bindtap="changeTab" 
+      data-tab="0">
+      当前预约
+    </view>
+    <view 
+      class="tab-item {{activeTab === 1 ? 'active' : ''}}" 
+      bindtap="changeTab" 
+      data-tab="1">
+      历史预约
+    </view>
+    <view class="tab-line" style="left: {{activeTab * 50}}%"></view>
+  </view>
+  
+  <!-- 当前预约列表 -->
+  <view class="reservation-list" wx:if="{{activeTab === 0}}">
+    <view wx:if="{{loading}}" class="loading-container">
+      <view class="loading-spinner"></view>
+      <text>加载中...</text>
+    </view>
+    
+    <scroll-view 
+      scroll-y="true" 
+      style="height: calc(100vh - 100rpx);" 
+      bindscrolltolower="onReachBottom" 
+      refresher-enabled="true" 
+      refresher-triggered="{{refreshing}}" 
+      bindrefresherrefresh="onPullDownRefresh">
+      
+      <view wx:if="{{!loading && currentReservations.length === 0}}" class="empty-tip">
+        <image src="/images/empty-reservation.png" mode="aspectFit"></image>
+        <text>暂无当前预约</text>
+      </view>
+      
+      <view 
+        class="reservation-item"
+        wx:for="{{currentReservations}}" 
+        wx:key="id"
+        bindtap="viewReservationDetail"
+        data-id="{{item.id}}">
+        
+        <view class="reservation-header">
+          <view class="room-name">{{item.studyRoomName}}</view>
+          <view class="status {{getStatusClass(item.status)}}">{{item.statusText}}</view>
+        </view>
+        
+        <view class="reservation-content">
+          <view class="info-row">
+            <text class="label">座位:</text>
+            <text class="value">{{item.seatNumber}}</text>
+          </view>
+          <view class="info-row">
+            <text class="label">时间:</text>
+            <text class="value">{{formatDateTime(item.startTime)}} 至 {{formatDateTime(item.endTime)}}</text>
+          </view>
+          <view class="info-row">
+            <text class="label">位置:</text>
+            <text class="value">{{item.studyRoomLocation}}</text>
+          </view>
+        </view>
+        
+        <view class="reservation-actions">
+          <button 
+            class="action-btn cancel" 
+            wx:if="{{canCancel(item)}}" 
+            catchtap="cancelReservation" 
+            data-id="{{item.id}}">
+            取消预约
+          </button>
+          <button 
+            class="action-btn extend" 
+            wx:if="{{canExtend(item)}}" 
+            catchtap="extendReservation" 
+            data-id="{{item.id}}" 
+            data-end-time="{{item.endTime}}">
+            延长时间
+          </button>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+  
+  <!-- 历史预约列表 -->
+  <view class="reservation-list" wx:if="{{activeTab === 1}}">
+    <view wx:if="{{loading && !loadingMore}}" class="loading-container">
+      <view class="loading-spinner"></view>
+      <text>加载中...</text>
+    </view>
+    
+    <scroll-view 
+      scroll-y="true" 
+      style="height: calc(100vh - 100rpx);" 
+      bindscrolltolower="onReachBottom" 
+      refresher-enabled="true" 
+      refresher-triggered="{{refreshing}}" 
+      bindrefresherrefresh="onPullDownRefresh">
+      
+      <view wx:if="{{!loading && historyReservations.length === 0}}" class="empty-tip">
+        <image src="/images/empty-reservation.png" mode="aspectFit"></image>
+        <text>暂无历史预约</text>
+      </view>
+      
+      <view 
+        class="reservation-item"
+        wx:for="{{historyReservations}}" 
+        wx:key="id"
+        bindtap="viewReservationDetail"
+        data-id="{{item.id}}">
+        
+        <view class="reservation-header">
+          <view class="room-name">{{item.studyRoomName}}</view>
+          <view class="status {{getStatusClass(item.status)}}">{{item.statusText}}</view>
+        </view>
+        
+        <view class="reservation-content">
+          <view class="info-row">
+            <text class="label">座位:</text>
+            <text class="value">{{item.seatNumber}}</text>
+          </view>
+          <view class="info-row">
+            <text class="label">时间:</text>
+            <text class="value">{{formatDateTime(item.startTime)}} 至 {{formatDateTime(item.endTime)}}</text>
+          </view>
+          <view class="info-row">
+            <text class="label">位置:</text>
+            <text class="value">{{item.studyRoomLocation}}</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 加载更多提示 -->
+      <view wx:if="{{loadingMore}}" class="loading-more">
+        <view class="loading-spinner small"></view>
+        <text>加载更多...</text>
+      </view>
+      
+      <!-- 没有更多数据提示 -->
+      <view wx:if="{{!hasMoreData && historyReservations.length > 0}}" class="no-more-data">
+        <text>-- 没有更多数据了 --</text>
+      </view>
+    </scroll-view>
+  </view>
+</view> 

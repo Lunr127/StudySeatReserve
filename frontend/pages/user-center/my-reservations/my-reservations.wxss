@@ -1,0 +1,228 @@
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+/* 标签切换 */
+.tabs {
+  display: flex;
+  background-color: white;
+  height: 100rpx;
+  position: relative;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30rpx;
+  color: #666;
+  transition: all 0.3s;
+}
+
+.tab-item.active {
+  color: #409eff;
+  font-weight: bold;
+}
+
+.tab-line {
+  position: absolute;
+  bottom: 0;
+  width: 50%;
+  height: 6rpx;
+  background-color: #409eff;
+  transition: all 0.3s;
+}
+
+/* 预约列表 */
+.reservation-list {
+  padding: 20rpx;
+}
+
+.reservation-item {
+  background-color: white;
+  border-radius: 12rpx;
+  margin-bottom: 20rpx;
+  padding: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.reservation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1rpx solid #f0f0f0;
+  padding-bottom: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.room-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.status {
+  font-size: 24rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 6rpx;
+}
+
+.status-pending {
+  background-color: #e1f3d8;
+  color: #67c23a;
+}
+
+.status-using {
+  background-color: #ecf5ff;
+  color: #409eff;
+}
+
+.status-completed {
+  background-color: #f0f9eb;
+  color: #67c23a;
+}
+
+.status-cancelled {
+  background-color: #f4f4f5;
+  color: #909399;
+}
+
+.status-violated {
+  background-color: #fef0f0;
+  color: #f56c6c;
+}
+
+.reservation-content {
+  margin-bottom: 20rpx;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 16rpx;
+}
+
+.info-row:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  width: 100rpx;
+  font-size: 28rpx;
+  color: #666;
+}
+
+.value {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.reservation-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.action-btn {
+  min-width: 160rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  font-size: 26rpx;
+  margin-left: 20rpx;
+  border-radius: 6rpx;
+}
+
+.action-btn.cancel {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.action-btn.extend {
+  background-color: #409eff;
+  color: white;
+}
+
+/* 加载容器 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300rpx;
+}
+
+.loading-spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 6rpx solid #f3f3f3;
+  border-top: 6rpx solid #409eff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20rpx;
+}
+
+.loading-spinner.small {
+  width: 30rpx;
+  height: 30rpx;
+  border-width: 4rpx;
+  margin-bottom: 0;
+  margin-right: 10rpx;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-container text {
+  font-size: 28rpx;
+  color: #909399;
+}
+
+/* 空状态提示 */
+.empty-tip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+}
+
+.empty-tip image {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 20rpx;
+}
+
+.empty-tip text {
+  font-size: 28rpx;
+  color: #909399;
+}
+
+/* 加载更多 */
+.loading-more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20rpx 0;
+}
+
+.loading-more text {
+  font-size: 26rpx;
+  color: #909399;
+}
+
+/* 没有更多数据 */
+.no-more-data {
+  text-align: center;
+  padding: 20rpx 0;
+}
+
+.no-more-data text {
+  font-size: 26rpx;
+  color: #909399;
+} 

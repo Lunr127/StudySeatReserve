@@ -1,0 +1,81 @@
+<view class="container">
+  <!-- 头部信息 -->
+  <view class="header">
+    <view class="title">选择预约时间</view>
+    <view class="date">{{dateString}}</view>
+  </view>
+  
+  <!-- 座位和自习室信息 -->
+  <view class="info-card">
+    <view class="info-header">
+      <view class="info-title">预约信息</view>
+    </view>
+    <view class="info-body">
+      <view class="info-item">
+        <text class="label">自习室：</text>
+        <text class="value">{{studyRoom.name}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">座位号：</text>
+        <text class="value">{{seat.seatNumber}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">开放时间：</text>
+        <text class="value">{{studyRoom.openTime}} - {{studyRoom.closeTime}}</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 时间段选择 -->
+  <view class="time-selection-section">
+    <view class="section-title">可选时间段</view>
+    <view class="time-slots" wx:if="{{!loading && availableSlots.length > 0}}">
+      <view 
+        class="time-slot {{item.selected ? 'selected' : ''}}" 
+        wx:for="{{availableSlots}}" 
+        wx:key="startTime" 
+        bindtap="selectTimeSlot"
+        data-index="{{index}}">
+        <text class="time">{{item.startTime}} - {{item.endTime}}</text>
+      </view>
+    </view>
+    
+    <!-- 无可用时间段 -->
+    <view class="empty-state" wx:if="{{!loading && availableSlots.length === 0}}">
+      <image src="/images/empty-slots.png" mode="aspectFit"></image>
+      <text>今日没有可用的时间段</text>
+    </view>
+    
+    <!-- 加载中 -->
+    <view class="loading-state" wx:if="{{loading}}">
+      <text>正在加载时间段...</text>
+    </view>
+  </view>
+  
+  <!-- 已选择的时间段 -->
+  <view class="selected-time" wx:if="{{selectedStartTime && selectedEndTime}}">
+    <view class="section-title">已选择</view>
+    <view class="selected-time-content">
+      <text>{{selectedStartTime ? (selectedStartTime.getHours() + ':' + (selectedStartTime.getMinutes() < 10 ? '0' : '') + selectedStartTime.getMinutes()) : ''}} - {{selectedEndTime ? (selectedEndTime.getHours() + ':' + (selectedEndTime.getMinutes() < 10 ? '0' : '') + selectedEndTime.getMinutes()) : ''}}</text>
+      <text class="duration">预约时长: {{selectedStartTime && selectedEndTime ? Math.round((selectedEndTime - selectedStartTime) / (1000 * 60 * 60) * 10) / 10 : 0}}小时</text>
+    </view>
+  </view>
+  
+  <!-- 预约规则 -->
+  <view class="rules-section">
+    <view class="section-title">预约规则</view>
+    <view class="rules-content">
+      <text>1. 每次预约时长不少于{{rules.minDuration}}小时，不超过{{rules.maxDuration}}小时</text>
+      <text>2. 最多可提前{{rules.advanceDays}}天预约</text>
+      <text>3. 预约成功后，请在预约开始时间后15分钟内完成签到</text>
+      <text>4. 当日累计违约3次将被限制预约</text>
+    </view>
+  </view>
+  
+  <!-- 底部按钮 -->
+  <view class="bottom-button">
+    <button class="submit-btn" bindtap="submitReservation" disabled="{{!selectedStartTime || !selectedEndTime}}">
+      确认预约
+    </button>
+  </view>
+</view> 

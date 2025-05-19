@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studyseat.reserve.mapper.ReservationMapper">
+    
+    <!-- 预约视图对象结果映射 -->
+    <resultMap id="ReservationVOMap" type="com.studyseat.reserve.vo.ReservationVO">
+        <id property="id" column="id"/>
+        <result property="studentId" column="student_id"/>
+        <result property="studentName" column="student_name"/>
+        <result property="seatId" column="seat_id"/>
+        <result property="seatNumber" column="seat_number"/>
+        <result property="studyRoomId" column="study_room_id"/>
+        <result property="studyRoomName" column="study_room_name"/>
+        <result property="studyRoomLocation" column="study_room_location"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="status" column="status"/>
+        <result property="statusText" column="status_text"/>
+        <result property="createTime" column="create_time"/>
+        <result property="canCancel" column="can_cancel"/>
+        <result property="canExtend" column="can_extend"/>
+        <result property="canCheckIn" column="can_check_in"/>
+        <result property="hasCheckedIn" column="has_checked_in"/>
+    </resultMap>
+    
+    <!-- 分页查询预约列表 -->
+    <select id="selectReservationPage" resultMap="ReservationVOMap">
+        SELECT 
+            r.id, r.student_id, u.real_name as student_name,
+            r.seat_id, s.seat_number,
+            sr.id as study_room_id, sr.name as study_room_name, sr.location as study_room_location,
+            r.start_time, r.end_time, r.status, r.create_time,
+            CASE r.status
+                WHEN 0 THEN '已取消'
+                WHEN 1 THEN '待签到'
+                WHEN 2 THEN '使用中'
+                WHEN 3 THEN '已完成'
+                WHEN 4 THEN '已违约'
+                ELSE '未知'
+            END as status_text,
+            CASE WHEN r.status IN (1, 2) AND r.end_time > NOW() THEN 1 ELSE 0 END as can_cancel,
+            CASE WHEN r.status = 2 AND r.end_time > NOW() THEN 1 ELSE 0 END as can_extend,
+            CASE WHEN r.status = 1 AND r.start_time <= NOW() AND 
+                DATE_ADD(r.start_time, INTERVAL 15 MINUTE) >= NOW() THEN 1 ELSE 0 END as can_check_in,
+            CASE WHEN EXISTS (SELECT 1 FROM check_in ci WHERE ci.reservation_id = r.id) THEN 1 ELSE 0 END as has_checked_in
+        FROM reservation r
+        LEFT JOIN student st ON r.student_id = st.id
+        LEFT JOIN user u ON st.user_id = u.id
+        LEFT JOIN seat s ON r.seat_id = s.id
+        LEFT JOIN study_room sr ON s.study_room_id = sr.id
+        WHERE r.is_deleted = 0
+        <if test="studentId != null">
+            AND r.student_id = #{studentId}
+        </if>
+        <if test="seatId != null">
+            AND r.seat_id = #{seatId}
+        </if>
+        <if test="studyRoomId != null">
+            AND sr.id = #{studyRoomId}
+        </if>
+        <if test="status != null">
+            AND r.status = #{status}
+        </if>
+        <if test="startAfter != null">
+            AND r.start_time >= #{startAfter}
+        </if>
+        <if test="startBefore != null">
+            AND r.start_time &lt;= #{startBefore}
+        </if>
+        ORDER BY r.start_time DESC
+    </select>
+    
+    <!-- 根据ID查询预约详情 -->
+    <select id="selectReservationById" resultMap="ReservationVOMap">
+        SELECT 
+            r.id, r.student_id, u.real_name as student_name,
+            r.seat_id, s.seat_number,
+            sr.id as study_room_id, sr.name as study_room_name, sr.location as study_room_location,
+            r.start_time, r.end_time, r.status, r.create_time,
+            CASE r.status
+                WHEN 0 THEN '已取消'
+                WHEN 1 THEN '待签到'
+                WHEN 2 THEN '使用中'
+                WHEN 3 THEN '已完成'
+                WHEN 4 THEN '已违约'
+                ELSE '未知'
+            END as status_text,
+            CASE WHEN r.status IN (1, 2) AND r.end_time > NOW() THEN 1 ELSE 0 END as can_cancel,
+            CASE WHEN r.status = 2 AND r.end_time > NOW() THEN 1 ELSE 0 END as can_extend,
+            CASE WHEN r.status = 1 AND r.start_time <= NOW() AND 
+                DATE_ADD(r.start_time, INTERVAL 15 MINUTE) >= NOW() THEN 1 ELSE 0 END as can_check_in,
+            CASE WHEN EXISTS (SELECT 1 FROM check_in ci WHERE ci.reservation_id = r.id) THEN 1 ELSE 0 END as has_checked_in
+        FROM reservation r
+        LEFT JOIN student st ON r.student_id = st.id
+        LEFT JOIN user u ON st.user_id = u.id
+        LEFT JOIN seat s ON r.seat_id = s.id
+        LEFT JOIN study_room sr ON s.study_room_id = sr.id
+        WHERE r.id = #{id} AND r.is_deleted = 0
+    </select>
+    
+    <!-- 查询指定时间段内座位的预约情况 -->
+    <select id="selectOverlappingReservations" resultType="com.studyseat.reserve.entity.Reservation">
+        SELECT * FROM reservation
+        WHERE seat_id = #{seatId} 
+        AND status IN (1, 2) 
+        AND is_deleted = 0 
+        AND (
+            (start_time &lt;= #{endTime} AND end_time >= #{startTime})
+        )
+    </select>
+    
+    <!-- 查询用户在指定日期的有效预约数量 -->
+    <select id="countValidReservationsForDay" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM reservation
+        WHERE student_id = #{studentId}
+        AND status IN (1, 2, 3)
+        AND is_deleted = 0
+        AND start_time >= #{startOfDay}
+        AND start_time &lt; #{endOfDay}
+    </select>
+    
+    <!-- 更新超时未签到的预约为违约状态 -->
+    <update id="updateNoShowReservations">
+        UPDATE reservation
+        SET status = 4, update_time = NOW()
+        WHERE status = 1 
+        AND is_deleted = 0
+        AND start_time &lt; DATE_SUB(#{currentTime}, INTERVAL #{timeoutMinutes} MINUTE)
+        AND NOT EXISTS (SELECT 1 FROM check_in ci WHERE ci.reservation_id = reservation.id)
+    </update>
+    
+</mapper> 
