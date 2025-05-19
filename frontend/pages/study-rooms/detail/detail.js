@@ -268,7 +268,7 @@ Page({
     // 确保ID以字符串形式传递，防止JS大整数精度问题
     const stringId = String(this.data.roomId);
     wx.navigateTo({
-      url: `/pages/seat-reservation/seat-reservation?roomId=${stringId}`
+      url: `/pages/seat-reservation/seat-selection/seat-selection?roomId=${stringId}`
     });
   },
   

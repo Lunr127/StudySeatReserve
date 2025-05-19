@@ -5,7 +5,11 @@
     "pages/study-rooms/study-rooms",
     "pages/study-rooms/detail/detail",
     "pages/seat-reservation/seat-reservation",
+    "pages/seat-reservation/seat-selection/seat-selection",
+    "pages/seat-reservation/time-selection/time-selection",
+    "pages/seat-reservation/confirm-reservation/confirm-reservation",
     "pages/user-center/user-center",
+    "pages/user-center/my-reservations/my-reservations",
     "pages/notifications/notifications",
     "pages/admin/study-rooms/manage/manage",
     "pages/admin/study-rooms/edit/edit"

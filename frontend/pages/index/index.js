@@ -64,7 +64,7 @@ Page({
   goToSeatReservation: function(e) {
     const roomId = e.currentTarget.dataset.id;
     wx.navigateTo({
-      url: '/pages/seat-reservation/seat-reservation?roomId=' + roomId,
+      url: '/pages/seat-reservation/seat-selection/seat-selection?roomId=' + roomId,
     });
   },
 
