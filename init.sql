@@ -248,35 +248,39 @@ INSERT INTO `study_room` (`name`, `location`, `building`, `floor`, `room_number`
 ('计算机学院机房', '计算机学院一楼', '计算机学院大楼', '1', '108', 40, '计算机学院机房，配有高性能电脑', '09:00:00', '21:00:00', '计算机学院', 1, 3);
 
 -- 为自习室1添加座位
-INSERT INTO `seat` (`study_room_id`, `seat_number`, `row_number`, `column_number`, `has_power`, `is_window`, `is_corner`) VALUES
-(1, 'A1', 1, 1, 1, 1, 1),
-(1, 'A2', 1, 2, 1, 1, 0),
-(1, 'A3', 1, 3, 1, 1, 0),
-(1, 'A4', 1, 4, 1, 1, 0),
-(1, 'A5', 1, 5, 1, 1, 1),
-(1, 'B1', 2, 1, 1, 0, 0),
-(1, 'B2', 2, 2, 1, 0, 0),
-(1, 'B3', 2, 3, 1, 0, 0),
-(1, 'B4', 2, 4, 1, 0, 0),
-(1, 'B5', 2, 5, 1, 0, 0);
+INSERT INTO `seat` (`study_room_id`, `seat_number`, `row_number`, `column_number`, `has_power`, `is_window`, `is_corner`, `status`)
+SELECT 1, CONCAT('A', seat_num), 1, seat_num, IF(seat_num % 2 = 0, 1, 0), IF(seat_num = 1 OR seat_num = 10, 1, 0), IF(seat_num = 1 OR seat_num = 10, 1, 0), 1
+FROM (
+    SELECT 1 as seat_num UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 
+    UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10
+) as seat_nums;
+
+INSERT INTO `seat` (`study_room_id`, `seat_number`, `row_number`, `column_number`, `has_power`, `is_window`, `is_corner`, `status`)
+SELECT 1, CONCAT('B', seat_num), 2, seat_num, IF(seat_num % 2 = 0, 1, 0), IF(seat_num = 1 OR seat_num = 10, 1, 0), IF(seat_num = 1 OR seat_num = 10, 1, 0), 1
+FROM (
+    SELECT 1 as seat_num UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 
+    UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10
+) as seat_nums;
 
 -- 为自习室2添加座位
-INSERT INTO `seat` (`study_room_id`, `seat_number`, `row_number`, `column_number`, `has_power`, `is_window`, `is_corner`) VALUES
-(2, 'A1', 1, 1, 1, 1, 1),
-(2, 'A2', 1, 2, 1, 1, 0),
-(2, 'A3', 1, 3, 1, 1, 0),
-(2, 'A4', 1, 4, 1, 1, 0),
-(2, 'A5', 1, 5, 1, 1, 1),
-(2, 'B1', 2, 1, 1, 0, 0),
-(2, 'B2', 2, 2, 1, 0, 0),
-(2, 'B3', 2, 3, 1, 0, 0),
-(2, 'B4', 2, 4, 1, 0, 0),
-(2, 'B5', 2, 5, 1, 0, 0);
+INSERT INTO `seat` (`study_room_id`, `seat_number`, `row_number`, `column_number`, `has_power`, `is_window`, `is_corner`, `status`)
+SELECT 2, CONCAT('A', seat_num), 1, seat_num, 1, IF(seat_num = 1 OR seat_num = 5, 1, 0), IF(seat_num = 1 OR seat_num = 5, 1, 0), 1
+FROM (
+    SELECT 1 as seat_num UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5
+) as seat_nums;
 
--- 插入系统参数
+INSERT INTO `seat` (`study_room_id`, `seat_number`, `row_number`, `column_number`, `has_power`, `is_window`, `is_corner`, `status`)
+SELECT 2, CONCAT('B', seat_num), 2, seat_num, 1, IF(seat_num = 1 OR seat_num = 5, 1, 0), IF(seat_num = 1 OR seat_num = 5, 1, 0), 1
+FROM (
+    SELECT 1 as seat_num UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5
+) as seat_nums;
+
+-- 系统参数设置
 INSERT INTO `system_param` (`param_key`, `param_value`, `description`) VALUES
-('reservation_days_ahead', '7', '提前预约天数'),
-('max_reservation_per_day', '2', '每天最大预约次数'),
-('violation_limit', '3', '违约上限次数'),
-('check_in_time_limit', '15', '签到时间限制（分钟）'),
-('ban_days_after_violation', '7', '违约后禁用天数'); 
+('max_reserve_time', '4', '最大预约时长(小时)'),
+('min_reserve_time', '1', '最小预约时长(小时)'),
+('advance_days', '7', '提前预约天数'),
+('checkin_timeout', '15', '签到超时时间(分钟)'),
+('blacklist_days', '7', '违约黑名单天数'),
+('max_daily_reservations', '2', '每日最大预约次数'),
+('violation_threshold', '3', '违约次数阈值，达到后将被限制预约'); 

@@ -86,10 +86,10 @@ const studyRoomApi = {
   /**
    * 更新自习室状态
    * @param {string|number} id 自习室ID
-   * @param {number} status 状态值
+   * @param {number} isActive 状态值：0-关闭，1-开放
    * @returns {Promise} Promise对象
    */
-  updateStatus: (id, status) => put(`/api/study-rooms/${String(id)}/status`, { isActive: status })
+  updateStatus: (id, isActive) => put(`/api/study-rooms/${String(id)}/status?isActive=${isActive}`)
 };
 
 /**
