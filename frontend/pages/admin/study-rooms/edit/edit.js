@@ -1,5 +1,5 @@
 const { studyRoomApi } = require('../../../../utils/api');
-const { getUser } = require('../../../../utils/auth');
+const { getUserInfo } = require('../../../../utils/auth');
 
 Page({
   data: {
@@ -57,16 +57,26 @@ Page({
   
   // 检查用户是否为管理员
   checkIsAdmin: function() {
-    const userInfo = getUser();
-    if (!userInfo || userInfo.userType !== 1) {
+    getUserInfo().then(userInfo => {
+      if (!userInfo || userInfo.userType !== 1) {
+        wx.showToast({
+          title: '您没有管理员权限',
+          icon: 'none'
+        });
+        setTimeout(() => {
+          wx.navigateBack();
+        }, 1500);
+      }
+    }).catch(err => {
+      console.error('获取用户信息失败', err);
       wx.showToast({
-        title: '您没有管理员权限',
+        title: '获取用户信息失败',
         icon: 'none'
       });
       setTimeout(() => {
         wx.navigateBack();
       }, 1500);
-    }
+    });
   },
   
   // 加载管理员列表
@@ -99,10 +109,10 @@ Page({
           const roomData = res.data;
           
           // 格式化时间显示
-          if (roomData.openTime) {
+          if (roomData.openTime && typeof roomData.openTime === 'string') {
             roomData.openTime = roomData.openTime.substring(0, 5);
           }
-          if (roomData.closeTime) {
+          if (roomData.closeTime && typeof roomData.closeTime === 'string') {
             roomData.closeTime = roomData.closeTime.substring(0, 5);
           }
           

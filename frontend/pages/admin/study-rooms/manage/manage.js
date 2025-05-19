@@ -1,5 +1,5 @@
 const { studyRoomApi } = require('../../../../utils/api');
-const { getUser } = require('../../../../utils/auth');
+const { getUserInfo } = require('../../../../utils/auth');
 
 Page({
   data: {
@@ -51,16 +51,26 @@ Page({
   
   // 检查用户是否为管理员
   checkIsAdmin: function() {
-    const userInfo = getUser();
-    if (!userInfo || userInfo.userType !== 1) {
+    getUserInfo().then(userInfo => {
+      if (!userInfo || userInfo.userType !== 1) {
+        wx.showToast({
+          title: '您没有管理员权限',
+          icon: 'none'
+        });
+        setTimeout(() => {
+          wx.navigateBack();
+        }, 1500);
+      }
+    }).catch(err => {
+      console.error('获取用户信息失败', err);
       wx.showToast({
-        title: '您没有管理员权限',
+        title: '获取用户信息失败',
         icon: 'none'
       });
       setTimeout(() => {
         wx.navigateBack();
       }, 1500);
-    }
+    });
   },
   
   // 加载自习室数据
@@ -88,8 +98,8 @@ Page({
         const formattedRooms = records.map(room => {
           return {
             ...room,
-            openTime: room.openTime ? room.openTime.substring(0, 5) : '',
-            closeTime: room.closeTime ? room.closeTime.substring(0, 5) : ''
+            openTime: typeof room.openTime === 'string' && room.openTime ? room.openTime.substring(0, 5) : '',
+            closeTime: typeof room.closeTime === 'string' && room.closeTime ? room.closeTime.substring(0, 5) : ''
           };
         });
         
@@ -251,7 +261,7 @@ Page({
                 });
               } else {
                 wx.showToast({
-                  title: res.message || '删除失败',
+                  title: res.message || '操作失败',
                   icon: 'none'
                 });
               }
@@ -259,7 +269,7 @@ Page({
             .catch(err => {
               console.error('删除自习室失败', err);
               wx.showToast({
-                title: '删除失败，请重试',
+                title: '操作失败，请重试',
                 icon: 'none'
               });
             });
@@ -267,4 +277,4 @@ Page({
       }
     });
   }
-}) 
+}); 

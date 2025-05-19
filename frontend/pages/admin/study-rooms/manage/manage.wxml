@@ -18,9 +18,12 @@
   <!-- 管理列表 -->
   <view class="room-list" wx:if="{{rooms.length > 0}}">
     <view class="room-item" wx:for="{{rooms}}" wx:key="id">
-      <view class="room-info" bindtap="goToDetail" data-id="{{item.id}}">
-        <view class="room-name">{{item.name}}</view>
-        <view class="room-location">{{item.building}} {{item.floor}}楼 {{item.roomNumber}}</view>
+      <view class="room-header">
+        <!-- 状态标签与自习室标题分开布局 -->
+        <view class="room-title" bindtap="goToDetail" data-id="{{item.id}}">
+          <view class="room-name">{{item.name}}</view>
+          <view class="room-location">{{item.building}} {{item.floor}}楼 {{item.roomNumber}}</view>
+        </view>
         <view class="room-status {{item.isActive === 1 ? 'active' : 'inactive'}}">
           {{item.isActive === 1 ? '开放中' : '已关闭'}}
         </view>

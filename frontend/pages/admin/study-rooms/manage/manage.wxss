@@ -10,6 +10,8 @@
   display: flex;
   align-items: center;
   margin-bottom: 20rpx;
+  position: relative;
+  z-index: 10; /* 确保新增按钮始终位于最上层 */
 }
 
 .search-box {
@@ -44,6 +46,7 @@
   align-items: center;
   justify-content: center;
   font-size: 28rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.2);
 }
 
 /* 筛选栏 */
@@ -95,12 +98,20 @@
   margin-bottom: 20rpx;
   padding: 30rpx;
   box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  position: relative;
 }
 
-.room-info {
+/* 新增的头部布局 */
+.room-header {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 20rpx;
+}
+
+.room-title {
+  flex: 1;
+  margin-right: 20rpx;
 }
 
 .room-name {
@@ -116,12 +127,11 @@
 }
 
 .room-status {
-  position: absolute;
-  top: 30rpx;
-  right: 30rpx;
   padding: 6rpx 16rpx;
   border-radius: 20rpx;
   font-size: 24rpx;
+  flex-shrink: 0; /* 防止状态标签被压缩 */
+  align-self: flex-start; /* 保持在顶部对齐 */
 }
 
 .room-status.active {
