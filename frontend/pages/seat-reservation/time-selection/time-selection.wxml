@@ -2,7 +2,6 @@
   <!-- 头部信息 -->
   <view class="header">
     <view class="title">选择预约时间</view>
-    <view class="date">{{dateString}}</view>
   </view>
   
   <!-- 座位和自习室信息 -->
@@ -26,38 +25,62 @@
     </view>
   </view>
   
-  <!-- 时间段选择 -->
-  <view class="time-selection-section">
-    <view class="section-title">可选时间段</view>
-    <view class="time-slots" wx:if="{{!loading && availableSlots.length > 0}}">
-      <view 
-        class="time-slot {{item.selected ? 'selected' : ''}}" 
-        wx:for="{{availableSlots}}" 
-        wx:key="startTime" 
-        bindtap="selectTimeSlot"
-        data-index="{{index}}">
-        <text class="time">{{item.startTime}} - {{item.endTime}}</text>
-      </view>
-    </view>
-    
-    <!-- 无可用时间段 -->
-    <view class="empty-state" wx:if="{{!loading && availableSlots.length === 0}}">
-      <image src="/images/empty-slots.png" mode="aspectFit"></image>
-      <text>今日没有可用的时间段</text>
-    </view>
-    
-    <!-- 加载中 -->
-    <view class="loading-state" wx:if="{{loading}}">
-      <text>正在加载时间段...</text>
+  <!-- 日期选择 -->
+  <view class="selection-card">
+    <view class="section-title">选择日期</view>
+    <view class="date-picker-wrapper">
+      <picker mode="selector" range="{{dates}}" range-key="dateString" value="{{selectedDateIndex}}" bindchange="bindDateChange">
+        <view class="date-picker">
+          <text>{{dateString || '请选择日期'}}</text>
+          <image src="/images/arrow_down.png" class="picker-arrow"></image>
+        </view>
+      </picker>
     </view>
   </view>
   
-  <!-- 已选择的时间段 -->
-  <view class="selected-time" wx:if="{{selectedStartTime && selectedEndTime}}">
-    <view class="section-title">已选择</view>
-    <view class="selected-time-content">
-      <text>{{selectedStartTime ? (selectedStartTime.getHours() + ':' + (selectedStartTime.getMinutes() < 10 ? '0' : '') + selectedStartTime.getMinutes()) : ''}} - {{selectedEndTime ? (selectedEndTime.getHours() + ':' + (selectedEndTime.getMinutes() < 10 ? '0' : '') + selectedEndTime.getMinutes()) : ''}}</text>
-      <text class="duration">预约时长: {{selectedStartTime && selectedEndTime ? Math.round((selectedEndTime - selectedStartTime) / (1000 * 60 * 60) * 10) / 10 : 0}}小时</text>
+  <!-- 时间段选择 -->
+  <view class="selection-card">
+    <view class="section-title">选择时间段</view>
+    <view class="time-picker-container">
+      <view class="time-picker-item">
+        <text class="time-label">开始时间</text>
+        <!-- 根据是否是当天设置不同的开始时间范围限制 -->
+        <block wx:if="{{selectedDateIndex === 0}}">
+          <!-- 当天：不能早于当前时间，不能晚于关闭时间 -->
+          <picker mode="time" value="{{startTimeValue}}" start="{{startTimeValue}}" end="{{studyRoom.closeTime || '23:59'}}" bindchange="bindStartTimeChange">
+            <view class="time-picker">
+              <text>{{startTimeValue || '请选择'}}</text>
+              <image src="/images/arrow_down.png" class="picker-arrow"></image>
+            </view>
+          </picker>
+        </block>
+        <block wx:else>
+          <!-- 非当天：可以选择整个开放时间范围 -->
+          <picker mode="time" value="{{startTimeValue}}" start="{{studyRoom.openTime || '00:00'}}" end="{{studyRoom.closeTime || '23:59'}}" bindchange="bindStartTimeChange">
+            <view class="time-picker">
+              <text>{{startTimeValue || '请选择'}}</text>
+              <image src="/images/arrow_down.png" class="picker-arrow"></image>
+            </view>
+          </picker>
+        </block>
+      </view>
+      <view class="time-separator">至</view>
+      <view class="time-picker-item">
+        <text class="time-label">结束时间</text>
+        <!-- 结束时间必须晚于开始时间，不能晚于关闭时间 -->
+        <picker mode="time" value="{{endTimeValue}}" start="{{startTimeValue || studyRoom.openTime || '00:00'}}" end="{{studyRoom.closeTime || '23:59'}}" bindchange="bindEndTimeChange">
+          <view class="time-picker">
+            <text>{{endTimeValue || '请选择'}}</text>
+            <image src="/images/arrow_down.png" class="picker-arrow"></image>
+          </view>
+        </picker>
+      </view>
+    </view>
+    
+    <!-- 预约时长展示 -->
+    <view class="duration-display">
+      <text class="duration-text">预约时长：</text>
+      <text class="duration-value">约 {{startTimeValue && endTimeValue ? calculateDuration(startTimeValue, endTimeValue) : '0.0'}} 小时</text>
     </view>
   </view>
   
@@ -65,7 +88,7 @@
   <view class="rules-section">
     <view class="section-title">预约规则</view>
     <view class="rules-content">
-      <text>1. 每次预约时长不少于{{rules.minDuration}}小时，不超过{{rules.maxDuration}}小时</text>
+      <text>1. 每次预约时长不少于{{rules.minDuration}}小时</text>
       <text>2. 最多可提前{{rules.advanceDays}}天预约</text>
       <text>3. 预约成功后，请在预约开始时间后15分钟内完成签到</text>
       <text>4. 当日累计违约3次将被限制预约</text>
@@ -74,7 +97,7 @@
   
   <!-- 底部按钮 -->
   <view class="bottom-button">
-    <button class="submit-btn" bindtap="submitReservation" disabled="{{!selectedStartTime || !selectedEndTime}}">
+    <button class="submit-btn" bindtap="submitReservation" disabled="{{!startTimeValue || !endTimeValue}}">
       确认预约
     </button>
   </view>

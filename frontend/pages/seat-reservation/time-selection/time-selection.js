@@ -12,10 +12,15 @@ Page({
     selectedStartTime: null,
     selectedEndTime: null,
     dateString: '',
+    selectedDate: null, // 添加选择的日期
+    dates: [], // 添加日期选择列表
+    selectedDateIndex: 0, // 选中日期索引
+    startTimeValue: '', // 开始时间
+    endTimeValue: '', // 结束时间
     loading: true,
     rules: {
       minDuration: 1, // 最小预约时长（小时）
-      maxDuration: 4, // 最大预约时长（小时）
+      maxDuration: 24, // 最大预约时长不设上限（设置为24小时）
       advanceDays: 7 // 最多可提前预约天数
     }
   },
@@ -25,9 +30,20 @@ Page({
       title: '加载中...',
     });
     
+    // 生成可选择的日期列表（当前日期及未来6天）
+    const dates = [];
+    for (let i = 0; i < this.data.rules.advanceDays; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() + i);
+      dates.push({
+        date: new Date(date),
+        dateString: this.formatDate(date)
+      });
+    }
+    
     // 获取当前日期字符串
     const today = new Date();
-    const dateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const dateString = this.formatDate(today);
     
     // 获取页面参数
     if (options.roomId && options.seatId) {
@@ -42,7 +58,9 @@ Page({
         roomId: options.roomId,
         seatId: options.seatId,
         existingReservations: existingReservations,
-        dateString: dateString
+        dateString: dateString,
+        selectedDate: today,
+        dates: dates
       });
       
       this.loadStudyRoomInfo();
@@ -69,11 +87,45 @@ Page({
       },
       success(res) {
         if (res.data.code === 200) {
+          const studyRoom = res.data.data;
+          
+          // 格式化开放时间显示
+          if (studyRoom.openTime) {
+            if (typeof studyRoom.openTime === 'string') {
+              studyRoom.openTime = studyRoom.openTime.substring(0, 5);
+            } else if (studyRoom.openTime.toString) {
+              // 将逗号格式转换为冒号格式
+              const openTimeStr = studyRoom.openTime.toString();
+              if (openTimeStr.includes(',')) {
+                const parts = openTimeStr.split(',').map(Number);
+                studyRoom.openTime = `${String(parts[0]).padStart(2, '0')}:${String(parts[1]).padStart(2, '0')}`;
+              } else {
+                studyRoom.openTime = openTimeStr.substring(0, 5);
+              }
+            }
+          }
+          
+          if (studyRoom.closeTime) {
+            if (typeof studyRoom.closeTime === 'string') {
+              studyRoom.closeTime = studyRoom.closeTime.substring(0, 5);
+            } else if (studyRoom.closeTime.toString) {
+              // 将逗号格式转换为冒号格式
+              const closeTimeStr = studyRoom.closeTime.toString();
+              if (closeTimeStr.includes(',')) {
+                const parts = closeTimeStr.split(',').map(Number);
+                studyRoom.closeTime = `${String(parts[0]).padStart(2, '0')}:${String(parts[1]).padStart(2, '0')}`;
+              } else {
+                studyRoom.closeTime = closeTimeStr.substring(0, 5);
+              }
+            }
+          }
+          
           _this.setData({
-            studyRoom: res.data.data
+            studyRoom: studyRoom
           });
-          // 加载可用时间段
-          _this.generateAvailableTimeSlots();
+          
+          // 初始化时间选择器的值
+          _this.initTimeSelectors();
         } else {
           wx.showToast({
             title: res.data.message || '获取自习室信息失败',
@@ -218,11 +270,255 @@ Page({
     });
   },
   
+  // 格式化日期
+  formatDate: function(date) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  },
+  
   // 格式化时间
   formatTime: function(date) {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${hours}:${minutes}`;
+  },
+  
+  // 初始化时间选择器
+  initTimeSelectors: function() {
+    const { studyRoom, selectedDate } = this.data;
+    
+    if (!studyRoom.openTime || !studyRoom.closeTime) {
+      return;
+    }
+    
+    // 获取开放时间和关闭时间
+    let openTime = studyRoom.openTime;
+    let closeTime = studyRoom.closeTime;
+    
+    // 检查开放时间和关闭时间格式
+    if (!openTime.includes(':')) {
+      openTime = '08:00'; // 默认值
+    }
+    
+    if (!closeTime.includes(':')) {
+      closeTime = '22:00'; // 默认值
+    }
+    
+    // 如果是当天，则开始时间默认为当前时间
+    const today = new Date();
+    const isToday = selectedDate && 
+                    today.getFullYear() === selectedDate.getFullYear() &&
+                    today.getMonth() === selectedDate.getMonth() &&
+                    today.getDate() === selectedDate.getDate();
+    
+    if (isToday) {
+      // 获取当前精确时间
+      const now = new Date();
+      const currentHour = now.getHours();
+      const currentMinute = now.getMinutes();
+      
+      // 格式化当前时间，保持分钟不变
+      const currentTime = `${String(currentHour).padStart(2, '0')}:${String(currentMinute).padStart(2, '0')}`;
+      
+      // 解析开放时间
+      const [openHour, openMinute] = openTime.split(':').map(Number);
+      
+      // 转换为分钟进行比较
+      const openTotalMinutes = openHour * 60 + openMinute;
+      const currentTotalMinutes = currentHour * 60 + currentMinute;
+      
+      // 使用较晚的那个作为开始时间
+      if (currentTotalMinutes > openTotalMinutes) {
+        openTime = currentTime;
+      }
+      
+      // 设置结束时间为开始时间后2小时（默认值），但不超过关闭时间
+      const [closeHour, closeMinute] = closeTime.split(':').map(Number);
+      const closeTotalMinutes = closeHour * 60 + closeMinute;
+      
+      // 计算开始时间后2小时
+      let endTotalMinutes = Math.min(currentTotalMinutes + 120, closeTotalMinutes);
+      const endHour = Math.floor(endTotalMinutes / 60);
+      const endMinute = endTotalMinutes % 60;
+      
+      const suggestedEndTime = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`;
+      
+      // 更新结束时间，但确保不超过自习室关闭时间
+      closeTime = endTotalMinutes <= closeTotalMinutes ? suggestedEndTime : closeTime;
+    }
+    
+    this.setData({
+      startTimeValue: openTime,
+      endTimeValue: closeTime,
+      loading: false
+    });
+  },
+  
+  // 计算预约时长
+  calculateDuration: function(startTime, endTime) {
+    console.log('计算预约时长:', startTime, endTime); // 调试用
+    
+    if (!startTime || !endTime) {
+      console.log('缺少开始或结束时间');
+      return '0.0';
+    }
+    
+    try {
+      const [startHour, startMinute] = startTime.split(':').map(Number);
+      const [endHour, endMinute] = endTime.split(':').map(Number);
+      
+      // 验证解析出的是合法数值
+      if (isNaN(startHour) || isNaN(startMinute) || isNaN(endHour) || isNaN(endMinute)) {
+        console.log('时间格式不正确');
+        return '0.0';
+      }
+      
+      // 计算总分钟数
+      const startMinutes = startHour * 60 + startMinute;
+      const endMinutes = endHour * 60 + endMinute;
+      
+      // 如果结束时间小于开始时间，表示跨天，这里暂不处理跨天情况
+      if (endMinutes <= startMinutes) {
+        console.log('结束时间不能早于开始时间');
+        return '0.0';
+      }
+      
+      // 计算小时，保留一位小数
+      const hours = (endMinutes - startMinutes) / 60;
+      console.log('计算结果:', hours);
+      return hours.toFixed(1);
+    } catch (e) {
+      console.error('计算预约时长出错:', e);
+      return '0.0';
+    }
+  },
+  
+  // 选择日期
+  bindDateChange: function(e) {
+    const index = Number(e.detail.value);
+    const selectedDate = this.data.dates[index].date;
+    
+    // 检查日期是否实际更改
+    if (this.data.selectedDateIndex === index) {
+      return; // 没有变化，直接返回
+    }
+    
+    this.setData({
+      selectedDateIndex: index,
+      selectedDate: selectedDate,
+      dateString: this.data.dates[index].dateString
+    }, () => {
+      // 日期改变时，重新初始化时间选择器，但先等待数据更新完成
+      setTimeout(() => {
+        this.initTimeSelectors();
+      }, 50);
+    });
+  },
+  
+  // 选择开始时间
+  bindStartTimeChange: function(e) {
+    const newStartTime = e.detail.value;
+    
+    // 获取当前的结束时间
+    let { endTimeValue, studyRoom } = this.data;
+    
+    // 检查开始时间是否在自习室开放时间范围内
+    const [openHour, openMinute] = (studyRoom.openTime || '08:00').split(':').map(Number);
+    const [closeHour, closeMinute] = (studyRoom.closeTime || '22:00').split(':').map(Number);
+    const [startHour, startMinute] = newStartTime.split(':').map(Number);
+    
+    const openTotalMinutes = openHour * 60 + openMinute;
+    const closeTotalMinutes = closeHour * 60 + closeMinute;
+    const startTotalMinutes = startHour * 60 + startMinute;
+    
+    // 如果开始时间早于开放时间或晚于关闭时间，不更新值
+    if (startTotalMinutes < openTotalMinutes || startTotalMinutes >= closeTotalMinutes) {
+      wx.showToast({
+        title: `请在${studyRoom.openTime}-${studyRoom.closeTime}范围内选择`,
+        icon: 'none'
+      });
+      return;
+    }
+    
+    // 如果开始时间晚于或等于结束时间，则将结束时间设置为开始时间之后的一小时
+    if (endTimeValue) {
+      const [endHour, endMinute] = endTimeValue.split(':').map(Number);
+      const endTotalMinutes = endHour * 60 + endMinute;
+      
+      if (startTotalMinutes >= endTotalMinutes) {
+        // 将结束时间设置为开始时间之后的一小时
+        let newEndMinutes = startTotalMinutes + 60;
+        
+        // 确保不超过关闭时间
+        if (newEndMinutes > closeTotalMinutes) {
+          newEndMinutes = closeTotalMinutes;
+        }
+        
+        const newEndHour = Math.floor(newEndMinutes / 60);
+        const newEndMinute = newEndMinutes % 60;
+        
+        endTimeValue = `${String(newEndHour).padStart(2, '0')}:${String(newEndMinute).padStart(2, '0')}`;
+      }
+    } else {
+      // 如果没有结束时间，设置为开始时间后一小时，但不超过关闭时间
+      let newEndMinutes = startTotalMinutes + 60;
+      
+      // 确保不超过关闭时间
+      if (newEndMinutes > closeTotalMinutes) {
+        newEndMinutes = closeTotalMinutes;
+      }
+      
+      const newEndHour = Math.floor(newEndMinutes / 60);
+      const newEndMinute = newEndMinutes % 60;
+      
+      endTimeValue = `${String(newEndHour).padStart(2, '0')}:${String(newEndMinute).padStart(2, '0')}`;
+    }
+    
+    this.setData({
+      startTimeValue: newStartTime,
+      endTimeValue: endTimeValue
+    });
+  },
+  
+  // 选择结束时间
+  bindEndTimeChange: function(e) {
+    const newEndTime = e.detail.value;
+    const { startTimeValue, studyRoom } = this.data;
+    
+    // 获取开放时间和关闭时间
+    const [closeHour, closeMinute] = (studyRoom.closeTime || '22:00').split(':').map(Number);
+    const closeTotalMinutes = closeHour * 60 + closeMinute;
+    
+    // 解析新的结束时间
+    const [endHour, endMinute] = newEndTime.split(':').map(Number);
+    const endTotalMinutes = endHour * 60 + endMinute;
+    
+    // 检查是否超过关闭时间
+    if (endTotalMinutes > closeTotalMinutes) {
+      wx.showToast({
+        title: `结束时间不能超过${studyRoom.closeTime}`,
+        icon: 'none'
+      });
+      return;
+    }
+    
+    // 检查结束时间是否早于开始时间
+    if (startTimeValue) {
+      const [startHour, startMinute] = startTimeValue.split(':').map(Number);
+      const startTotalMinutes = startHour * 60 + startMinute;
+      
+      if (endTotalMinutes <= startTotalMinutes) {
+        wx.showToast({
+          title: '结束时间必须晚于开始时间',
+          icon: 'none'
+        });
+        return;
+      }
+    }
+    
+    // 验证通过，更新结束时间
+    this.setData({
+      endTimeValue: newEndTime
+    });
   },
   
   // 选择时间段
@@ -300,18 +596,80 @@ Page({
   
   // 提交预约
   submitReservation: function() {
-    const { roomId, seatId, selectedStartTime, selectedEndTime } = this.data;
+    const { roomId, seatId, selectedDate, startTimeValue, endTimeValue, studyRoom } = this.data;
     
-    if (!selectedStartTime || !selectedEndTime) {
+    if (!selectedDate || !startTimeValue || !endTimeValue) {
       wx.showToast({
-        title: '请选择时间段',
+        title: '请选择日期和时间',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    // 验证时间格式
+    if (!startTimeValue.includes(':') || !endTimeValue.includes(':')) {
+      wx.showToast({
+        title: '时间格式错误，请重新选择',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    // 解析时间
+    const [startHour, startMinute] = startTimeValue.split(':').map(Number);
+    const [endHour, endMinute] = endTimeValue.split(':').map(Number);
+    
+    // 安全检查：验证时间是否合法
+    if (isNaN(startHour) || isNaN(startMinute) || isNaN(endHour) || isNaN(endMinute)) {
+      wx.showToast({
+        title: '时间格式错误，请重新选择',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    // 构建开始时间和结束时间
+    const startTime = new Date(selectedDate);
+    const endTime = new Date(selectedDate);
+    
+    // 安全设置时间
+    try {
+      startTime.setHours(startHour, startMinute, 0, 0);
+      endTime.setHours(endHour, endMinute, 0, 0);
+    } catch (e) {
+      console.error('设置时间出错:', e);
+      wx.showToast({
+        title: '时间设置错误，请重新选择',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    // 检查时间是否合法
+    if (startTime >= endTime) {
+      wx.showToast({
+        title: '开始时间必须早于结束时间',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    // 当前时间（只需要确保是未来时间即可）
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - 5);
+
+    
+    // 检查是否是未来时间
+    if (startTime <= now) {
+      wx.showToast({
+        title: '预约时间必须是未来时间',
         icon: 'none'
       });
       return;
     }
     
     // 计算预约时长（小时）
-    const hours = (selectedEndTime - selectedStartTime) / (1000 * 60 * 60);
+    const hours = (endTime - startTime) / (1000 * 60 * 60);
     
     if (hours < this.data.rules.minDuration) {
       wx.showToast({
@@ -321,17 +679,50 @@ Page({
       return;
     }
     
-    if (hours > this.data.rules.maxDuration) {
+    // 预约时长不设上限
+    // if (hours > this.data.rules.maxDuration) {
+    //   wx.showToast({
+    //     title: `预约时长不能超过${this.data.rules.maxDuration}小时`,
+    //     icon: 'none'
+    //   });
+    //   return;
+    // }
+    
+    // 确保时间可以正确序列化并传递到下一个页面
+    try {
+      // 直接格式化为本地时间字符串（YYYY-MM-DDTHH:MM:SS格式），不再使用toISOString
+      const formatLocalTime = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+      };
+      
+      const startTimeLocal = formatLocalTime(startTime);
+      const endTimeLocal = formatLocalTime(endTime);
+
+      // 在跳转前打印日志，帮助调试
+      console.log('提交预约时间:', {
+        startTimeStr: startTimeLocal,
+        endTimeStr: endTimeLocal,
+        startTimeObj: startTime.toString(),
+        endTimeObj: endTime.toString()
+      });
+      
+      // 跳转到预约确认页面 - 使用encodeURIComponent确保URL参数正确传递
+      wx.navigateTo({
+        url: `/pages/seat-reservation/confirm-reservation/confirm-reservation?roomId=${roomId}&seatId=${seatId}&startTime=${encodeURIComponent(startTimeLocal)}&endTime=${encodeURIComponent(endTimeLocal)}`
+      });
+    } catch (e) {
+      console.error('序列化时间出错:', e);
       wx.showToast({
-        title: `预约时长不能超过${this.data.rules.maxDuration}小时`,
+        title: '无效的时间值，请重新选择',
         icon: 'none'
       });
       return;
     }
-    
-    // 跳转到预约确认页面
-    wx.navigateTo({
-      url: `/pages/seat-reservation/confirm-reservation/confirm-reservation?roomId=${roomId}&seatId=${seatId}&startTime=${selectedStartTime.toISOString()}&endTime=${selectedEndTime.toISOString()}`
-    });
   }
 }) 
