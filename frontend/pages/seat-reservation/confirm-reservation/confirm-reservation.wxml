@@ -35,15 +35,11 @@
       <view class="info-title">时间信息</view>
       <view class="info-item">
         <text class="label">开始时间:</text>
-        <text class="value">{{formatDateTime(startTime)}}</text>
+        <text class="value">{{formattedStartTime}}</text>
       </view>
       <view class="info-item">
         <text class="label">结束时间:</text>
-        <text class="value">{{formatDateTime(endTime)}}</text>
-      </view>
-      <view class="info-item">
-        <text class="label">预约时长:</text>
-        <text class="value">{{getDuration()}}小时</text>
+        <text class="value">{{formattedEndTime}}</text>
       </view>
     </view>
     

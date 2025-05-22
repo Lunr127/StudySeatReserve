@@ -30,19 +30,33 @@ Page({
           endTime: decodedEndTime
         });
         
+        // 尝试直接将字符串转为Date对象
         const startTime = new Date(decodedStartTime);
         const endTime = new Date(decodedEndTime);
         
-        // 检查日期是否有效
-        if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
-          throw new Error('无效的日期格式');
-        }
+        console.log('解析后的日期对象:', {
+          startTime: startTime.toString(),
+          startTimeValid: !isNaN(startTime.getTime()),
+          endTime: endTime.toString(),
+          endTimeValid: !isNaN(endTime.getTime())
+        });
+        
+        // 在设置数据之前先生成格式化的时间显示字符串
+        const formattedStartTime = this.formatDateTime(startTime);
+        const formattedEndTime = this.formatDateTime(endTime);
+        
+        console.log('格式化后的时间显示:', {
+          formattedStartTime: formattedStartTime,
+          formattedEndTime: formattedEndTime
+        });
         
         this.setData({
           roomId: options.roomId,
           seatId: options.seatId,
           startTime: startTime,
-          endTime: endTime
+          endTime: endTime,
+          formattedStartTime: formattedStartTime,  // 添加格式化后的字符串
+          formattedEndTime: formattedEndTime       // 添加格式化后的字符串
         });
         
         this.loadStudyRoomInfo();
@@ -137,21 +151,35 @@ Page({
   // 格式化时间
   formatDateTime: function(date) {
     try {
-      // 确保date是有效的Date对象
-      if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
-        console.warn('无效的日期对象:', date);
-        return '无效日期';
+      // 检查是否是有效日期对象
+      if (date && date instanceof Date && !isNaN(date.getTime())) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        
+        return `${year}-${month}-${day} ${hours}:${minutes}`;
       }
       
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
+      // 如果不是日期对象，尝试将其解析为日期
+      if (typeof date === 'string') {
+        const parsedDate = new Date(date);
+        if (!isNaN(parsedDate.getTime())) {
+          const year = parsedDate.getFullYear();
+          const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+          const day = String(parsedDate.getDate()).padStart(2, '0');
+          const hours = String(parsedDate.getHours()).padStart(2, '0');
+          const minutes = String(parsedDate.getMinutes()).padStart(2, '0');
+          
+          return `${year}-${month}-${day} ${hours}:${minutes}`;
+        }
+      }
       
-      return `${year}-${month}-${day} ${hours}:${minutes}`;
+      console.warn('无效的日期对象:', date);
+      return '无效日期';
     } catch (e) {
-      console.error('格式化日期时间出错:', e);
+      console.error('格式化日期时间出错:', e, '日期:', date);
       return '日期格式错误';
     }
   },

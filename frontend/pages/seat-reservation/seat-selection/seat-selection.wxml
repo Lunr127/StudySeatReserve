@@ -34,7 +34,7 @@
   
   <!-- 空状态 -->
   <view class="empty-state" wx:if="{{!loading && seats.length === 0}}">
-    <image src="/images/empty-seats.png" mode="aspectFit"></image>
+    <image src="/images/empty-slots.png" mode="aspectFit"></image>
     <text>没有找到符合条件的座位</text>
   </view>
   

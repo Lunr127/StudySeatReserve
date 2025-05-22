@@ -712,9 +712,18 @@ Page({
         endTimeObj: endTime.toString()
       });
       
+      // 确保时间格式一致，确保日期能够正确传递 - 使用更可靠的格式
+      const startTimeStr = `${startTime.getFullYear()}-${String(startTime.getMonth() + 1).padStart(2, '0')}-${String(startTime.getDate()).padStart(2, '0')}T${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}:00`;
+      const endTimeStr = `${endTime.getFullYear()}-${String(endTime.getMonth() + 1).padStart(2, '0')}-${String(endTime.getDate()).padStart(2, '0')}T${String(endTime.getHours()).padStart(2, '0')}:${String(endTime.getMinutes()).padStart(2, '0')}:00`;
+
+      console.log('最终提交的时间格式:', {
+        startTime: startTimeStr,
+        endTime: endTimeStr
+      });
+      
       // 跳转到预约确认页面 - 使用encodeURIComponent确保URL参数正确传递
       wx.navigateTo({
-        url: `/pages/seat-reservation/confirm-reservation/confirm-reservation?roomId=${roomId}&seatId=${seatId}&startTime=${encodeURIComponent(startTimeLocal)}&endTime=${encodeURIComponent(endTimeLocal)}`
+        url: `/pages/seat-reservation/confirm-reservation/confirm-reservation?roomId=${roomId}&seatId=${seatId}&startTime=${encodeURIComponent(startTimeStr)}&endTime=${encodeURIComponent(endTimeStr)}`
       });
     } catch (e) {
       console.error('序列化时间出错:', e);

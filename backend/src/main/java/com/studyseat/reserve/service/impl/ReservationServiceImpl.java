@@ -92,9 +92,7 @@ public class ReservationServiceImpl implements ReservationService {
         if (hours < 1) {
             throw new BusinessException("预约时长不能少于1小时");
         }
-        if (hours > 4) {
-            throw new BusinessException("预约时长不能超过4小时");
-        }
+        // 已移除预约时长上限限制
         
         // 检查学生是否有权限预约该自习室
         Student student = studentMapper.selectById(studentId);
@@ -195,9 +193,7 @@ public class ReservationServiceImpl implements ReservationService {
         
         // 检查延长后的预约时长
         long hours = reservation.getStartTime().until(endTime, ChronoUnit.HOURS);
-        if (hours > 8) {
-            throw new BusinessException("预约总时长不能超过8小时");
-        }
+        // 已移除预约延长总时长上限限制
         
         // 检查延长的时间段内座位是否已被预约
         if (!checkSeatAvailable(reservation.getSeatId(), reservation.getEndTime(), endTime)) {
