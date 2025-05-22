@@ -85,18 +85,54 @@ Page({
           if (roomData.openTime) {
             // 处理可能的不同类型
             if (typeof roomData.openTime === 'string') {
-              openTimeStr = roomData.openTime.substring(0, 5);
+              // 检查是否已经是 HH:MM 格式
+              if (roomData.openTime.includes(':')) {
+                openTimeStr = roomData.openTime.substring(0, 5);
+              } else if (roomData.openTime.includes(',')) {
+                // 将 "8,0" 转换为 "08:00" 格式
+                const [hours, minutes] = roomData.openTime.split(',').map(Number);
+                openTimeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+              } else {
+                openTimeStr = roomData.openTime.substring(0, 5);
+              }
             } else if (roomData.openTime.toString) {
-              openTimeStr = roomData.openTime.toString().substring(0, 5);
+              const timeStr = roomData.openTime.toString();
+              // 检查是否包含逗号（如 "8,0"）
+              if (timeStr.includes(',')) {
+                const [hours, minutes] = timeStr.split(',').map(Number);
+                openTimeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+              } else if (timeStr.includes(':')) {
+                openTimeStr = timeStr.substring(0, 5);
+              } else {
+                openTimeStr = timeStr.substring(0, 5);
+              }
             }
           }
           
           if (roomData.closeTime) {
             // 处理可能的不同类型
             if (typeof roomData.closeTime === 'string') {
-              closeTimeStr = roomData.closeTime.substring(0, 5);
+              // 检查是否已经是 HH:MM 格式
+              if (roomData.closeTime.includes(':')) {
+                closeTimeStr = roomData.closeTime.substring(0, 5);
+              } else if (roomData.closeTime.includes(',')) {
+                // 将 "22,0" 转换为 "22:00" 格式
+                const [hours, minutes] = roomData.closeTime.split(',').map(Number);
+                closeTimeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+              } else {
+                closeTimeStr = roomData.closeTime.substring(0, 5);
+              }
             } else if (roomData.closeTime.toString) {
-              closeTimeStr = roomData.closeTime.toString().substring(0, 5);
+              const timeStr = roomData.closeTime.toString();
+              // 检查是否包含逗号（如 "22,0"）
+              if (timeStr.includes(',')) {
+                const [hours, minutes] = timeStr.split(',').map(Number);
+                closeTimeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+              } else if (timeStr.includes(':')) {
+                closeTimeStr = timeStr.substring(0, 5);
+              } else {
+                closeTimeStr = timeStr.substring(0, 5);
+              }
             }
           }
           
