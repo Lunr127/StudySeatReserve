@@ -36,7 +36,33 @@ const userApi = {
    * 获取当前用户信息
    * @returns {Promise} Promise对象
    */
-  getUserInfo: () => get('/api/user/info')
+  getUserInfo: () => get('/api/user/info'),
+
+  /**
+   * 获取用户违约记录
+   * @param {Object} params 查询参数
+   * @returns {Promise} Promise对象
+   */
+  getUserViolations: (params) => get('/api/user/violations', params),
+
+  /**
+   * 获取用户违约统计
+   * @returns {Promise} Promise对象
+   */
+  getUserViolationCount: () => get('/api/user/violation-count'),
+
+  /**
+   * 获取用户偏好设置
+   * @returns {Promise} Promise对象
+   */
+  getUserPreferences: () => get('/api/user/preferences'),
+
+  /**
+   * 更新用户偏好设置
+   * @param {Object} data 偏好设置数据
+   * @returns {Promise} Promise对象
+   */
+  updateUserPreferences: (data) => put('/api/user/preferences', data)
 };
 
 /**

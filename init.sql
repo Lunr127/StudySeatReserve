@@ -139,16 +139,33 @@ CREATE TABLE IF NOT EXISTS `violation` (
     `student_id` BIGINT NOT NULL COMMENT '学生ID',
     `reservation_id` BIGINT NOT NULL COMMENT '预约ID',
     `violation_type` TINYINT NOT NULL COMMENT '违约类型：1-未签到，2-迟到，3-提前离开',
-    `description` VARCHAR(255) COMMENT '违约描述',
+    `description` TEXT COMMENT '违约描述',
     `is_deleted` TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
     KEY `idx_student_id` (`student_id`),
     KEY `idx_reservation_id` (`reservation_id`),
+    KEY `idx_create_time` (`create_time`),
     CONSTRAINT `fk_violation_student` FOREIGN KEY (`student_id`) REFERENCES `student` (`id`) ON DELETE CASCADE,
     CONSTRAINT `fk_violation_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='违约记录表';
+
+-- 用户偏好设置表：存储用户偏好设置
+CREATE TABLE IF NOT EXISTS `user_preference` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '偏好设置ID',
+    `user_id` BIGINT NOT NULL COMMENT '用户ID',
+    `enable_notification` BOOLEAN NOT NULL DEFAULT TRUE COMMENT '是否启用消息通知',
+    `enable_auto_cancel` BOOLEAN NOT NULL DEFAULT FALSE COMMENT '是否启用自动取消预约',
+    `auto_cancel_minutes` INT NOT NULL DEFAULT 15 COMMENT '自动取消时间（分钟）',
+    `preferences` TEXT COMMENT '其他偏好设置（JSON格式）',
+    `is_deleted` TINYINT DEFAULT 0 COMMENT '是否删除：0-未删除，1-已删除',
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_user_preference_user_id` (`user_id`),
+    CONSTRAINT `fk_user_preference_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='用户偏好设置表';
 
 -- 系统参数表：存储系统配置参数
 CREATE TABLE IF NOT EXISTS `system_param` (
@@ -283,4 +300,25 @@ INSERT INTO `system_param` (`param_key`, `param_value`, `description`) VALUES
 ('checkin_timeout', '15', '签到超时时间(分钟)'),
 ('blacklist_days', '7', '违约黑名单天数'),
 ('max_daily_reservations', '2', '每日最大预约次数'),
-('violation_threshold', '3', '违约次数阈值，达到后将被限制预约'); 
+('violation_threshold', '3', '违约次数阈值，达到后将被限制预约');
+
+-- 插入一些测试预约记录（为违约记录做准备）
+INSERT INTO `reservation` (`student_id`, `seat_id`, `start_time`, `end_time`, `status`) VALUES
+(1, 1, '2024-01-15 09:00:00', '2024-01-15 11:00:00', 4),  -- 已违约
+(1, 2, '2024-01-16 14:00:00', '2024-01-16 16:00:00', 4),  -- 已违约
+(2, 3, '2024-01-17 10:00:00', '2024-01-17 12:00:00', 4);  -- 已违约
+
+-- 插入测试违约记录数据
+INSERT INTO `violation` (`student_id`, `reservation_id`, `violation_type`, `description`) VALUES
+(1, 1, 1, '预约后未在规定时间内签到'),
+(1, 2, 2, '预约时间开始后20分钟才签到'),
+(2, 3, 3, '预约时间未结束就提前离开');
+
+-- 为所有用户创建默认偏好设置
+INSERT INTO `user_preference` (`user_id`, `enable_notification`, `enable_auto_cancel`, `auto_cancel_minutes`, `preferences`) VALUES
+(1, TRUE, FALSE, 15, '{}'),
+(2, TRUE, FALSE, 15, '{}'),
+(3, TRUE, FALSE, 15, '{}'),
+(4, TRUE, FALSE, 15, '{}'),
+(5, TRUE, FALSE, 15, '{}'),
+(6, TRUE, FALSE, 15, '{}'); 

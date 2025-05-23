@@ -1,4 +1,5 @@
 const app = getApp();
+const { userApi } = require('../../../utils/api');
 
 Page({
   data: {
@@ -28,41 +29,57 @@ Page({
       loading: !this.data.loadingMore
     });
 
-    // 模拟违约记录数据，实际应调用后端API
-    setTimeout(() => {
-      const mockData = [
-        {
-          id: 1,
-          reservationId: 101,
-          studyRoomName: '中心图书馆一楼自习室',
-          seatNumber: 'A12',
-          violationType: 1, // 1-未签到，2-迟到，3-提前离开
-          violationTypeText: '未签到',
-          reservationTime: '2023-10-15 14:00-16:00',
-          description: '预约后未在规定时间内签到',
-          createTime: '2023-10-15 14:15'
-        },
-        {
-          id: 2,
-          reservationId: 102,
-          studyRoomName: '工学院自习室',
-          seatNumber: 'B05',
-          violationType: 2,
-          violationTypeText: '迟到',
-          reservationTime: '2023-10-12 09:00-11:00',
-          description: '预约时间开始后20分钟才签到',
-          createTime: '2023-10-12 09:20'
-        }
-      ];
-
+    // 调用后端API获取违约记录
+    userApi.getUserViolations({
+      current: this.data.currentPage,
+      size: this.data.pageSize
+    }).then(res => {
+      if (res.code === 200) {
+        const pageData = res.data;
+        const newData = pageData.records || [];
+        
+        // 处理违约类型文字描述
+        const processedData = newData.map(item => {
+          return {
+            ...item,
+            violationTypeText: this.getViolationTypeText(item.violationType),
+            createTime: this.formatDateTime(item.createTime)
+          };
+        });
+        
+        // 判断是否还有更多数据
+        const hasMoreData = this.data.currentPage < pageData.pages;
+        
+        this.setData({
+          violationList: this.data.currentPage === 1 ? processedData : [...this.data.violationList, ...processedData],
+          loading: false,
+          loadingMore: false,
+          isEmpty: processedData.length === 0 && this.data.currentPage === 1,
+          hasMoreData
+        });
+      } else {
+        wx.showToast({
+          title: res.message || '获取违约记录失败',
+          icon: 'none'
+        });
+        this.setData({
+          loading: false,
+          loadingMore: false,
+          isEmpty: true
+        });
+      }
+    }).catch(err => {
+      console.error('获取违约记录错误:', err);
+      wx.showToast({
+        title: '网络错误',
+        icon: 'error'
+      });
       this.setData({
-        violationList: this.data.currentPage === 1 ? mockData : [...this.data.violationList, ...mockData],
         loading: false,
         loadingMore: false,
-        isEmpty: mockData.length === 0,
-        hasMoreData: mockData.length >= this.data.pageSize
+        isEmpty: true
       });
-    }, 1000);
+    });
   },
 
   /**
@@ -139,7 +156,20 @@ Page({
   },
 
   /**
-   * 获取违约类型样式
+   * 获取违约类型文字描述
+   */
+  getViolationTypeText: function(type) {
+    const typeMap = {
+      1: '未签到',
+      2: '迟到', 
+      3: '提前离开'
+    };
+    
+    return typeMap[type] || '未知';
+  },
+
+  /**
+   * 获取违约类型样式类
    */
   getViolationTypeClass: function(type) {
     const typeMap = {
@@ -149,5 +179,21 @@ Page({
     };
     
     return typeMap[type] || '';
+  },
+
+  /**
+   * 格式化时间
+   */
+  formatDateTime: function(dateTimeStr) {
+    if (!dateTimeStr) return '';
+    
+    const date = new Date(dateTimeStr);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
   }
 }); 

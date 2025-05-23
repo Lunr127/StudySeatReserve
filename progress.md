@@ -855,9 +855,23 @@
   - 统一了ID参数处理，防止JavaScript大整数精度问题
   - 添加了缺失的API方法（getCurrentReservations、extendReservation等）
   - 完善了错误处理和参数传递
-- [ ] 后端：实现个人预约历史查询
-- [ ] 后端：实现违约记录查询
-- [ ] 后端：实现个人偏好设置
+  - 添加了个人中心相关API（违约记录、用户偏好设置）
+- [x] 后端：实现个人预约历史查询
+  - 通过现有的ReservationService已实现预约历史查询功能
+  - 支持分页查询和状态筛选
+  - 前端已集成相关API调用
+- [x] 后端：实现违约记录查询
+  - 创建了Violation实体类和ViolationVO视图对象
+  - 实现了ViolationMapper接口和XML配置
+  - 创建了ViolationService接口和ViolationServiceImpl实现类
+  - 在UserController中添加了违约记录查询接口
+  - 支持分页查询和违约统计功能
+- [x] 后端：实现个人偏好设置
+  - 创建了UserPreference实体类和相关VO、DTO对象
+  - 实现了UserPreferenceMapper接口
+  - 创建了UserPreferenceService接口和UserPreferenceServiceImpl实现类
+  - 在UserController中添加了偏好设置的获取和更新接口
+  - 支持自动创建默认偏好设置
 - [ ] 单元测试：个人中心服务测试
 - [ ] 集成测试：个人中心功能测试
 

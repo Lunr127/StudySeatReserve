@@ -162,6 +162,17 @@ Page({
     }).catch(err => {
       console.error('获取已完成预约失败:', err);
     });
+
+    // 获取违约次数
+    userApi.getUserViolationCount().then(res => {
+      if (res.code === 200) {
+        this.setData({
+          'statistics.violationCount': res.data || 0
+        });
+      }
+    }).catch(err => {
+      console.error('获取违约统计失败:', err);
+    });
   },
 
   /**
