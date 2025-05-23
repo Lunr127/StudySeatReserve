@@ -1,4 +1,5 @@
 const app = getApp();
+const { reservationApi } = require('../../../utils/api');
 
 Page({
   data: {
@@ -47,52 +48,42 @@ Page({
   
   // 加载当前预约
   loadCurrentReservations: function() {
-    const _this = this;
-    
     this.setData({
       loading: true
     });
     
-    wx.request({
-      url: `${app.globalData.baseUrl}/api/reservations/current`,
-      method: 'GET',
-      header: {
-        'Authorization': `Bearer ${wx.getStorageSync('token')}`
-      },
-      success(res) {
-        if (res.data.code === 200) {
-          _this.setData({
-            currentReservations: res.data.data || [],
-            loading: false,
-            refreshing: false
-          });
-        } else {
-          wx.showToast({
-            title: res.data.message || '获取当前预约失败',
-            icon: 'none'
-          });
-          _this.setData({
-            loading: false,
-            refreshing: false
-          });
-        }
-      },
-      fail() {
-        wx.showToast({
-          title: '网络错误',
-          icon: 'error'
+    reservationApi.getCurrentReservations().then(res => {
+      if (res.code === 200) {
+        this.setData({
+          currentReservations: res.data || [],
+          loading: false,
+          refreshing: false
         });
-        _this.setData({
+      } else {
+        wx.showToast({
+          title: res.message || '获取当前预约失败',
+          icon: 'none'
+        });
+        this.setData({
           loading: false,
           refreshing: false
         });
       }
+    }).catch(err => {
+      console.error('获取当前预约错误:', err);
+      wx.showToast({
+        title: '网络错误',
+        icon: 'error'
+      });
+      this.setData({
+        loading: false,
+        refreshing: false
+      });
     });
   },
   
   // 加载历史预约
   loadHistoryReservations: function() {
-    const _this = this;
     const { currentPage, pageSize, historyReservations } = this.data;
     
     this.setData({
@@ -100,55 +91,48 @@ Page({
       loadingMore: this.data.loadingMore
     });
     
-    wx.request({
-      url: `${app.globalData.baseUrl}/api/reservations`,
-      method: 'GET',
-      data: {
-        current: currentPage,
-        size: pageSize,
-        status: [0, 3, 4] // 已取消、已完成、已违约
-      },
-      header: {
-        'Authorization': `Bearer ${wx.getStorageSync('token')}`
-      },
-      success(res) {
-        if (res.data.code === 200) {
-          const newData = res.data.data.records || [];
-          
-          // 判断是否还有更多数据
-          const hasMoreData = currentPage < res.data.data.pages;
-          
-          _this.setData({
-            historyReservations: currentPage === 1 ? newData : [...historyReservations, ...newData],
-            totalPages: res.data.data.pages || 1,
-            loading: false,
-            refreshing: false,
-            loadingMore: false,
-            hasMoreData
-          });
-        } else {
-          wx.showToast({
-            title: res.data.message || '获取历史预约失败',
-            icon: 'none'
-          });
-          _this.setData({
-            loading: false,
-            refreshing: false,
-            loadingMore: false
-          });
-        }
-      },
-      fail() {
-        wx.showToast({
-          title: '网络错误',
-          icon: 'error'
+    reservationApi.getReservations({
+      current: currentPage,
+      size: pageSize,
+      status: [0, 3, 4] // 已取消、已完成、已违约
+    }).then(res => {
+      if (res.code === 200) {
+        const pageData = res.data;
+        const newData = pageData.records || [];
+        
+        // 判断是否还有更多数据
+        const hasMoreData = currentPage < pageData.pages;
+        
+        this.setData({
+          historyReservations: currentPage === 1 ? newData : [...historyReservations, ...newData],
+          totalPages: pageData.pages || 1,
+          loading: false,
+          refreshing: false,
+          loadingMore: false,
+          hasMoreData
         });
-        _this.setData({
+      } else {
+        wx.showToast({
+          title: res.message || '获取历史预约失败',
+          icon: 'none'
+        });
+        this.setData({
           loading: false,
           refreshing: false,
           loadingMore: false
         });
       }
+    }).catch(err => {
+      console.error('获取历史预约错误:', err);
+      wx.showToast({
+        title: '网络错误',
+        icon: 'error'
+      });
+      this.setData({
+        loading: false,
+        refreshing: false,
+        loadingMore: false
+      });
     });
   },
   
@@ -204,36 +188,29 @@ Page({
       title: '取消中...',
     });
     
-    wx.request({
-      url: `${app.globalData.baseUrl}/api/reservations/${id}/cancel`,
-      method: 'POST',
-      header: {
-        'Authorization': `Bearer ${wx.getStorageSync('token')}`
-      },
-      success: (res) => {
-        wx.hideLoading();
-        
-        if (res.data.code === 200) {
-          wx.showToast({
-            title: '取消成功',
-            icon: 'success'
-          });
-          // 刷新列表
-          this.refreshCurrentReservations();
-        } else {
-          wx.showToast({
-            title: res.data.message || '取消失败',
-            icon: 'none'
-          });
-        }
-      },
-      fail: () => {
-        wx.hideLoading();
+    reservationApi.cancelReservation(id).then(res => {
+      wx.hideLoading();
+      
+      if (res.code === 200) {
         wx.showToast({
-          title: '网络错误',
-          icon: 'error'
+          title: '取消成功',
+          icon: 'success'
+        });
+        // 刷新列表
+        this.refreshCurrentReservations();
+      } else {
+        wx.showToast({
+          title: res.message || '取消失败',
+          icon: 'none'
         });
       }
+    }).catch(err => {
+      wx.hideLoading();
+      console.error('取消预约错误:', err);
+      wx.showToast({
+        title: '网络错误',
+        icon: 'error'
+      });
     });
   },
   

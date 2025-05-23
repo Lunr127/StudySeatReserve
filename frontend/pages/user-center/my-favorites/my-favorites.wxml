@@ -1,0 +1,58 @@
+<view class="container">
+  <view class="header">
+    <view class="title">我的收藏</view>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-text">加载中...</view>
+  </view>
+
+  <!-- 收藏列表 -->
+  <view wx:elif="{{!isEmpty}}" class="favorite-list">
+    <view 
+      wx:for="{{favoriteList}}" 
+      wx:key="id" 
+      class="favorite-item"
+      data-favorite-type="{{item.favoriteType}}"
+      data-study-room-id="{{item.studyRoomId}}"
+      data-seat-id="{{item.seatId}}"
+      bindtap="viewFavoriteDetail"
+    >
+      <view class="favorite-content">
+        <view class="favorite-icon">
+          <image 
+            src="{{item.favoriteType === 1 ? '/images/room.png' : '/images/seat.png'}}" 
+            class="icon"
+          ></image>
+        </view>
+        <view class="favorite-info">
+          <view class="favorite-title">
+            {{item.favoriteType === 1 ? item.studyRoomName : item.seatNumber}}
+          </view>
+          <view class="favorite-subtitle">
+            {{item.favoriteType === 1 ? item.studyRoomLocation : item.studyRoomName}}
+          </view>
+          <view class="favorite-time">收藏于 {{item.createTime}}</view>
+        </view>
+      </view>
+      <view 
+        class="remove-btn"
+        data-id="{{item.id}}"
+        data-title="{{item.favoriteType === 1 ? item.studyRoomName : item.seatNumber}}"
+        bindtap="removeFavorite"
+        catchtap="true"
+      >
+        <image src="/images/delete.png" class="remove-icon"></image>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:else class="empty-container">
+    <image src="/images/empty_favorite.png" class="empty-icon"></image>
+    <view class="empty-text">暂无收藏</view>
+    <view class="empty-tips">收藏喜欢的自习室和座位，方便下次快速预约</view>
+    <custom-button type="primary" bindtap="goToStudyRooms">去看看</custom-button>
+  </view>
+</view> 

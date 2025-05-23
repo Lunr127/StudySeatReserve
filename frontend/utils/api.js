@@ -124,18 +124,46 @@ const reservationApi = {
   createReservation: (data) => post('/api/reservations', data),
 
   /**
-   * 获取我的预约列表
+   * 获取预约列表（分页）
    * @param {Object} params 查询参数
    * @returns {Promise} Promise对象
    */
-  getMyReservations: (params) => get('/api/reservations/my', params),
+  getReservations: (params) => get('/api/reservations', params),
+
+  /**
+   * 获取当前有效预约
+   * @returns {Promise} Promise对象
+   */
+  getCurrentReservations: () => get('/api/reservations/current'),
 
   /**
    * 取消预约
    * @param {string|number} id 预约ID
    * @returns {Promise} Promise对象
    */
-  cancelReservation: (id) => post(`/api/reservations/${String(id)}/cancel`)
+  cancelReservation: (id) => post(`/api/reservations/${String(id)}/cancel`),
+
+  /**
+   * 延长预约
+   * @param {string|number} id 预约ID
+   * @param {string} endTimeStr 新的结束时间
+   * @returns {Promise} Promise对象
+   */
+  extendReservation: (id, endTimeStr) => post(`/api/reservations/${String(id)}/extend?endTimeStr=${endTimeStr}`),
+
+  /**
+   * 获取预约详情
+   * @param {string|number} id 预约ID
+   * @returns {Promise} Promise对象
+   */
+  getReservationDetail: (id) => get(`/api/reservations/${String(id)}`),
+
+  /**
+   * 检查座位可用性
+   * @param {Object} params 查询参数
+   * @returns {Promise} Promise对象
+   */
+  checkSeatAvailability: (params) => get('/api/reservations/check-availability', params)
 };
 
 /**

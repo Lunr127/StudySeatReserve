@@ -1,0 +1,71 @@
+<view class="container">
+  <!-- 用户信息区域 -->
+  <view wx:if="{{userInfo}}" class="user-section">
+    <view class="user-info">
+      <image class="avatar" src="{{userInfo.avatar || '/images/avatar.png'}}" mode="aspectFill"></image>
+      <view class="user-details">
+        <view class="username">{{userInfo.realName || userInfo.username}}</view>
+        <view class="user-type">{{userInfo.userType === 1 ? '管理员' : '学生'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 设置列表 -->
+  <view class="settings-section">
+    <view class="section-title">偏好设置</view>
+    <view class="settings-list">
+      <view 
+        wx:for="{{settingItems}}" 
+        wx:key="id" 
+        class="setting-item"
+        data-item="{{item}}"
+        bindtap="onSettingItemTap"
+      >
+        <view class="setting-content">
+          <view class="setting-title">{{item.title}}</view>
+          <view class="setting-subtitle">{{item.subtitle}}</view>
+        </view>
+        
+        <!-- 开关类型 -->
+        <switch 
+          wx:if="{{item.type === 'switch'}}"
+          checked="{{item.value}}"
+          data-id="{{item.id}}"
+          bindchange="onSwitchChange"
+          color="#3A7AF2"
+        ></switch>
+        
+        <!-- 导航类型 -->
+        <view wx:elif="{{item.type === 'navigate'}}" class="setting-arrow">
+          <image src="/images/arrow_right.png" class="arrow-icon"></image>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 其他操作 -->
+  <view class="actions-section">
+    <view class="section-title">其他</view>
+    <view class="actions-list">
+      <view class="action-item" bindtap="clearCache">
+        <view class="action-content">
+          <view class="action-title">清除缓存</view>
+          <view class="action-subtitle">清除本地缓存数据</view>
+        </view>
+        <view class="action-arrow">
+          <image src="/images/arrow_right.png" class="arrow-icon"></image>
+        </view>
+      </view>
+      
+      <view class="action-item" bindtap="checkUpdate">
+        <view class="action-content">
+          <view class="action-title">检查更新</view>
+          <view class="action-subtitle">检查应用更新</view>
+        </view>
+        <view class="action-arrow">
+          <image src="/images/arrow_right.png" class="arrow-icon"></image>
+        </view>
+      </view>
+    </view>
+  </view>
+</view> 

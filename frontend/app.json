@@ -10,6 +10,12 @@
     "pages/seat-reservation/confirm-reservation/confirm-reservation",
     "pages/user-center/user-center",
     "pages/user-center/my-reservations/my-reservations",
+    "pages/user-center/my-favorites/my-favorites",
+    "pages/user-center/violation-records/violation-records",
+    "pages/user-center/settings/settings",
+    "pages/user-center/edit-profile/edit-profile",
+    "pages/user-center/extend-reservation/extend-reservation",
+    "pages/user-center/reservation-detail/reservation-detail",
     "pages/notifications/notifications",
     "pages/admin/study-rooms/manage/manage",
     "pages/admin/study-rooms/edit/edit"

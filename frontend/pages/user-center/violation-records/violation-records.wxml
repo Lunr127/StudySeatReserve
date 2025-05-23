@@ -1,0 +1,66 @@
+<view class="container">
+  <view class="header">
+    <view class="title">违约记录</view>
+    <view class="subtitle">请遵守预约规则，减少违约行为</view>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading && currentPage === 1}}" class="loading-container">
+    <view class="loading-text">加载中...</view>
+  </view>
+
+  <!-- 违约记录列表 -->
+  <view wx:elif="{{!isEmpty}}" class="violation-list">
+    <view 
+      wx:for="{{violationList}}" 
+      wx:key="id" 
+      class="violation-item"
+      data-id="{{item.id}}"
+      bindtap="viewViolationDetail"
+    >
+      <view class="violation-header">
+        <view class="violation-type {{getViolationTypeClass(item.violationType)}}">
+          {{item.violationTypeText}}
+        </view>
+        <view class="violation-time">{{item.createTime}}</view>
+      </view>
+      
+      <view class="violation-content">
+        <view class="room-info">
+          <view class="room-name">{{item.studyRoomName}}</view>
+          <view class="seat-number">座位：{{item.seatNumber}}</view>
+        </view>
+        <view class="reservation-time">预约时间：{{item.reservationTime}}</view>
+        <view class="violation-desc">{{item.description}}</view>
+      </view>
+      
+      <view class="violation-actions">
+        <view 
+          class="appeal-btn"
+          data-id="{{item.id}}"
+          bindtap="appealViolation"
+          catchtap="true"
+        >
+          申诉
+        </view>
+      </view>
+    </view>
+    
+    <!-- 加载更多 -->
+    <view wx:if="{{loadingMore}}" class="loading-more">
+      <view class="loading-text">加载更多...</view>
+    </view>
+    
+    <!-- 没有更多数据 -->
+    <view wx:elif="{{!hasMoreData && violationList.length > 0}}" class="no-more">
+      <view class="no-more-text">没有更多数据了</view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:else class="empty-container">
+    <image src="/images/empty_violation.png" class="empty-icon"></image>
+    <view class="empty-text">暂无违约记录</view>
+    <view class="empty-tips">保持良好的预约习惯，避免违约行为</view>
+  </view>
+</view> 

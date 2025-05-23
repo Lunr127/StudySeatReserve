@@ -1,21 +1,286 @@
 /* user-center.wxss */
 .container {
-  padding: 50rpx 30rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+/* 用户信息区域 */
+.user-header {
+  background: linear-gradient(135deg, #3A7AF2 0%, #5B8CFF 100%);
+  padding: 40rpx 30rpx 60rpx;
+  color: white;
+}
+
+.user-info {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+}
+
+.avatar-section {
+  position: relative;
+  margin-right: 30rpx;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  border: 4rpx solid rgba(255, 255, 255, 0.3);
+}
+
+.edit-btn {
+  position: absolute;
+  right: -10rpx;
+  bottom: -10rpx;
+  width: 40rpx;
+  height: 40rpx;
+  background-color: white;
+  border-radius: 20rpx;
+  display: flex;
   align-items: center;
   justify-content: center;
-  height: 80vh;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
 }
 
-.page-title {
+.edit-icon {
+  width: 24rpx;
+  height: 24rpx;
+}
+
+.user-details {
+  flex: 1;
+}
+
+.username {
   font-size: 36rpx;
   font-weight: bold;
-  margin-bottom: 30rpx;
-  color: var(--primary-color);
+  margin-bottom: 10rpx;
 }
 
-.page-description {
+.user-type {
+  font-size: 24rpx;
+  opacity: 0.8;
+  margin-bottom: 5rpx;
+}
+
+.user-phone {
+  font-size: 24rpx;
+  opacity: 0.7;
+}
+
+/* 未登录状态 */
+.login-prompt {
+  text-align: center;
+  padding: 40rpx 0;
+}
+
+.default-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.7;
+}
+
+.login-text {
+  font-size: 32rpx;
+  margin-bottom: 30rpx;
+}
+
+/* 统计数据区域 */
+.statistics-section {
+  background-color: white;
+  margin: -30rpx 30rpx 30rpx;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30rpx;
+}
+
+.statistics-grid {
+  display: flex;
+  justify-content: space-between;
+}
+
+.stat-item {
+  text-align: center;
+  flex: 1;
+}
+
+.stat-number {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #3A7AF2;
+  margin-bottom: 10rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 功能菜单区域 */
+.menu-section {
+  margin: 0 30rpx 30rpx;
+}
+
+.menu-list {
+  background-color: white;
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+  position: relative;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:active {
+  background-color: #f8f9fa;
+}
+
+.menu-icon {
+  width: 80rpx;
+  height: 80rpx;
+  margin-right: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  border-radius: 40rpx;
+}
+
+.menu-icon .icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.menu-content {
+  flex: 1;
+}
+
+.menu-title {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 8rpx;
+}
+
+.menu-subtitle {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.menu-arrow {
+  width: 40rpx;
+  height: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrow-icon {
+  width: 20rpx;
+  height: 20rpx;
+  opacity: 0.6;
+}
+
+/* 设置区域 */
+.settings-section {
+  margin: 0 30rpx 30rpx;
+}
+
+.setting-item {
+  background-color: white;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+}
+
+.setting-item:active {
+  background-color: #f8f9fa;
+}
+
+.setting-icon {
+  width: 80rpx;
+  height: 80rpx;
+  margin-right: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffe6e6;
+  border-radius: 40rpx;
+}
+
+.setting-icon .icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.setting-text {
+  font-size: 30rpx;
+  color: #e74c3c;
+  font-weight: 500;
+}
+
+/* 未登录时的功能介绍 */
+.features-intro {
+  margin: 30rpx;
+}
+
+.feature-list {
+  background-color: white;
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.feature-item:last-child {
+  border-bottom: none;
+}
+
+.feature-icon {
+  width: 60rpx;
+  height: 60rpx;
+  margin-right: 20rpx;
+  opacity: 0.7;
+}
+
+.feature-text {
+  flex: 1;
+}
+
+.feature-title {
   font-size: 28rpx;
-  color: var(--font-color-light);
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 5rpx;
+}
+
+.feature-desc {
+  font-size: 24rpx;
+  color: #999;
 } 

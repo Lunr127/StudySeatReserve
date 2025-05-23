@@ -1,4 +1,5 @@
 const app = getApp();
+const { userApi } = require('../../utils/api');
 
 Page({
   /**
@@ -124,7 +125,7 @@ Page({
   },
 
   /**
-   * 检查登录状态
+   * 检查登录状态并获取用户信息
    */
   checkLoginStatus: function() {
     // 检查全局数据中是否有token
@@ -134,16 +135,71 @@ Page({
     });
     
     if (hasLogin) {
-      // 如果已登录，获取用户信息
-      this.setData({
-        userInfo: {
-          nickName: '张三',
-          avatarUrl: '/images/avatar.png'
-        }
-      });
+      // 如果已登录，从后端获取用户信息
+      this.getUserInfo();
       // 获取最近预约
       this.getRecentReservations();
     }
+  },
+
+  /**
+   * 获取用户信息
+   */
+  getUserInfo: function() {
+    userApi.getUserInfo().then(res => {
+      if (res.code === 200) {
+        const userInfo = res.data;
+        this.setData({
+          userInfo: {
+            nickName: userInfo.realName || userInfo.username,
+            avatarUrl: userInfo.avatar || '/images/avatar.png',
+            realName: userInfo.realName,
+            username: userInfo.username,
+            userType: userInfo.userType,
+            phone: userInfo.phone,
+            email: userInfo.email
+          }
+        });
+        
+        // 更新全局用户信息
+        app.globalData.userInfo = userInfo;
+        wx.setStorageSync('userInfo', userInfo);
+      } else {
+        console.error('获取用户信息失败:', res.message);
+        // 如果获取失败，使用本地缓存的用户信息
+        const cachedUserInfo = wx.getStorageSync('userInfo');
+        if (cachedUserInfo) {
+          this.setData({
+            userInfo: {
+              nickName: cachedUserInfo.realName || cachedUserInfo.username,
+              avatarUrl: cachedUserInfo.avatar || '/images/avatar.png',
+              realName: cachedUserInfo.realName,
+              username: cachedUserInfo.username,
+              userType: cachedUserInfo.userType,
+              phone: cachedUserInfo.phone,
+              email: cachedUserInfo.email
+            }
+          });
+        }
+      }
+    }).catch(err => {
+      console.error('获取用户信息错误:', err);
+      // 如果网络错误，使用本地缓存的用户信息
+      const cachedUserInfo = wx.getStorageSync('userInfo');
+      if (cachedUserInfo) {
+        this.setData({
+          userInfo: {
+            nickName: cachedUserInfo.realName || cachedUserInfo.username,
+            avatarUrl: cachedUserInfo.avatar || '/images/avatar.png',
+            realName: cachedUserInfo.realName,
+            username: cachedUserInfo.username,
+            userType: cachedUserInfo.userType,
+            phone: cachedUserInfo.phone,
+            email: cachedUserInfo.email
+          }
+        });
+      }
+    });
   },
 
   /**

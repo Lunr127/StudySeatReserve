@@ -1,4 +1,110 @@
 <view class="container">
-  <view class="page-title">用户中心</view>
-  <view class="page-description">用户中心页面开发中...</view>
+  <!-- 用户信息区域 -->
+  <view class="user-header">
+    <view wx:if="{{hasLogin}}" class="user-info">
+      <view class="avatar-section">
+        <image class="avatar" src="{{userInfo.avatar || '/images/avatar.png'}}" mode="aspectFill"></image>
+        <view class="edit-btn" bindtap="editProfile">
+          <image src="/images/edit.png" class="edit-icon"></image>
+        </view>
+      </view>
+      <view class="user-details">
+        <view class="username">{{userInfo.realName || userInfo.username}}</view>
+        <view class="user-type">{{userInfo.userType === 1 ? '管理员' : '学生'}}</view>
+        <view wx:if="{{userInfo.phone}}" class="user-phone">{{userInfo.phone}}</view>
+      </view>
+    </view>
+    
+    <view wx:else class="login-prompt">
+      <image class="default-avatar" src="/images/avatar.png"></image>
+      <view class="login-text">点击登录</view>
+      <custom-button type="primary" size="small" bindtap="goToLogin">立即登录</custom-button>
+    </view>
+  </view>
+
+  <!-- 统计数据区域（仅登录后显示） -->
+  <view wx:if="{{hasLogin}}" class="statistics-section">
+    <view class="section-title">我的统计</view>
+    <view class="statistics-grid">
+      <view class="stat-item">
+        <view class="stat-number">{{statistics.totalReservations}}</view>
+        <view class="stat-label">总预约</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-number">{{statistics.currentReservations}}</view>
+        <view class="stat-label">当前预约</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-number">{{statistics.completedReservations}}</view>
+        <view class="stat-label">已完成</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-number">{{statistics.violationCount}}</view>
+        <view class="stat-label">违约次数</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能菜单区域 -->
+  <view wx:if="{{hasLogin}}" class="menu-section">
+    <view class="section-title">功能菜单</view>
+    <view class="menu-list">
+      <view 
+        wx:for="{{menuItems}}" 
+        wx:key="id" 
+        class="menu-item" 
+        data-item="{{item}}"
+        bindtap="onMenuItemTap"
+      >
+        <view class="menu-icon">
+          <image src="{{item.icon}}" class="icon"></image>
+        </view>
+        <view class="menu-content">
+          <view class="menu-title">{{item.title}}</view>
+          <view class="menu-subtitle">{{item.subtitle}}</view>
+        </view>
+        <view class="menu-arrow">
+          <image src="/images/arrow_right.png" class="arrow-icon"></image>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 设置区域 -->
+  <view wx:if="{{hasLogin}}" class="settings-section">
+    <view class="setting-item" bindtap="logout">
+      <view class="setting-icon">
+        <image src="/images/logout.png" class="icon"></image>
+      </view>
+      <view class="setting-text">退出登录</view>
+    </view>
+  </view>
+
+  <!-- 未登录时的功能介绍 -->
+  <view wx:else class="features-intro">
+    <view class="section-title">功能介绍</view>
+    <view class="feature-list">
+      <view class="feature-item">
+        <image src="/images/reservation.png" class="feature-icon"></image>
+        <view class="feature-text">
+          <view class="feature-title">座位预约</view>
+          <view class="feature-desc">快速预约心仪座位</view>
+        </view>
+      </view>
+      <view class="feature-item">
+        <image src="/images/favorite.png" class="feature-icon"></image>
+        <view class="feature-text">
+          <view class="feature-title">收藏管理</view>
+          <view class="feature-desc">收藏常用自习室</view>
+        </view>
+      </view>
+      <view class="feature-item">
+        <image src="/images/settings.png" class="feature-icon"></image>
+        <view class="feature-text">
+          <view class="feature-title">个性设置</view>
+          <view class="feature-desc">个性化使用体验</view>
+        </view>
+      </view>
+    </view>
+  </view>
 </view> 
