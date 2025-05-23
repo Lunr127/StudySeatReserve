@@ -19,13 +19,18 @@
 |-------|---------|------|---------|
 | admin.png | 24x24px | 管理员图标 | 管理员界面 |
 | arrow_down.png | 24x24px | 向下箭头图标 | 下拉菜单、展开详情等 |
+| arrow_right.png | 24x24px | 向右箭头图标 | 导航、详情页跳转等 |
+| edit.png | 24x24px | 编辑图标 | 个人信息编辑按钮 |
 | filter.png | 24x24px | 筛选图标 | 筛选功能按钮 |
 | location.png | 24x24px | 位置图标 | 自习室位置信息 |
+| logout.png | 24x24px | 退出登录图标 | 用户中心退出登录按钮 |
 | manage.png | 24x24px | 管理图标 | 管理功能按钮 |
 | notification.png | 24x24px | 通知图标 | 通知页面、消息提醒 |
 | scan.png | 32x32px | 扫码图标 | 扫码签到功能 |
+| settings.png | 24x24px | 设置图标 | 个人设置菜单项 |
 | time.png | 24x24px | 时间图标 | 时间相关信息显示 |
 | favorite.png | 24x24px | 收藏图标 | 收藏功能 |
+| violation.png | 24x24px | 违约图标 | 违约记录菜单项 |
 
 ## 页面图片
 
@@ -36,6 +41,7 @@
 | banner2.png | 750x300px | 首页轮播图2 | 首页轮播 |
 | classroom.png | 120x120px | 教室示意图 | 自习室列表、详情页 |
 | empty.png | 200x200px | 空数据占位图 | 列表为空时显示 |
+| empty-reservation.png | 200x200px | 无预约记录占位图 | 预约列表为空时显示 |
 | empty-slots.png | 200x200px | 无可用时间段占位图 | 时间段选择页面为空时显示 |
 | library.png | 120x120px | 图书馆示意图 | 自习室列表、详情页 |
 | logo.png | 200x200px | 应用logo | 启动页、登录页 |
@@ -57,3 +63,4 @@
 |-----|---------|-------|
 | 2025-5-19 | 创建文档并添加初始图片说明 | Xinghan Li |
 | 2025-5-19 | 添加empty-slots.png图片说明 | Xinghan Li | 
+| 2025-5-23 | 添加arrow_right.png、edit.png、logout.png、settings.png、violation.png和empty-reservation.png图片 | Xinghan Li | 
