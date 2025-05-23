@@ -13,25 +13,15 @@
   ],
   "properties": [
     {
-      "name": "knife4j.enable",
-      "type": "java.lang.Boolean",
-      "description": "是否启用Knife4j."
-    },
-    {
-      "name": "knife4j.setting.language",
-      "type": "java.lang.String",
-      "description": "Knife4j界面语言."
-    },
-    {
       "name": "spring.jwt.expiration",
       "type": "java.lang.Long",
-      "description": "JWT过期时间(秒).",
+      "description": "JWT的超期限时间(60*60*24*7)",
       "sourceType": "com.studyseat.reserve.config.JwtProperties"
     },
     {
       "name": "spring.jwt.secret",
       "type": "java.lang.String",
-      "description": "JWT加密密钥.",
+      "description": "JWT加解密使用的密钥",
       "sourceType": "com.studyseat.reserve.config.JwtProperties"
     },
     {
@@ -47,25 +37,10 @@
       "sourceType": "com.studyseat.reserve.config.JwtProperties"
     },
     {
-      "name": "spring.jwt.tokenHead",
-      "type": "java.lang.String",
-      "description": "JWT负载开头部分."
-    },
-    {
-      "name": "spring.jwt.tokenHeader",
-      "type": "java.lang.String",
-      "description": "JWT请求头名称."
-    },
-    {
       "name": "spring.system.advance-reserve-days",
       "type": "java.lang.Integer",
       "description": "允许提前预约的天数",
       "sourceType": "com.studyseat.reserve.config.SystemProperties"
-    },
-    {
-      "name": "spring.system.advanceReserveDays",
-      "type": "java.lang.Integer",
-      "description": "允许提前预约的天数."
     },
     {
       "name": "spring.system.checkin-timeout",
@@ -74,31 +49,16 @@
       "sourceType": "com.studyseat.reserve.config.SystemProperties"
     },
     {
-      "name": "spring.system.checkinTimeout",
-      "type": "java.lang.Integer",
-      "description": "签到有效时间(分钟)."
-    },
-    {
       "name": "spring.system.enable-violation",
       "type": "java.lang.Boolean",
       "description": "是否启用违约记录",
       "sourceType": "com.studyseat.reserve.config.SystemProperties"
     },
     {
-      "name": "spring.system.enableViolation",
-      "type": "java.lang.Boolean",
-      "description": "是否启用违约记录."
-    },
-    {
       "name": "spring.system.max-reserve-hours",
       "type": "java.lang.Integer",
       "description": "默认最大预约时长（小时）",
       "sourceType": "com.studyseat.reserve.config.SystemProperties"
-    },
-    {
-      "name": "spring.system.maxReserveHours",
-      "type": "java.lang.Integer",
-      "description": "最大预约时长(小时)."
     }
   ],
   "hints": []

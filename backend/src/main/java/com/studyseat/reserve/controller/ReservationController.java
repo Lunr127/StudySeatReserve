@@ -2,7 +2,7 @@ package com.studyseat.reserve.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.studyseat.reserve.common.R;
+import com.studyseat.reserve.common.Result;
 import com.studyseat.reserve.dto.ReservationDTO;
 import com.studyseat.reserve.dto.ReservationQueryDTO;
 import com.studyseat.reserve.entity.Student;
@@ -44,7 +44,7 @@ public class ReservationController {
      */
     @PostMapping
     @PreAuthorize("hasRole('STUDENT')")
-    public R<Long> createReservation(@RequestBody @Validated ReservationDTO reservationDTO, HttpServletRequest request) {
+    public Result<Long> createReservation(@RequestBody @Validated ReservationDTO reservationDTO, HttpServletRequest request) {
         // 从JWT中获取用户ID
         Long userId = jwtUtil.getUserIdFromToken(request);
         
@@ -55,7 +55,7 @@ public class ReservationController {
         }
         
         Long reservationId = reservationService.createReservation(student.getId(), reservationDTO);
-        return R.ok(reservationId, "预约成功");
+        return Result.ok(reservationId, "预约成功");
     }
     
     /**
@@ -67,7 +67,7 @@ public class ReservationController {
      */
     @PostMapping("/{id}/cancel")
     @PreAuthorize("hasRole('STUDENT')")
-    public R<Boolean> cancelReservation(@PathVariable Long id, HttpServletRequest request) {
+    public Result<Boolean> cancelReservation(@PathVariable Long id, HttpServletRequest request) {
         // 从JWT中获取用户ID
         Long userId = jwtUtil.getUserIdFromToken(request);
         
@@ -78,7 +78,7 @@ public class ReservationController {
         }
         
         boolean result = reservationService.cancelReservation(id, student.getId());
-        return R.ok(result, "取消预约成功");
+        return Result.ok(result, "取消预约成功");
     }
     
     /**
@@ -91,7 +91,7 @@ public class ReservationController {
      */
     @PostMapping("/{id}/extend")
     @PreAuthorize("hasRole('STUDENT')")
-    public R<Boolean> extendReservation(
+    public Result<Boolean> extendReservation(
             @PathVariable Long id,
             @RequestParam String endTimeStr,
             HttpServletRequest request) {
@@ -113,7 +113,7 @@ public class ReservationController {
         }
         
         boolean result = reservationService.extendReservation(id, student.getId(), endTime);
-        return R.ok(result, "延长预约成功");
+        return Result.ok(result, "延长预约成功");
     }
     
     /**
@@ -127,7 +127,7 @@ public class ReservationController {
      */
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'STUDENT')")
-    public R<IPage<ReservationVO>> getReservationPage(
+    public Result<IPage<ReservationVO>> getReservationPage(
             ReservationQueryDTO queryDTO,
             @RequestParam(defaultValue = "1") Integer current,
             @RequestParam(defaultValue = "10") Integer size,
@@ -148,7 +148,7 @@ public class ReservationController {
         Page<ReservationVO> page = new Page<>(current, size);
         IPage<ReservationVO> reservationPage = reservationService.getReservationPage(queryDTO, page);
         
-        return R.ok(reservationPage);
+        return Result.ok(reservationPage);
     }
     
     /**
@@ -160,7 +160,7 @@ public class ReservationController {
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'STUDENT')")
-    public R<ReservationVO> getReservationById(@PathVariable Long id, HttpServletRequest request) {
+    public Result<ReservationVO> getReservationById(@PathVariable Long id, HttpServletRequest request) {
         // 从JWT中获取用户ID和用户类型
         Long userId = jwtUtil.getUserIdFromToken(request);
         String userType = jwtUtil.getUserTypeFromToken(request);
@@ -178,7 +178,7 @@ public class ReservationController {
             }
         }
         
-        return R.ok(reservation);
+        return Result.ok(reservation);
     }
     
     /**
@@ -189,7 +189,7 @@ public class ReservationController {
      */
     @GetMapping("/current")
     @PreAuthorize("hasRole('STUDENT')")
-    public R<List<ReservationVO>> getCurrentReservations(HttpServletRequest request) {
+    public Result<List<ReservationVO>> getCurrentReservations(HttpServletRequest request) {
         // 从JWT中获取用户ID
         Long userId = jwtUtil.getUserIdFromToken(request);
         
@@ -201,7 +201,7 @@ public class ReservationController {
         
         List<ReservationVO> reservations = reservationService.getCurrentReservations(student.getId());
         
-        return R.ok(reservations);
+        return Result.ok(reservations);
     }
     
     /**
@@ -214,7 +214,7 @@ public class ReservationController {
      */
     @GetMapping("/check-availability")
     @PreAuthorize("hasRole('STUDENT')")
-    public R<Boolean> checkSeatAvailability(
+    public Result<Boolean> checkSeatAvailability(
             @RequestParam Long seatId,
             @RequestParam String startTimeStr,
             @RequestParam String endTimeStr) {
@@ -229,7 +229,7 @@ public class ReservationController {
         
         boolean available = reservationService.checkSeatAvailable(seatId, startTime, endTime);
         
-        return R.ok(available);
+        return Result.ok(available);
     }
     
     /**
@@ -240,8 +240,8 @@ public class ReservationController {
      */
     @GetMapping("/seat/{seatId}/today")
     @PreAuthorize("hasAnyRole('ADMIN', 'STUDENT')")
-    public R<List<ReservationVO>> getTodayReservationsBySeat(@PathVariable Long seatId) {
+    public Result<List<ReservationVO>> getTodayReservationsBySeat(@PathVariable Long seatId) {
         List<ReservationVO> reservations = reservationService.getTodayReservationsBySeat(seatId);
-        return R.ok(reservations);
+        return Result.ok(reservations);
     }
 } 

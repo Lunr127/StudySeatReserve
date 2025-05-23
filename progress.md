@@ -872,6 +872,17 @@
   - 创建了UserPreferenceService接口和UserPreferenceServiceImpl实现类
   - 在UserController中添加了偏好设置的获取和更新接口
   - 支持自动创建默认偏好设置
+- [x] 数据库更新
+  - 将新的SQL语句合并到init.sql中
+  - 重新运行init.sql成功初始化数据库
+  - 创建了user_preference表和violation表的测试数据
+- [x] 代码重构：统一响应结果类
+  - 发现R.java和Result.java功能重复的问题
+  - 将R.java的功能合并到Result.java中，添加了ok、fail等兼容方法
+  - 为Result.java添加了error(String message)方法解决编译错误
+  - 更新ReservationController使用Result类替代R类
+  - 删除了重复的R.java文件
+  - 确保代码一致性和维护性
 - [ ] 单元测试：个人中心服务测试
 - [ ] 集成测试：个人中心功能测试
 
