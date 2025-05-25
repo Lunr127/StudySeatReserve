@@ -218,6 +218,99 @@ const favoriteApi = {
 };
 
 /**
+ * 签到相关API
+ */
+const checkInApi = {
+  /**
+   * 签到
+   * @param {Object} data 签到数据
+   * @returns {Promise} Promise对象
+   */
+  checkIn: (data) => post('/api/check-in', data),
+
+  /**
+   * 签退
+   * @param {string|number} reservationId 预约ID
+   * @returns {Promise} Promise对象
+   */
+  checkOut: (reservationId) => post(`/api/check-in/check-out/${String(reservationId)}`),
+
+  /**
+   * 获取签到记录列表
+   * @param {Object} params 查询参数
+   * @returns {Promise} Promise对象
+   */
+  getCheckInList: (params) => get('/api/check-in', params),
+
+  /**
+   * 根据预约ID获取签到信息
+   * @param {string|number} reservationId 预约ID
+   * @returns {Promise} Promise对象
+   */
+  getCheckInByReservation: (reservationId) => get(`/api/check-in/reservation/${String(reservationId)}`),
+
+  /**
+   * 验证签到权限
+   * @param {string|number} reservationId 预约ID
+   * @returns {Promise} Promise对象
+   */
+  validateCheckInPermission: (reservationId) => get(`/api/check-in/validate/${String(reservationId)}`)
+};
+
+/**
+ * 签到码相关API
+ */
+const checkCodeApi = {
+  /**
+   * 获取自习室当日签到码
+   * @param {string|number} studyRoomId 自习室ID
+   * @param {string} date 日期（可选）
+   * @returns {Promise} Promise对象
+   */
+  getTodayCheckCode: (studyRoomId, date) => {
+    const params = date ? { date } : {};
+    return get(`/api/check-code/today/${String(studyRoomId)}`, params);
+  },
+
+  /**
+   * 验证签到码
+   * @param {string} code 签到码
+   * @param {string|number} studyRoomId 自习室ID
+   * @param {string} validDate 验证日期（可选）
+   * @returns {Promise} Promise对象
+   */
+  validateCheckCode: (code, studyRoomId, validDate) => {
+    const params = { code, studyRoomId };
+    if (validDate) {
+      params.validDate = validDate;
+    }
+    return get('/api/check-code/validate', params);
+  },
+
+  /**
+   * 生成每日签到码（管理员）
+   * @param {string|number} studyRoomId 自习室ID
+   * @param {string} validDate 有效日期
+   * @returns {Promise} Promise对象
+   */
+  generateDailyCode: (studyRoomId, validDate) => post('/api/check-code/generate', { studyRoomId, validDate }),
+
+  /**
+   * 批量生成签到码（管理员）
+   * @param {string} validDate 有效日期
+   * @returns {Promise} Promise对象
+   */
+  generateDailyCodesForAllRooms: (validDate) => post('/api/check-code/generate-all', { validDate }),
+
+  /**
+   * 获取签到码列表（管理员）
+   * @param {Object} params 查询参数
+   * @returns {Promise} Promise对象
+   */
+  getCheckCodeList: (params) => get('/api/check-code', params)
+};
+
+/**
  * 管理员相关API
  */
 const adminApi = {
@@ -235,5 +328,7 @@ module.exports = {
   seatApi,
   reservationApi,
   favoriteApi,
+  checkInApi,
+  checkCodeApi,
   adminApi
 }; 

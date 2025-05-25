@@ -1,0 +1,173 @@
+<view class="container">
+  <!-- 页面头部 -->
+  <view class="header">
+    <view class="back-btn" bindtap="onBack">
+      <image src="/images/arrow_left.png" class="back-icon"></image>
+    </view>
+    <view class="title">签到</view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-text">加载中...</view>
+  </view>
+
+  <!-- 主要内容 -->
+  <view wx:else class="content">
+    <!-- 预约信息卡片 -->
+    <view wx:if="{{reservation}}" class="reservation-card">
+      <view class="card-header">
+        <view class="card-title">预约信息</view>
+        <view class="status-badge status-{{reservation.status}}">
+          {{reservation.statusText}}
+        </view>
+      </view>
+      <view class="card-content">
+        <view class="info-row">
+          <view class="label">自习室：</view>
+          <view class="value">{{reservation.studyRoomName}}</view>
+        </view>
+        <view class="info-row">
+          <view class="label">座位：</view>
+          <view class="value">{{reservation.seatNumber}}</view>
+        </view>
+        <view class="info-row">
+          <view class="label">时间：</view>
+          <view class="value">{{reservation.startTime}} - {{reservation.endTime}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 签到状态显示 -->
+    <view wx:if="{{checkInStatus}}" class="check-status-card">
+      <view wx:if="{{checkInStatus === 1}}" class="status-content checked-in">
+        <image src="/images/check_success.png" class="status-icon"></image>
+        <view class="status-text">已签到</view>
+        <view class="status-time">签到时间：{{checkInInfo.checkInTime}}</view>
+        <view class="status-type">签到方式：{{checkInInfo.checkInTypeText}}</view>
+      </view>
+      
+      <view wx:elif="{{checkInStatus === 2}}" class="status-content checked-out">
+        <image src="/images/check_complete.png" class="status-icon"></image>
+        <view class="status-text">已签退</view>
+        <view class="status-time">签到时间：{{checkInInfo.checkInTime}}</view>
+        <view class="status-time">签退时间：{{checkInInfo.checkOutTime}}</view>
+        <view class="duration-text">使用时长：{{checkInInfo.durationMinutes}}分钟</view>
+      </view>
+    </view>
+
+    <!-- 签到操作区域 -->
+    <view wx:if="{{!checkInStatus}}" class="check-in-section">
+      <view class="section-title">选择签到方式</view>
+      
+      <!-- 签到方式选择 -->
+      <view class="check-type-selector">
+        <view 
+          class="type-option {{checkInType === 1 ? 'active' : ''}}"
+          data-type="1"
+          bindtap="onCheckInTypeChange"
+        >
+          <image src="/images/scan_code.png" class="type-icon"></image>
+          <view class="type-text">扫码签到</view>
+        </view>
+        <view 
+          class="type-option {{checkInType === 2 ? 'active' : ''}}"
+          data-type="2"
+          bindtap="onCheckInTypeChange"
+        >
+          <image src="/images/input_code.png" class="type-icon"></image>
+          <view class="type-text">输入编码</view>
+        </view>
+      </view>
+
+      <!-- 扫码签到 -->
+      <view wx:if="{{checkInType === 1}}" class="scan-section">
+        <view class="scan-tip">
+          <image src="/images/info.png" class="tip-icon"></image>
+          <text>请扫描自习室内的签到二维码</text>
+        </view>
+        <custom-button 
+          type="primary" 
+          size="large" 
+          bindtap="onScanCode"
+          loading="{{loading}}"
+        >
+          <image src="/images/scan_code.png" class="btn-icon"></image>
+          扫码签到
+        </custom-button>
+      </view>
+
+      <!-- 手动输入编码 -->
+      <view wx:if="{{checkInType === 2}}" class="input-section">
+        <view class="input-tip">
+          <image src="/images/info.png" class="tip-icon"></image>
+          <text>请输入自习室当日签到码</text>
+        </view>
+        
+        <view class="input-group">
+          <input 
+            class="code-input" 
+            type="number" 
+            placeholder="请输入6位签到码"
+            maxlength="6"
+            value="{{inputCode}}"
+            bindinput="onInputCodeChange"
+          />
+          <view class="show-code-btn" bindtap="onShowCheckCode">
+            <image src="/images/eye.png" class="eye-icon"></image>
+          </view>
+        </view>
+        
+        <custom-button 
+          type="primary" 
+          size="large" 
+          bindtap="onManualCheckIn"
+          loading="{{loading}}"
+          disabled="{{!inputCode}}"
+        >
+          确认签到
+        </custom-button>
+      </view>
+    </view>
+
+    <!-- 签退操作 -->
+    <view wx:if="{{checkInStatus === 1}}" class="check-out-section">
+      <view class="section-title">签退操作</view>
+      <view class="check-out-tip">
+        <image src="/images/info.png" class="tip-icon"></image>
+        <text>如需提前结束自习，请点击下方按钮签退</text>
+      </view>
+      <custom-button 
+        type="outline" 
+        size="large" 
+        bindtap="onCheckOut"
+        loading="{{loading}}"
+      >
+        签退
+      </custom-button>
+    </view>
+
+    <!-- 签到说明 -->
+    <view class="instructions">
+      <view class="section-title">签到说明</view>
+      <view class="instruction-list">
+        <view class="instruction-item">
+          <view class="instruction-number">1</view>
+          <view class="instruction-text">请在预约时间开始前15分钟内进行签到</view>
+        </view>
+        <view class="instruction-item">
+          <view class="instruction-number">2</view>
+          <view class="instruction-text">签到成功后，请按时到达预约座位</view>
+        </view>
+        <view class="instruction-item">
+          <view class="instruction-number">3</view>
+          <view class="instruction-text">如需提前离开，请记得签退</view>
+        </view>
+        <view class="instruction-item">
+          <view class="instruction-number">4</view>
+          <view class="instruction-text">超时未签到将被记录为违约</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view> 

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studyseat.reserve.mapper.CheckInMapper">
+
+    <!-- 通用结果映射 -->
+    <resultMap id="CheckInVOResultMap" type="com.studyseat.reserve.vo.CheckInVO">
+        <id column="id" property="id"/>
+        <result column="reservation_id" property="reservationId"/>
+        <result column="student_name" property="studentName"/>
+        <result column="study_room_name" property="studyRoomName"/>
+        <result column="seat_number" property="seatNumber"/>
+        <result column="check_in_time" property="checkInTime"/>
+        <result column="check_in_type" property="checkInType"/>
+        <result column="check_in_type_text" property="checkInTypeText"/>
+        <result column="check_out_time" property="checkOutTime"/>
+        <result column="check_code" property="checkCode"/>
+        <result column="is_checked_out" property="isCheckedOut"/>
+        <result column="duration_minutes" property="durationMinutes"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 分页查询签到记录 -->
+    <select id="selectCheckInPage" resultMap="CheckInVOResultMap">
+        SELECT 
+            ci.id,
+            ci.reservation_id,
+            u.real_name AS student_name,
+            sr.name AS study_room_name,
+            s.seat_number,
+            ci.check_in_time,
+            ci.check_in_type,
+            CASE ci.check_in_type
+                WHEN 1 THEN '扫码签到'
+                WHEN 2 THEN '手动输入编码'
+                ELSE '未知'
+            END AS check_in_type_text,
+            ci.check_out_time,
+            ci.check_code,
+            CASE WHEN ci.check_out_time IS NOT NULL THEN 1 ELSE 0 END AS is_checked_out,
+            CASE 
+                WHEN ci.check_out_time IS NOT NULL 
+                THEN TIMESTAMPDIFF(MINUTE, ci.check_in_time, ci.check_out_time)
+                ELSE TIMESTAMPDIFF(MINUTE, ci.check_in_time, NOW())
+            END AS duration_minutes,
+            ci.create_time
+        FROM check_in ci
+        INNER JOIN reservation r ON ci.reservation_id = r.id
+        INNER JOIN student st ON r.student_id = st.id
+        INNER JOIN user u ON st.user_id = u.id
+        INNER JOIN seat s ON r.seat_id = s.id
+        INNER JOIN study_room sr ON s.study_room_id = sr.id
+        WHERE ci.is_deleted = 0
+        <if test="studyRoomId != null">
+            AND sr.id = #{studyRoomId}
+        </if>
+        <if test="studentId != null">
+            AND st.id = #{studentId}
+        </if>
+        ORDER BY ci.create_time DESC
+    </select>
+
+    <!-- 根据预约ID查询签到信息 -->
+    <select id="selectByReservationId" resultMap="CheckInVOResultMap">
+        SELECT 
+            ci.id,
+            ci.reservation_id,
+            u.real_name AS student_name,
+            sr.name AS study_room_name,
+            s.seat_number,
+            ci.check_in_time,
+            ci.check_in_type,
+            CASE ci.check_in_type
+                WHEN 1 THEN '扫码签到'
+                WHEN 2 THEN '手动输入编码'
+                ELSE '未知'
+            END AS check_in_type_text,
+            ci.check_out_time,
+            ci.check_code,
+            CASE WHEN ci.check_out_time IS NOT NULL THEN 1 ELSE 0 END AS is_checked_out,
+            CASE 
+                WHEN ci.check_out_time IS NOT NULL 
+                THEN TIMESTAMPDIFF(MINUTE, ci.check_in_time, ci.check_out_time)
+                ELSE TIMESTAMPDIFF(MINUTE, ci.check_in_time, NOW())
+            END AS duration_minutes,
+            ci.create_time
+        FROM check_in ci
+        INNER JOIN reservation r ON ci.reservation_id = r.id
+        INNER JOIN student st ON r.student_id = st.id
+        INNER JOIN user u ON st.user_id = u.id
+        INNER JOIN seat s ON r.seat_id = s.id
+        INNER JOIN study_room sr ON s.study_room_id = sr.id
+        WHERE ci.is_deleted = 0 AND ci.reservation_id = #{reservationId}
+    </select>
+
+    <!-- 根据ID查询签到详情 -->
+    <select id="selectCheckInById" resultMap="CheckInVOResultMap">
+        SELECT 
+            ci.id,
+            ci.reservation_id,
+            u.real_name AS student_name,
+            sr.name AS study_room_name,
+            s.seat_number,
+            ci.check_in_time,
+            ci.check_in_type,
+            CASE ci.check_in_type
+                WHEN 1 THEN '扫码签到'
+                WHEN 2 THEN '手动输入编码'
+                ELSE '未知'
+            END AS check_in_type_text,
+            ci.check_out_time,
+            ci.check_code,
+            CASE WHEN ci.check_out_time IS NOT NULL THEN 1 ELSE 0 END AS is_checked_out,
+            CASE 
+                WHEN ci.check_out_time IS NOT NULL 
+                THEN TIMESTAMPDIFF(MINUTE, ci.check_in_time, ci.check_out_time)
+                ELSE TIMESTAMPDIFF(MINUTE, ci.check_in_time, NOW())
+            END AS duration_minutes,
+            ci.create_time
+        FROM check_in ci
+        INNER JOIN reservation r ON ci.reservation_id = r.id
+        INNER JOIN student st ON r.student_id = st.id
+        INNER JOIN user u ON st.user_id = u.id
+        INNER JOIN seat s ON r.seat_id = s.id
+        INNER JOIN study_room sr ON s.study_room_id = sr.id
+        WHERE ci.is_deleted = 0 AND ci.id = #{id}
+    </select>
+
+</mapper> 

@@ -223,6 +223,15 @@ Page({
       url: `/pages/user-center/extend-reservation/extend-reservation?id=${id}&endTime=${endTime}`
     });
   },
+
+  // 跳转到签到页面
+  goToCheckIn: function(e) {
+    const { id } = e.currentTarget.dataset;
+    
+    wx.navigateTo({
+      url: `/pages/check-in/check-in?reservationId=${id}`
+    });
+  },
   
   // 查看预约详情
   viewReservationDetail: function(e) {

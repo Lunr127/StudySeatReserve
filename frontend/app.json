@@ -16,6 +16,7 @@
     "pages/user-center/edit-profile/edit-profile",
     "pages/user-center/extend-reservation/extend-reservation",
     "pages/user-center/reservation-detail/reservation-detail",
+    "pages/check-in/check-in",
     "pages/notifications/notifications",
     "pages/admin/study-rooms/manage/manage",
     "pages/admin/study-rooms/edit/edit"

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studyseat.reserve.mapper.CheckCodeMapper">
+
+    <!-- 通用结果映射 -->
+    <resultMap id="CheckCodeVOResultMap" type="com.studyseat.reserve.vo.CheckCodeVO">
+        <id column="id" property="id"/>
+        <result column="study_room_id" property="studyRoomId"/>
+        <result column="study_room_name" property="studyRoomName"/>
+        <result column="code" property="code"/>
+        <result column="valid_date" property="validDate"/>
+        <result column="is_active" property="isActive"/>
+        <result column="status_text" property="statusText"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 分页查询签到码 -->
+    <select id="selectCheckCodePage" resultMap="CheckCodeVOResultMap">
+        SELECT 
+            cc.id,
+            cc.study_room_id,
+            sr.name AS study_room_name,
+            cc.code,
+            cc.valid_date,
+            cc.is_active,
+            CASE cc.is_active
+                WHEN 1 THEN '有效'
+                WHEN 0 THEN '无效'
+                ELSE '未知'
+            END AS status_text,
+            cc.create_time
+        FROM check_code cc
+        INNER JOIN study_room sr ON cc.study_room_id = sr.id
+        WHERE cc.is_deleted = 0
+        <if test="studyRoomId != null">
+            AND cc.study_room_id = #{studyRoomId}
+        </if>
+        <if test="validDate != null">
+            AND cc.valid_date = #{validDate}
+        </if>
+        ORDER BY cc.valid_date DESC, cc.create_time DESC
+    </select>
+
+    <!-- 根据自习室ID和日期查询签到码 -->
+    <select id="selectByRoomIdAndDate" resultType="com.studyseat.reserve.entity.CheckCode">
+        SELECT *
+        FROM check_code
+        WHERE is_deleted = 0 
+        AND study_room_id = #{studyRoomId} 
+        AND valid_date = #{validDate}
+        LIMIT 1
+    </select>
+
+    <!-- 根据签到码查询详细信息 -->
+    <select id="selectByCodeAndDate" resultMap="CheckCodeVOResultMap">
+        SELECT 
+            cc.id,
+            cc.study_room_id,
+            sr.name AS study_room_name,
+            cc.code,
+            cc.valid_date,
+            cc.is_active,
+            CASE cc.is_active
+                WHEN 1 THEN '有效'
+                WHEN 0 THEN '无效'
+                ELSE '未知'
+            END AS status_text,
+            cc.create_time
+        FROM check_code cc
+        INNER JOIN study_room sr ON cc.study_room_id = sr.id
+        WHERE cc.is_deleted = 0 
+        AND cc.code = #{code} 
+        AND cc.valid_date = #{validDate}
+        AND cc.is_active = 1
+        LIMIT 1
+    </select>
+
+</mapper> 

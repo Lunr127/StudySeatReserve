@@ -65,6 +65,13 @@
         
         <view class="reservation-actions">
           <button 
+            class="action-btn check-in" 
+            wx:if="{{canCheckIn(item)}}" 
+            catchtap="goToCheckIn" 
+            data-id="{{item.id}}">
+            签到
+          </button>
+          <button 
             class="action-btn cancel" 
             wx:if="{{canCancel(item)}}" 
             catchtap="cancelReservation" 

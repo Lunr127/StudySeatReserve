@@ -1,0 +1,381 @@
+/* 页面容器 */
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding-bottom: 40rpx;
+}
+
+/* 页面头部 */
+.header {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 30rpx;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10rpx);
+}
+
+.back-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.back-icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.title {
+  flex: 1;
+  text-align: center;
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #fff;
+  margin-left: -60rpx;
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400rpx;
+}
+
+.loading-text {
+  color: #fff;
+  font-size: 32rpx;
+}
+
+/* 主要内容 */
+.content {
+  padding: 30rpx;
+}
+
+/* 预约信息卡片 */
+.reservation-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.status-badge {
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  color: #fff;
+}
+
+.status-1 {
+  background: #ffa726;
+}
+
+.status-2 {
+  background: #66bb6a;
+}
+
+.status-3 {
+  background: #42a5f5;
+}
+
+.status-4 {
+  background: #ef5350;
+}
+
+.card-content {
+  space-y: 16rpx;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.label {
+  font-size: 28rpx;
+  color: #666;
+  width: 120rpx;
+}
+
+.value {
+  font-size: 28rpx;
+  color: #333;
+  flex: 1;
+}
+
+/* 签到状态卡片 */
+.check-status-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.status-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.status-icon {
+  width: 120rpx;
+  height: 120rpx;
+  margin-bottom: 20rpx;
+}
+
+.status-text {
+  font-size: 36rpx;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+
+.checked-in .status-text {
+  color: #66bb6a;
+}
+
+.checked-out .status-text {
+  color: #42a5f5;
+}
+
+.status-time {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 8rpx;
+}
+
+.status-type {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.duration-text {
+  font-size: 28rpx;
+  color: #666;
+  margin-top: 8rpx;
+}
+
+/* 签到操作区域 */
+.check-in-section {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 30rpx;
+}
+
+/* 签到方式选择 */
+.check-type-selector {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.type-option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30rpx 20rpx;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 16rpx;
+  transition: all 0.3s ease;
+}
+
+.type-option.active {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.type-icon {
+  width: 60rpx;
+  height: 60rpx;
+  margin-bottom: 16rpx;
+}
+
+.type-text {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.type-option.active .type-text {
+  color: #667eea;
+  font-weight: 600;
+}
+
+/* 扫码签到区域 */
+.scan-section {
+  text-align: center;
+}
+
+.scan-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30rpx;
+  padding: 20rpx;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 12rpx;
+}
+
+.tip-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 12rpx;
+}
+
+.scan-tip text {
+  font-size: 28rpx;
+  color: #667eea;
+}
+
+.btn-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 12rpx;
+}
+
+/* 手动输入区域 */
+.input-section {
+  text-align: center;
+}
+
+.input-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30rpx;
+  padding: 20rpx;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 12rpx;
+}
+
+.input-tip text {
+  font-size: 28rpx;
+  color: #667eea;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30rpx;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+
+.code-input {
+  flex: 1;
+  padding: 24rpx 20rpx;
+  font-size: 32rpx;
+  text-align: center;
+  letter-spacing: 8rpx;
+}
+
+.show-code-btn {
+  width: 80rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  border-left: 2rpx solid #e0e0e0;
+}
+
+.eye-icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+/* 签退操作区域 */
+.check-out-section {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.check-out-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30rpx;
+  padding: 20rpx;
+  background: rgba(255, 167, 38, 0.1);
+  border-radius: 12rpx;
+}
+
+.check-out-tip text {
+  font-size: 28rpx;
+  color: #ffa726;
+}
+
+/* 签到说明 */
+.instructions {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+}
+
+.instruction-list {
+  space-y: 20rpx;
+}
+
+.instruction-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20rpx;
+}
+
+.instruction-number {
+  width: 40rpx;
+  height: 40rpx;
+  background: #667eea;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: 600;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.instruction-text {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.6;
+  flex: 1;
+} 
