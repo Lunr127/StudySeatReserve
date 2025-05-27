@@ -321,4 +321,19 @@ INSERT INTO `user_preference` (`user_id`, `enable_notification`, `enable_auto_ca
 (3, TRUE, FALSE, 15, '{}'),
 (4, TRUE, FALSE, 15, '{}'),
 (5, TRUE, FALSE, 15, '{}'),
-(6, TRUE, FALSE, 15, '{}'); 
+(6, TRUE, FALSE, 15, '{}');
+
+-- 插入当前状态的预约测试数据（今天的预约）
+INSERT INTO `reservation` (`student_id`, `seat_id`, `start_time`, `end_time`, `status`) VALUES
+-- 张三的当前预约（待签到）
+(1, 1, CONCAT(CURDATE(), ' 10:00:00'), CONCAT(CURDATE(), ' 12:00:00'), 1),
+(1, 2, CONCAT(CURDATE(), ' 14:00:00'), CONCAT(CURDATE(), ' 16:00:00'), 1),
+-- 李四的当前预约（使用中）
+(2, 3, CONCAT(CURDATE(), ' 09:00:00'), CONCAT(CURDATE(), ' 11:00:00'), 2),
+-- 王五的当前预约（待签到）
+(3, 4, CONCAT(CURDATE(), ' 15:00:00'), CONCAT(CURDATE(), ' 17:00:00'), 1);
+
+-- 插入明天的预约（待签到）
+INSERT INTO `reservation` (`student_id`, `seat_id`, `start_time`, `end_time`, `status`) VALUES
+(1, 5, CONCAT(DATE_ADD(CURDATE(), INTERVAL 1 DAY), ' 09:00:00'), CONCAT(DATE_ADD(CURDATE(), INTERVAL 1 DAY), ' 11:00:00'), 1),
+(2, 6, CONCAT(DATE_ADD(CURDATE(), INTERVAL 1 DAY), ' 14:00:00'), CONCAT(DATE_ADD(CURDATE(), INTERVAL 1 DAY), ' 16:00:00'), 1); 

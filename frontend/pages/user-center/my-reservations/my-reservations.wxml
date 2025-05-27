@@ -55,7 +55,7 @@
           </view>
           <view class="info-row">
             <text class="label">时间:</text>
-            <text class="value">{{formatDateTime(item.startTime)}} 至 {{formatDateTime(item.endTime)}}</text>
+            <text class="value">{{item.formattedStartTime}} 至 {{item.formattedEndTime}}</text>
           </view>
           <view class="info-row">
             <text class="label">位置:</text>
@@ -130,7 +130,7 @@
           </view>
           <view class="info-row">
             <text class="label">时间:</text>
-            <text class="value">{{formatDateTime(item.startTime)}} 至 {{formatDateTime(item.endTime)}}</text>
+            <text class="value">{{item.formattedStartTime}} 至 {{item.formattedEndTime}}</text>
           </view>
           <view class="info-row">
             <text class="label">位置:</text>

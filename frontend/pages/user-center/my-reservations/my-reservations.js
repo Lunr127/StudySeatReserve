@@ -54,8 +54,16 @@ Page({
     
     reservationApi.getCurrentReservations().then(res => {
       if (res.code === 200) {
+        // 格式化数据
+        const currentReservations = (res.data || []).map(item => ({
+          ...item,
+          formattedStartTime: this.formatDateTime(item.startTime),
+          formattedEndTime: this.formatDateTime(item.endTime),
+          formattedCreateTime: this.formatDateTime(item.createTime)
+        }));
+        
         this.setData({
-          currentReservations: res.data || [],
+          currentReservations,
           loading: false,
           refreshing: false
         });
@@ -98,7 +106,14 @@ Page({
     }).then(res => {
       if (res.code === 200) {
         const pageData = res.data;
-        const newData = pageData.records || [];
+        
+        // 格式化数据
+        const newData = (pageData.records || []).map(item => ({
+          ...item,
+          formattedStartTime: this.formatDateTime(item.startTime),
+          formattedEndTime: this.formatDateTime(item.endTime),
+          formattedCreateTime: this.formatDateTime(item.createTime)
+        }));
         
         // 判断是否还有更多数据
         const hasMoreData = currentPage < pageData.pages;
