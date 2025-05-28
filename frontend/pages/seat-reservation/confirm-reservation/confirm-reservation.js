@@ -297,10 +297,26 @@ Page({
             icon: 'success'
           });
           
-          // 延迟跳转到预约详情页
+          // 显示选择跳转页面的模态框
           setTimeout(() => {
-            wx.redirectTo({
-              url: `/pages/user-center/my-reservations/my-reservations`
+            wx.showModal({
+              title: '预约成功',
+              content: '您想要跳转到哪里？',
+              cancelText: '返回主页',
+              confirmText: '查看预约',
+              success: (res) => {
+                if (res.confirm) {
+                  // 用户点击"查看预约"
+                  wx.redirectTo({
+                    url: `/pages/user-center/my-reservations/my-reservations`
+                  });
+                } else if (res.cancel) {
+                  // 用户点击"返回主页"
+                  wx.switchTab({
+                    url: `/pages/index/index`
+                  });
+                }
+              }
             });
           }, 1500);
         } else {
