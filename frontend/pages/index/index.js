@@ -1,5 +1,5 @@
 const app = getApp();
-const { userApi } = require('../../utils/api');
+const { userApi, reservationApi } = require('../../utils/api');
 
 Page({
   /**
@@ -108,20 +108,59 @@ Page({
    */
   getRecentReservations: function() {
     if (this.data.hasLogin) {
-      // 模拟数据，实际应调用后端API
-      this.setData({
-        recentReservations: [
-          {
-            id: 1,
-            roomName: '中心图书馆一楼自习室',
-            seatNumber: 'A12',
-            date: '2023-05-20',
-            time: '14:00-16:00',
-            status: '使用中'
-          }
-        ]
+      // 调用后端API获取当前有效预约
+      reservationApi.getCurrentReservations().then(res => {
+        if (res.code === 200) {
+          // 转换数据格式以适配前端显示
+          const recentReservations = res.data.map(reservation => ({
+            id: reservation.id,
+            roomName: reservation.studyRoomName,
+            seatNumber: reservation.seatNumber,
+            date: reservation.startTime ? reservation.startTime.split(' ')[0] : '',
+            time: reservation.startTime && reservation.endTime ? 
+              reservation.startTime.split(' ')[1].substring(0, 5) + '-' + 
+              reservation.endTime.split(' ')[1].substring(0, 5) : '',
+            status: reservation.statusText || this.getStatusText(reservation.status),
+            startTime: reservation.startTime,
+            endTime: reservation.endTime,
+            canCancel: reservation.canCancel,
+            canExtend: reservation.canExtend,
+            canCheckIn: reservation.canCheckIn,
+            hasCheckedIn: reservation.hasCheckedIn
+          }));
+          
+          this.setData({
+            recentReservations: recentReservations
+          });
+        } else {
+          console.error('获取最近预约失败:', res.message);
+          // 如果获取失败，设置为空数组
+          this.setData({
+            recentReservations: []
+          });
+        }
+      }).catch(err => {
+        console.error('获取最近预约错误:', err);
+        // 如果网络错误，设置为空数组
+        this.setData({
+          recentReservations: []
+        });
       });
     }
+  },
+
+  /**
+   * 获取状态文字
+   */
+  getStatusText: function(status) {
+    const statusMap = {
+      0: '已取消',
+      1: '待签到',
+      2: '使用中',
+      3: '已完成',
+      4: '已违约'
+    };
+    return statusMap[status] || '未知状态';
   },
 
   /**

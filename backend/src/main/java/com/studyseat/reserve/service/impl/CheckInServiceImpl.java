@@ -55,17 +55,17 @@ public class CheckInServiceImpl extends ServiceImpl<CheckInMapper, CheckIn> impl
             throw new BusinessException("该预约已经签到过了");
         }
         
-        // 3. 验证签到时间（预约开始时间前后15分钟内可以签到）
+        // 3. 验证签到时间（预约开始时间前30分钟至后30分钟内可以签到）
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = reservation.getStartTime();
         LocalDateTime endTime = reservation.getEndTime();
         
-        if (now.isBefore(startTime.minusMinutes(15))) {
-            throw new BusinessException("签到时间过早，请在预约开始前15分钟内签到");
+        if (now.isBefore(startTime.minusMinutes(30))) {
+            throw new BusinessException("签到时间过早，请在预约开始前30分钟内签到");
         }
         
-        if (now.isAfter(endTime)) {
-            throw new BusinessException("预约时间已结束，无法签到");
+        if (now.isAfter(startTime.plusMinutes(30))) {
+            throw new BusinessException("签到时间过晚，请在预约开始后30分钟内签到");
         }
         
         // 4. 如果是手动输入编码签到，验证签到码
@@ -192,8 +192,7 @@ public class CheckInServiceImpl extends ServiceImpl<CheckInMapper, CheckIn> impl
         // 检查是否在签到时间范围内
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = reservation.getStartTime();
-        LocalDateTime endTime = reservation.getEndTime();
         
-        return !now.isBefore(startTime.minusMinutes(15)) && !now.isAfter(endTime);
+        return !now.isBefore(startTime.minusMinutes(30)) && !now.isAfter(startTime.plusMinutes(30));
     }
 } 

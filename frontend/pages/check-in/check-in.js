@@ -263,12 +263,5 @@ Page({
         icon: 'none'
       });
     }
-  },
-
-  /**
-   * 返回上一页
-   */
-  onBack() {
-    wx.navigateBack();
   }
 }); 

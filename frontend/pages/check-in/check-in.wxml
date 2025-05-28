@@ -1,12 +1,4 @@
 <view class="container">
-  <!-- 页面头部 -->
-  <view class="header">
-    <view class="back-btn" bindtap="onBack">
-      <image src="/images/arrow_left.png" class="back-icon"></image>
-    </view>
-    <view class="title">签到</view>
-  </view>
-
   <!-- 加载状态 -->
   <view wx:if="{{loading}}" class="loading-container">
     <view class="loading-text">加载中...</view>
@@ -153,7 +145,7 @@
       <view class="instruction-list">
         <view class="instruction-item">
           <view class="instruction-number">1</view>
-          <view class="instruction-text">请在预约时间开始前15分钟内进行签到</view>
+          <view class="instruction-text">请在预约时间开始前30分钟至开始后30分钟内进行签到</view>
         </view>
         <view class="instruction-item">
           <view class="instruction-number">2</view>

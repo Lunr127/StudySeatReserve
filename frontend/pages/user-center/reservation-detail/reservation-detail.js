@@ -57,6 +57,10 @@ Page({
         reservation.formattedEndTime = this.formatDateTime(reservation.endTime);
         reservation.formattedCreateTime = this.formatDateTime(reservation.createTime);
         
+        // 设置状态文本和样式类
+        reservation.statusText = reservation.statusText || this.getStatusText(reservation.status);
+        reservation.statusClass = this.getStatusClass(reservation.status);
+        
         this.setData({
           reservation: reservation,
           loading: false

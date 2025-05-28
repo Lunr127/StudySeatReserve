@@ -40,8 +40,9 @@
             END as status_text,
             CASE WHEN r.status IN (1, 2) AND r.end_time > NOW() THEN 1 ELSE 0 END as can_cancel,
             CASE WHEN r.status = 2 AND r.end_time > NOW() THEN 1 ELSE 0 END as can_extend,
-            CASE WHEN r.status = 1 AND r.start_time &lt;= NOW() AND 
-                DATE_ADD(r.start_time, INTERVAL 15 MINUTE) &gt;= NOW() THEN 1 ELSE 0 END as can_check_in,
+            CASE WHEN r.status = 1 AND 
+                DATE_SUB(r.start_time, INTERVAL 30 MINUTE) &lt;= NOW() AND 
+                DATE_ADD(r.start_time, INTERVAL 30 MINUTE) &gt;= NOW() THEN 1 ELSE 0 END as can_check_in,
             CASE WHEN EXISTS (SELECT 1 FROM check_in ci WHERE ci.reservation_id = r.id) THEN 1 ELSE 0 END as has_checked_in
         FROM reservation r
         LEFT JOIN student st ON r.student_id = st.id
@@ -87,8 +88,9 @@
             END as status_text,
             CASE WHEN r.status IN (1, 2) AND r.end_time > NOW() THEN 1 ELSE 0 END as can_cancel,
             CASE WHEN r.status = 2 AND r.end_time > NOW() THEN 1 ELSE 0 END as can_extend,
-            CASE WHEN r.status = 1 AND r.start_time &lt;= NOW() AND 
-                DATE_ADD(r.start_time, INTERVAL 15 MINUTE) &gt;= NOW() THEN 1 ELSE 0 END as can_check_in,
+            CASE WHEN r.status = 1 AND 
+                DATE_SUB(r.start_time, INTERVAL 30 MINUTE) &lt;= NOW() AND 
+                DATE_ADD(r.start_time, INTERVAL 30 MINUTE) &gt;= NOW() THEN 1 ELSE 0 END as can_check_in,
             CASE WHEN EXISTS (SELECT 1 FROM check_in ci WHERE ci.reservation_id = r.id) THEN 1 ELSE 0 END as has_checked_in
         FROM reservation r
         LEFT JOIN student st ON r.student_id = st.id

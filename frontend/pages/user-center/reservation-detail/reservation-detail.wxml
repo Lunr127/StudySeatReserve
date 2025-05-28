@@ -16,10 +16,10 @@
   <!-- 预约详情内容 -->
   <block wx:if="{{!loading && reservation}}">
     <!-- 预约状态卡片 -->
-    <view class="reservation-status-card {{getStatusClass(reservation.status)}}">
-      <view class="status-text">{{reservation.statusText || getStatusText(reservation.status)}}</view>
+    <view class="reservation-status-card {{reservation.statusClass}}">
+      <view class="status-text">{{reservation.statusText}}</view>
       <view class="status-desc">
-        <block wx:if="{{reservation.status === 1}}">请在预约开始前15分钟内签到</block>
+        <block wx:if="{{reservation.status === 1}}">请在预约开始前30分钟至开始后30分钟内签到</block>
         <block wx:elif="{{reservation.status === 2}}">正在使用中，请按时签退</block>
         <block wx:elif="{{reservation.status === 0}}">您已取消该预约</block>
         <block wx:elif="{{reservation.status === 3}}">预约已完成，感谢使用</block>

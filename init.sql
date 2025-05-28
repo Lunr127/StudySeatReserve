@@ -253,9 +253,9 @@ INSERT INTO `user` (`username`, `password`, `real_name`, `phone`, `email`, `user
 
 -- 插入学生信息
 INSERT INTO `student` (`user_id`, `student_id`, `college`, `major`, `grade`, `class_name`) VALUES
-(4, '2023001', '计算机学院', '计算机科学与技术', '2023级', '计科1班'),
-(5, '2023002', '经济管理学院', '工商管理', '2023级', '工管1班'),
-(6, '2023003', '文学院', '汉语言文学', '2023级', '汉文1班');
+(4, '2025001', '计算机学院', '计算机科学与技术', '2025级', '计科1班'),
+(5, '2025002', '经济管理学院', '工商管理', '2025级', '工管1班'),
+(6, '2025003', '文学院', '汉语言文学', '2025级', '汉文1班');
 
 -- 插入示例自习室
 INSERT INTO `study_room` (`name`, `location`, `building`, `floor`, `room_number`, `capacity`, `description`, `open_time`, `close_time`, `belongs_to`, `is_active`, `admin_id`) VALUES
@@ -304,9 +304,9 @@ INSERT INTO `system_param` (`param_key`, `param_value`, `description`) VALUES
 
 -- 插入一些测试预约记录（为违约记录做准备）
 INSERT INTO `reservation` (`student_id`, `seat_id`, `start_time`, `end_time`, `status`) VALUES
-(1, 1, '2024-01-15 09:00:00', '2024-01-15 11:00:00', 4),  -- 已违约
-(1, 2, '2024-01-16 14:00:00', '2024-01-16 16:00:00', 4),  -- 已违约
-(2, 3, '2024-01-17 10:00:00', '2024-01-17 12:00:00', 4);  -- 已违约
+(1, 1, '2025-01-15 09:00:00', '2025-01-15 11:00:00', 4),  -- 已违约
+(1, 2, '2025-01-16 14:00:00', '2025-01-16 16:00:00', 4),  -- 已违约
+(2, 3, '2025-01-17 10:00:00', '2025-01-17 12:00:00', 4);  -- 已违约
 
 -- 插入测试违约记录数据
 INSERT INTO `violation` (`student_id`, `reservation_id`, `violation_type`, `description`) VALUES

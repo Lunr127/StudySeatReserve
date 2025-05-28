@@ -86,7 +86,7 @@
     <view class="rules-content">
       <text>1. 每次预约时长不少于{{rules.minDuration}}小时</text>
       <text>2. 最多可提前{{rules.advanceDays}}天预约</text>
-      <text>3. 预约成功后，请在预约开始时间后15分钟内完成签到</text>
+      <text>3. 预约成功后，请在预约开始前30分钟至开始后30分钟内完成签到</text>
       <text>4. 当日累计违约3次将被限制预约</text>
     </view>
   </view>

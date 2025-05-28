@@ -46,7 +46,7 @@
     <view class="notice-card">
       <view class="notice-title">温馨提示</view>
       <view class="notice-content">
-        <view class="notice-item">1. 预约成功后，需在预约开始时间后15分钟内完成签到，否则系统将自动取消预约。</view>
+        <view class="notice-item">1. 预约成功后，需在预约开始前30分钟至开始后30分钟内完成签到，否则系统将自动取消预约。</view>
         <view class="notice-item">2. 如需取消预约，请至少提前30分钟操作，以便其他学生使用。</view>
         <view class="notice-item">3. 请遵守自习室规定，保持安静，不要影响他人学习。</view>
       </view>
