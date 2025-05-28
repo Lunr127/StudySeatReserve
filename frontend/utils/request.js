@@ -109,14 +109,44 @@ const get = (url, data = {}, options = {}) => {
   const processedData = {};
   for (const key in data) {
     if (data[key] !== null && data[key] !== undefined) {
-      processedData[key] = data[key];
+      // 如果参数值是数组，需要特殊处理
+      if (Array.isArray(data[key])) {
+        // 对于数组参数，需要构建查询字符串
+        // 例如：status=[0,3,4] 转换为 status=0&status=3&status=4
+        // 这里先标记为数组，在构建URL时处理
+        processedData[key] = data[key];
+      } else {
+        processedData[key] = data[key];
+      }
     }
   }
   
+  // 构建查询字符串
+  let queryString = '';
+  if (Object.keys(processedData).length > 0) {
+    const queryParams = [];
+    for (const key in processedData) {
+      const value = processedData[key];
+      if (Array.isArray(value)) {
+        // 数组参数：为每个值创建一个同名参数
+        value.forEach(item => {
+          queryParams.push(`${encodeURIComponent(key)}=${encodeURIComponent(item)}`);
+        });
+      } else {
+        // 普通参数
+        queryParams.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+      }
+    }
+    queryString = queryParams.join('&');
+  }
+  
+  // 如果有查询字符串，附加到URL上
+  const finalUrl = queryString ? `${url}?${queryString}` : url;
+  
   return request({
-    url,
+    url: finalUrl,
     method: 'GET',
-    data: processedData,
+    // GET请求不需要在data中传递参数了，因为已经构建到URL中
     ...options
   });
 };

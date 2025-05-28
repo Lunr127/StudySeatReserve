@@ -59,8 +59,11 @@
         <if test="studyRoomId != null">
             AND sr.id = #{studyRoomId}
         </if>
-        <if test="status != null">
-            AND r.status = #{status}
+        <if test="status != null and status.size() > 0">
+            AND r.status IN
+            <foreach item="item" index="index" collection="status" open="(" separator="," close=")">
+                #{item}
+            </foreach>
         </if>
         <if test="startAfter != null">
             AND r.start_time &gt;= #{startAfter}

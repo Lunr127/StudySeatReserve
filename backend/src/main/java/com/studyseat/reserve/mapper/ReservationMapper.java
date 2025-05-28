@@ -22,7 +22,7 @@ public interface ReservationMapper extends BaseMapper<Reservation> {
      * @param studentId 学生ID
      * @param seatId 座位ID
      * @param studyRoomId 自习室ID
-     * @param status 预约状态
+     * @param status 预约状态列表
      * @param startAfter 开始时间（之后）
      * @param startBefore 开始时间（之前）
      * @return 预约视图对象分页列表
@@ -32,7 +32,7 @@ public interface ReservationMapper extends BaseMapper<Reservation> {
             @Param("studentId") Long studentId,
             @Param("seatId") Long seatId,
             @Param("studyRoomId") Long studyRoomId,
-            @Param("status") Integer status,
+            @Param("status") List<Integer> status,
             @Param("startAfter") LocalDateTime startAfter,
             @Param("startBefore") LocalDateTime startBefore
     );

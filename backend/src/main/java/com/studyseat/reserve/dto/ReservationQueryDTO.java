@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 预约查询数据传输对象
@@ -42,7 +43,7 @@ public class ReservationQueryDTO {
     private LocalDateTime startTimeEnd;
     
     /**
-     * 状态：0-已取消，1-待签到，2-使用中，3-已完成，4-已违约
+     * 状态列表：0-已取消，1-待签到，2-使用中，3-已完成，4-已违约
      */
-    private Integer status;
+    private List<Integer> status;
 } 
