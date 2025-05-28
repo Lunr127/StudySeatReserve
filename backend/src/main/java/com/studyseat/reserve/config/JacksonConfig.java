@@ -12,6 +12,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.context.annotation.Primary;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,7 +30,11 @@ public class JacksonConfig {
     private static final String DEFAULT_TIME_FORMAT = "HH:mm:ss";
     
     @Bean
+    @Primary
     public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        
+        // 注册Java8时间模块
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         
         // 配置LocalDateTime序列化
@@ -42,14 +47,12 @@ public class JacksonConfig {
         javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(dateFormatter));
         javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormatter));
         
-        // 配置LocalTime序列化
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT);
-        javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormatter));
-        javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
+        // 自定义LocalTime序列化器，输出HH:mm格式
+        javaTimeModule.addSerializer(LocalTime.class, 
+            new LocalTimeSerializer(DateTimeFormatter.ofPattern("HH:mm")));
         
-        return Jackson2ObjectMapperBuilder.json()
-                .modules(javaTimeModule)
-                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .build();
+        mapper.registerModule(javaTimeModule);
+        
+        return mapper;
     }
 } 
