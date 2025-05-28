@@ -30,13 +30,9 @@ Page({
           endTime: decodedEndTime
         });
         
-        // 将 "yyyy-MM-dd HH:mm:ss" 格式转换为 iOS 兼容的 "yyyy/MM/dd HH:mm:ss" 格式
-        const formattedStartTime = decodedStartTime.replace(/-/g, '/');
-        const formattedEndTime = decodedEndTime.replace(/-/g, '/');
-        
         // 尝试直接将字符串转为Date对象
-        const startTime = new Date(formattedStartTime);
-        const endTime = new Date(formattedEndTime);
+        const startTime = new Date(decodedStartTime);
+        const endTime = new Date(decodedEndTime);
         
         console.log('解析后的日期对象:', {
           startTime: startTime.toString(),
@@ -46,12 +42,12 @@ Page({
         });
         
         // 在设置数据之前先生成格式化的时间显示字符串
-        const formattedStartTimeDisplay = this.formatDateTime(startTime);
-        const formattedEndTimeDisplay = this.formatDateTime(endTime);
+        const formattedStartTime = this.formatDateTime(startTime);
+        const formattedEndTime = this.formatDateTime(endTime);
         
         console.log('格式化后的时间显示:', {
-          formattedStartTime: formattedStartTimeDisplay,
-          formattedEndTime: formattedEndTimeDisplay
+          formattedStartTime: formattedStartTime,
+          formattedEndTime: formattedEndTime
         });
         
         this.setData({
@@ -59,8 +55,8 @@ Page({
           seatId: options.seatId,
           startTime: startTime,
           endTime: endTime,
-          formattedStartTime: formattedStartTimeDisplay,  // 添加格式化后的字符串
-          formattedEndTime: formattedEndTimeDisplay       // 添加格式化后的字符串
+          formattedStartTime: formattedStartTime,  // 添加格式化后的字符串
+          formattedEndTime: formattedEndTime       // 添加格式化后的字符串
         });
         
         this.loadStudyRoomInfo();
@@ -168,9 +164,7 @@ Page({
       
       // 如果不是日期对象，尝试将其解析为日期
       if (typeof date === 'string') {
-        // 将 "yyyy-MM-dd HH:mm:ss" 格式转换为 iOS 兼容的 "yyyy/MM/dd HH:mm:ss" 格式
-        const formattedDateStr = date.replace(/-/g, '/');
-        const parsedDate = new Date(formattedDateStr);
+        const parsedDate = new Date(date);
         if (!isNaN(parsedDate.getTime())) {
           const year = parsedDate.getFullYear();
           const month = String(parsedDate.getMonth() + 1).padStart(2, '0');

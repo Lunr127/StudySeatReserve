@@ -280,16 +280,7 @@ Page({
   formatDateTime: function(dateTimeStr) {
     if (!dateTimeStr) return '';
     
-    // 将 "yyyy-MM-dd HH:mm:ss" 格式转换为 iOS 兼容的 "yyyy/MM/dd HH:mm:ss" 格式
-    const formattedStr = dateTimeStr.replace(/-/g, '/');
-    
-    const date = new Date(formattedStr);
-    
-    // 检查日期是否有效
-    if (isNaN(date.getTime())) {
-      console.error('Invalid date:', dateTimeStr);
-      return dateTimeStr; // 返回原始字符串，避免显示错误
-    }
+    const date = new Date(dateTimeStr);
     
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
