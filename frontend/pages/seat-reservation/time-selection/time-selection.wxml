@@ -44,31 +44,19 @@
     <view class="time-picker-container">
       <view class="time-picker-item">
         <text class="time-label">开始时间</text>
-        <!-- 根据是否是当天设置不同的开始时间范围限制 -->
-        <block wx:if="{{selectedDateIndex === 0}}">
-          <!-- 当天：不能早于当前时间，不能晚于关闭时间 -->
-          <picker mode="time" value="{{startTimeValue}}" start="{{startTimeValue}}" end="{{studyRoom.closeTime || '23:59'}}" bindchange="bindStartTimeChange">
-            <view class="time-picker">
-              <text>{{startTimeValue || '请选择'}}</text>
-              <image src="/images/arrow_down.png" class="picker-arrow"></image>
-            </view>
-          </picker>
-        </block>
-        <block wx:else>
-          <!-- 非当天：可以选择整个开放时间范围 -->
-          <picker mode="time" value="{{startTimeValue}}" start="{{studyRoom.openTime || '00:00'}}" end="{{studyRoom.closeTime || '23:59'}}" bindchange="bindStartTimeChange">
-            <view class="time-picker">
-              <text>{{startTimeValue || '请选择'}}</text>
-              <image src="/images/arrow_down.png" class="picker-arrow"></image>
-            </view>
-          </picker>
-        </block>
+        <!-- 使用动态计算的时间范围 -->
+        <picker mode="time" value="{{startTimeValue}}" start="{{startTimeMin}}" end="{{startTimeMax}}" bindchange="bindStartTimeChange">
+          <view class="time-picker">
+            <text>{{startTimeValue || '请选择'}}</text>
+            <image src="/images/arrow_down.png" class="picker-arrow"></image>
+          </view>
+        </picker>
       </view>
       <view class="time-separator">至</view>
       <view class="time-picker-item">
         <text class="time-label">结束时间</text>
-        <!-- 结束时间必须晚于开始时间，不能晚于关闭时间 -->
-        <picker mode="time" value="{{endTimeValue}}" start="{{startTimeValue || studyRoom.openTime || '00:00'}}" end="{{studyRoom.closeTime || '23:59'}}" bindchange="bindEndTimeChange">
+        <!-- 使用动态计算的时间范围 -->
+        <picker mode="time" value="{{endTimeValue}}" start="{{endTimeMin}}" end="{{endTimeMax}}" bindchange="bindEndTimeChange">
           <view class="time-picker">
             <text>{{endTimeValue || '请选择'}}</text>
             <image src="/images/arrow_down.png" class="picker-arrow"></image>
@@ -76,8 +64,6 @@
         </picker>
       </view>
     </view>
-    
-
   </view>
   
   <!-- 预约规则 -->

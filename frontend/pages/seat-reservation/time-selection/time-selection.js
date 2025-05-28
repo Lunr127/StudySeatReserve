@@ -22,7 +22,12 @@ Page({
       minDuration: 1, // 最小预约时长（小时）
       maxDuration: 24, // 最大预约时长不设上限（设置为24小时）
       advanceDays: 7 // 最多可提前预约天数
-    }
+    },
+    // 动态计算的时间范围
+    startTimeMin: '',
+    startTimeMax: '',
+    endTimeMin: '',
+    endTimeMax: ''
   },
   
   onLoad: function(options) {
@@ -303,7 +308,7 @@ Page({
       closeTime = '22:00'; // 默认值
     }
     
-    // 如果是当天，则开始时间默认为当前时间
+    // 如果是当天，则开始时间默认为当前时间+1分钟
     const today = new Date();
     const isToday = selectedDate && 
                     today.getFullYear() === selectedDate.getFullYear() &&
@@ -311,12 +316,14 @@ Page({
                     today.getDate() === selectedDate.getDate();
     
     if (isToday) {
-      // 获取当前精确时间
+      // 获取当前时间并+1分钟
       const now = new Date();
+      now.setMinutes(now.getMinutes() + 1); // 当前时间+1分钟
+      
       const currentHour = now.getHours();
       const currentMinute = now.getMinutes();
       
-      // 格式化当前时间，保持分钟不变
+      // 格式化当前时间+1分钟
       const currentTime = `${String(currentHour).padStart(2, '0')}:${String(currentMinute).padStart(2, '0')}`;
       
       // 解析开放时间
@@ -331,7 +338,7 @@ Page({
         openTime = currentTime;
       }
       
-      // 设置结束时间为开始时间后2小时（默认值），但不超过关闭时间
+      // 设置结束时间为开始时间后2小时，但不超过关闭时间
       const [closeHour, closeMinute] = closeTime.split(':').map(Number);
       const closeTotalMinutes = closeHour * 60 + closeMinute;
       
@@ -344,12 +351,63 @@ Page({
       
       // 更新结束时间，但确保不超过自习室关闭时间
       closeTime = endTotalMinutes <= closeTotalMinutes ? suggestedEndTime : closeTime;
+    } else {
+      // 非当天的情况下，开始时间为开放时间，结束时间为开放时间+2小时或关闭时间
+      const [openHour, openMinute] = openTime.split(':').map(Number);
+      const [closeHour, closeMinute] = closeTime.split(':').map(Number);
+      
+      const openTotalMinutes = openHour * 60 + openMinute;
+      const closeTotalMinutes = closeHour * 60 + closeMinute;
+      
+      // 默认预约2小时
+      let endTotalMinutes = Math.min(openTotalMinutes + 120, closeTotalMinutes);
+      const endHour = Math.floor(endTotalMinutes / 60);
+      const endMinute = endTotalMinutes % 60;
+      
+      closeTime = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`;
     }
     
     this.setData({
       startTimeValue: openTime,
       endTimeValue: closeTime,
       loading: false
+    });
+    
+    // 更新时间范围
+    this.updateTimeRanges();
+  },
+  
+  // 更新时间选择器的范围
+  updateTimeRanges: function() {
+    const { studyRoom, selectedDateIndex, startTimeValue } = this.data;
+    
+    let startTimeMin = '';
+    let startTimeMax = studyRoom.closeTime || '23:59';
+    let endTimeMin = '';
+    let endTimeMax = studyRoom.closeTime || '23:59';
+    
+    // 如果是当天，最小时间为当前时间+1分钟
+    if (selectedDateIndex === 0) {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() + 1);
+      startTimeMin = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      endTimeMin = startTimeMin;
+    } else {
+      // 非当天，最小时间为开放时间
+      startTimeMin = studyRoom.openTime || '00:00';
+      endTimeMin = studyRoom.openTime || '00:00';
+    }
+    
+    // 结束时间的最小值为开始时间（如果已选择）
+    if (startTimeValue) {
+      endTimeMin = startTimeValue;
+    }
+    
+    this.setData({
+      startTimeMin,
+      startTimeMax,
+      endTimeMin,
+      endTimeMax
     });
   },
   
@@ -412,6 +470,9 @@ Page({
         this.initTimeSelectors();
       }, 50);
     });
+    
+    // 更新时间范围
+    this.updateTimeRanges();
   },
   
   // 选择开始时间
@@ -419,72 +480,82 @@ Page({
     const newStartTime = e.detail.value;
     
     // 获取当前的结束时间
-    let { endTimeValue, studyRoom } = this.data;
+    let { endTimeValue, studyRoom, selectedDateIndex } = this.data;
     
-    // 检查开始时间是否在自习室开放时间范围内
-    const [openHour, openMinute] = (studyRoom.openTime || '08:00').split(':').map(Number);
+    // 检查开始时间是否在允许的时间范围内
     const [closeHour, closeMinute] = (studyRoom.closeTime || '22:00').split(':').map(Number);
     const [startHour, startMinute] = newStartTime.split(':').map(Number);
     
-    const openTotalMinutes = openHour * 60 + openMinute;
     const closeTotalMinutes = closeHour * 60 + closeMinute;
     const startTotalMinutes = startHour * 60 + startMinute;
     
-    // 如果开始时间早于开放时间或晚于关闭时间，不更新值
-    if (startTotalMinutes < openTotalMinutes || startTotalMinutes >= closeTotalMinutes) {
+    // 如果是当天，检查是否早于当前时间+1分钟
+    const today = new Date();
+    const isToday = selectedDateIndex === 0;
+    
+    if (isToday) {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() + 1); // 当前时间+1分钟
+      const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
+      
+      if (startTotalMinutes < currentTotalMinutes) {
+        wx.showToast({
+          title: '开始时间不能早于当前时间',
+          icon: 'none'
+        });
+        return;
+      }
+    } else {
+      // 非当天，检查是否早于开放时间
+      const [openHour, openMinute] = (studyRoom.openTime || '08:00').split(':').map(Number);
+      const openTotalMinutes = openHour * 60 + openMinute;
+      
+      if (startTotalMinutes < openTotalMinutes) {
+        wx.showToast({
+          title: `开始时间不能早于${studyRoom.openTime}`,
+          icon: 'none'
+        });
+        return;
+      }
+    }
+    
+    // 检查是否晚于关闭时间
+    if (startTotalMinutes >= closeTotalMinutes) {
       wx.showToast({
-        title: `请在${studyRoom.openTime}-${studyRoom.closeTime}范围内选择`,
+        title: `开始时间不能晚于${studyRoom.closeTime}`,
         icon: 'none'
       });
       return;
     }
     
-    // 如果开始时间晚于或等于结束时间，则将结束时间设置为开始时间之后的一小时
-    if (endTimeValue) {
-      const [endHour, endMinute] = endTimeValue.split(':').map(Number);
-      const endTotalMinutes = endHour * 60 + endMinute;
-      
-      if (startTotalMinutes >= endTotalMinutes) {
-        // 将结束时间设置为开始时间之后的一小时
-        let newEndMinutes = startTotalMinutes + 60;
-        
-        // 确保不超过关闭时间
-        if (newEndMinutes > closeTotalMinutes) {
-          newEndMinutes = closeTotalMinutes;
-        }
-        
-        const newEndHour = Math.floor(newEndMinutes / 60);
-        const newEndMinute = newEndMinutes % 60;
-        
-        endTimeValue = `${String(newEndHour).padStart(2, '0')}:${String(newEndMinute).padStart(2, '0')}`;
-      }
-    } else {
-      // 如果没有结束时间，设置为开始时间后一小时，但不超过关闭时间
-      let newEndMinutes = startTotalMinutes + 60;
-      
-      // 确保不超过关闭时间
-      if (newEndMinutes > closeTotalMinutes) {
-        newEndMinutes = closeTotalMinutes;
-      }
-      
-      const newEndHour = Math.floor(newEndMinutes / 60);
-      const newEndMinute = newEndMinutes % 60;
-      
-      endTimeValue = `${String(newEndHour).padStart(2, '0')}:${String(newEndMinute).padStart(2, '0')}`;
+    // 自动设置结束时间为开始时间+2小时
+    let newEndMinutes = startTotalMinutes + 120; // +2小时
+    
+    // 确保不超过关闭时间
+    if (newEndMinutes > closeTotalMinutes) {
+      newEndMinutes = closeTotalMinutes;
     }
+    
+    const newEndHour = Math.floor(newEndMinutes / 60);
+    const newEndMinute = newEndMinutes % 60;
+    
+    endTimeValue = `${String(newEndHour).padStart(2, '0')}:${String(newEndMinute).padStart(2, '0')}`;
     
     this.setData({
       startTimeValue: newStartTime,
       endTimeValue: endTimeValue
     });
+    
+    // 更新时间范围
+    this.updateTimeRanges();
   },
   
   // 选择结束时间
   bindEndTimeChange: function(e) {
     const newEndTime = e.detail.value;
-    const { startTimeValue, studyRoom } = this.data;
+    const { startTimeValue, studyRoom, selectedDateIndex } = this.data;
     
-    // 获取开放时间和关闭时间
+    // 获取关闭时间
     const [closeHour, closeMinute] = (studyRoom.closeTime || '22:00').split(':').map(Number);
     const closeTotalMinutes = closeHour * 60 + closeMinute;
     
@@ -499,6 +570,23 @@ Page({
         icon: 'none'
       });
       return;
+    }
+    
+    // 如果是当天，检查是否早于当前时间+1分钟
+    const isToday = selectedDateIndex === 0;
+    
+    if (isToday) {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() + 1); // 当前时间+1分钟
+      const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
+      
+      if (endTotalMinutes < currentTotalMinutes) {
+        wx.showToast({
+          title: '结束时间不能早于当前时间',
+          icon: 'none'
+        });
+        return;
+      }
     }
     
     // 检查结束时间是否早于开始时间
