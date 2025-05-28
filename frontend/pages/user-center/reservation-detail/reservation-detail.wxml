@@ -1,2 +1,118 @@
-<!--pages/user-center/reservation-detail/reservation-detail.wxml-->
-<text>pages/user-center/reservation-detail/reservation-detail.wxml</text>
+ <view class="container">
+  <!-- 返回按钮 -->
+  <view class="nav-bar">
+    <view class="back-btn" bindtap="goBack">
+      <image src="/images/icon-back.png" mode="aspectFit"></image>
+    </view>
+    <view class="page-title">预约详情</view>
+  </view>
+  
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-spinner"></view>
+    <text>加载中...</text>
+  </view>
+  
+  <!-- 预约详情内容 -->
+  <block wx:if="{{!loading && reservation}}">
+    <!-- 预约状态卡片 -->
+    <view class="reservation-status-card {{getStatusClass(reservation.status)}}">
+      <view class="status-text">{{reservation.statusText || getStatusText(reservation.status)}}</view>
+      <view class="status-desc">
+        <block wx:if="{{reservation.status === 1}}">请在预约开始前15分钟内签到</block>
+        <block wx:elif="{{reservation.status === 2}}">正在使用中，请按时签退</block>
+        <block wx:elif="{{reservation.status === 0}}">您已取消该预约</block>
+        <block wx:elif="{{reservation.status === 3}}">预约已完成，感谢使用</block>
+        <block wx:elif="{{reservation.status === 4}}">违约原因: {{reservation.violationDescription || '未按时签到'}}</block>
+      </view>
+    </view>
+    
+    <!-- 预约信息卡片 -->
+    <view class="info-card">
+      <view class="card-title">预约信息</view>
+      
+      <view class="info-row">
+        <text class="info-label">自习室:</text>
+        <text class="info-value">{{reservation.studyRoomName}}</text>
+      </view>
+      
+      <view class="info-row">
+        <text class="info-label">座位号:</text>
+        <text class="info-value">{{reservation.seatNumber}}</text>
+      </view>
+      
+      <view class="info-row">
+        <text class="info-label">位置:</text>
+        <text class="info-value">{{reservation.studyRoomLocation}}</text>
+      </view>
+      
+      <view class="info-row">
+        <text class="info-label">开始时间:</text>
+        <text class="info-value">{{reservation.formattedStartTime}}</text>
+      </view>
+      
+      <view class="info-row">
+        <text class="info-label">结束时间:</text>
+        <text class="info-value">{{reservation.formattedEndTime}}</text>
+      </view>
+      
+      <view class="info-row">
+        <text class="info-label">预约时间:</text>
+        <text class="info-value">{{reservation.formattedCreateTime}}</text>
+      </view>
+    </view>
+    
+    <!-- 座位信息卡片 -->
+    <view class="info-card">
+      <view class="card-title">座位信息</view>
+      
+      <view class="seat-features">
+        <view class="feature-item {{reservation.hasPower ? 'active' : ''}}">
+          <image src="/images/icon-power.png" mode="aspectFit"></image>
+          <text>电源</text>
+        </view>
+        
+        <view class="feature-item {{reservation.isWindow ? 'active' : ''}}">
+          <image src="/images/icon-window.png" mode="aspectFit"></image>
+          <text>靠窗</text>
+        </view>
+        
+        <view class="feature-item {{reservation.isCorner ? 'active' : ''}}">
+          <image src="/images/icon-corner.png" mode="aspectFit"></image>
+          <text>角落</text>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 操作按钮 -->
+    <view class="action-buttons">
+      <button 
+        class="action-btn check-in" 
+        wx:if="{{reservation.canCheckIn}}" 
+        bindtap="goToCheckIn">
+        签到
+      </button>
+      
+      <button 
+        class="action-btn cancel" 
+        wx:if="{{reservation.canCancel}}" 
+        bindtap="cancelReservation">
+        取消预约
+      </button>
+      
+      <button 
+        class="action-btn extend" 
+        wx:if="{{reservation.canExtend}}" 
+        bindtap="extendReservation">
+        延长时间
+      </button>
+    </view>
+  </block>
+  
+  <!-- 错误提示 -->
+  <view wx:if="{{!loading && !reservation}}" class="error-container">
+    <image src="/images/error.png" mode="aspectFit"></image>
+    <text>加载预约详情失败</text>
+    <button class="retry-btn" bindtap="loadReservationDetail">重试</button>
+  </view>
+</view>
