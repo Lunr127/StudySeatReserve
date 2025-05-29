@@ -19,7 +19,8 @@
     "pages/check-in/check-in",
     "pages/notifications/notifications",
     "pages/admin/study-rooms/manage/manage",
-    "pages/admin/study-rooms/edit/edit"
+    "pages/admin/study-rooms/edit/edit",
+    "pages/admin/check-code-management/check-code-management"
   ],
   "window": {
     "backgroundTextStyle": "light",

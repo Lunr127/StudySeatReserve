@@ -42,21 +42,34 @@
 
   <!-- 快捷菜单 -->
   <view class="quick-menu flex-row">
+    <!-- 所有用户都可以查看自习室 -->
     <view class="menu-item" bindtap="goToStudyRooms">
       <image class="menu-icon" src="/images/study_room.png"></image>
       <view class="menu-text">自习室</view>
     </view>
-    <view class="menu-item" bindtap="goToUserCenter">
+    
+    <!-- 学生功能 -->
+    <view wx:if="{{hasLogin && userInfo && userInfo.userType === 2}}" class="menu-item" bindtap="goToUserCenter">
       <image class="menu-icon" src="/images/reservation.png"></image>
       <view class="menu-text">我的预约</view>
     </view>
-    <view class="menu-item" bindtap="goToScanCheckIn">
+    <view wx:if="{{hasLogin && userInfo && userInfo.userType === 2}}" class="menu-item" bindtap="goToScanCheckIn">
       <image class="menu-icon" src="/images/scan.png"></image>
       <view class="menu-text">扫码签到</view>
     </view>
-    <view class="menu-item" bindtap="goToFavorites">
+    <view wx:if="{{hasLogin && userInfo && userInfo.userType === 2}}" class="menu-item" bindtap="goToFavorites">
       <image class="menu-icon" src="/images/favorite.png"></image>
       <view class="menu-text">收藏</view>
+    </view>
+    
+    <!-- 管理员功能 -->
+    <view wx:if="{{hasLogin && userInfo && userInfo.userType === 1}}" class="menu-item" bindtap="goToUserCenter">
+      <image class="menu-icon" src="/images/admin.png"></image>
+      <view class="menu-text">自习室管理</view>
+    </view>
+    <view wx:if="{{hasLogin && userInfo && userInfo.userType === 1}}" class="menu-item" bindtap="goToCheckCodeManagement">
+      <image class="menu-icon" src="/images/qr_code.png"></image>
+      <view class="menu-text">扫码签到管理</view>
     </view>
   </view>
 
@@ -81,8 +94,8 @@
     </view>
   </view>
 
-  <!-- 最近预约 (仅登录后显示) -->
-  <view class="section" wx:if="{{hasLogin && recentReservations.length > 0}}">
+  <!-- 最近预约 (仅学生用户登录后显示) -->
+  <view class="section" wx:if="{{hasLogin && userInfo && userInfo.userType === 2 && recentReservations.length > 0}}">
     <view class="section-header">
       <view class="section-title">我的预约</view>
     </view>

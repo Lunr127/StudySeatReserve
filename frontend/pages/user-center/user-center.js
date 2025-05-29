@@ -58,9 +58,6 @@ Page({
    */
   onShow: function() {
     this.checkLoginStatus();
-    if (this.data.hasLogin) {
-      this.loadStatistics();
-    }
   },
 
   /**
@@ -86,6 +83,12 @@ Page({
       this.setData({
         userInfo: app.globalData.userInfo
       });
+      // 根据用户类型设置菜单
+      this.setMenuByUserType(app.globalData.userInfo.userType);
+      // 获取用户信息后加载统计数据
+      if (this.data.hasLogin) {
+        this.loadStatistics();
+      }
       return;
     }
 
@@ -100,6 +103,13 @@ Page({
         // 更新全局用户信息
         app.globalData.userInfo = userInfo;
         wx.setStorageSync('userInfo', userInfo);
+        
+        // 根据用户类型设置菜单
+        this.setMenuByUserType(userInfo.userType);
+        // 获取用户信息后加载统计数据
+        if (this.data.hasLogin) {
+          this.loadStatistics();
+        }
       } else {
         console.error('获取用户信息失败:', res.message);
         wx.showToast({
@@ -115,7 +125,83 @@ Page({
         this.setData({
           userInfo: cachedUserInfo
         });
+        // 根据用户类型设置菜单
+        this.setMenuByUserType(cachedUserInfo.userType);
+        // 获取用户信息后加载统计数据
+        if (this.data.hasLogin) {
+          this.loadStatistics();
+        }
       }
+    });
+  },
+
+  /**
+   * 根据用户类型设置菜单
+   */
+  setMenuByUserType: function(userType) {
+    let menuItems = [];
+    
+    if (userType === 1) {
+      // 管理员菜单
+      menuItems = [
+        {
+          id: 'admin-study-rooms',
+          icon: '/images/manage.png',
+          title: '自习室管理',
+          subtitle: '管理自习室信息',
+          url: '/pages/admin/study-rooms/manage/manage'
+        },
+        {
+          id: 'check-code-management',
+          icon: '/images/qr_code.png',
+          title: '签到码管理',
+          subtitle: '管理签到码',
+          url: '/pages/admin/check-code-management/check-code-management'
+        },
+        {
+          id: 'settings',
+          icon: '/images/settings.png',
+          title: '个人设置',
+          subtitle: '账号与偏好设置',
+          url: '/pages/user-center/settings/settings'
+        }
+      ];
+    } else {
+      // 学生菜单
+      menuItems = [
+        {
+          id: 'my-reservations',
+          icon: '/images/reservation.png',
+          title: '我的预约',
+          subtitle: '查看预约记录',
+          url: '/pages/user-center/my-reservations/my-reservations'
+        },
+        {
+          id: 'my-favorites',
+          icon: '/images/favorite.png',
+          title: '我的收藏',
+          subtitle: '收藏的自习室',
+          url: '/pages/user-center/my-favorites/my-favorites'
+        },
+        {
+          id: 'violation-records',
+          icon: '/images/violation.png',
+          title: '违约记录',
+          subtitle: '查看违约情况',
+          url: '/pages/user-center/violation-records/violation-records'
+        },
+        {
+          id: 'settings',
+          icon: '/images/settings.png',
+          title: '个人设置',
+          subtitle: '账号与偏好设置',
+          url: '/pages/user-center/settings/settings'
+        }
+      ];
+    }
+    
+    this.setData({
+      menuItems: menuItems
     });
   },
 
@@ -123,56 +209,67 @@ Page({
    * 加载统计数据
    */
   loadStatistics: function() {
-    // 获取当前预约数量
-    reservationApi.getCurrentReservations().then(res => {
-      if (res.code === 200) {
-        this.setData({
-          'statistics.currentReservations': res.data.length
-        });
-      }
-    }).catch(err => {
-      console.error('获取当前预约失败:', err);
-    });
+    // 只有学生用户才获取当前预约数量，管理员不需要
+    if (this.data.userInfo && this.data.userInfo.userType === 2) {
+      // 获取当前预约数量
+      reservationApi.getCurrentReservations().then(res => {
+        if (res.code === 200) {
+          this.setData({
+            'statistics.currentReservations': res.data.length
+          });
+        }
+      }).catch(err => {
+        console.error('获取当前预约失败:', err);
+      });
 
-    // 获取总预约数量（通过分页接口获取总数）
-    reservationApi.getReservations({
-      current: 1,
-      size: 1
-    }).then(res => {
-      if (res.code === 200) {
-        this.setData({
-          'statistics.totalReservations': res.data.total || 0
-        });
-      }
-    }).catch(err => {
-      console.error('获取预约统计失败:', err);
-    });
+      // 获取总预约数量（通过分页接口获取总数）
+      reservationApi.getReservations({
+        current: 1,
+        size: 1
+      }).then(res => {
+        if (res.code === 200) {
+          this.setData({
+            'statistics.totalReservations': res.data.total || 0
+          });
+        }
+      }).catch(err => {
+        console.error('获取预约统计失败:', err);
+      });
 
-    // 获取已完成预约数量
-    reservationApi.getReservations({
-      current: 1,
-      size: 1,
-      status: 3 // 已完成状态
-    }).then(res => {
-      if (res.code === 200) {
-        this.setData({
-          'statistics.completedReservations': res.data.total || 0
-        });
-      }
-    }).catch(err => {
-      console.error('获取已完成预约失败:', err);
-    });
+      // 获取已完成预约数量
+      reservationApi.getReservations({
+        current: 1,
+        size: 1,
+        status: 3 // 已完成状态
+      }).then(res => {
+        if (res.code === 200) {
+          this.setData({
+            'statistics.completedReservations': res.data.total || 0
+          });
+        }
+      }).catch(err => {
+        console.error('获取已完成预约失败:', err);
+      });
 
-    // 获取违约次数
-    userApi.getUserViolationCount().then(res => {
-      if (res.code === 200) {
-        this.setData({
-          'statistics.violationCount': res.data || 0
-        });
-      }
-    }).catch(err => {
-      console.error('获取违约统计失败:', err);
-    });
+      // 获取违约次数
+      userApi.getUserViolationCount().then(res => {
+        if (res.code === 200) {
+          this.setData({
+            'statistics.violationCount': res.data || 0
+          });
+        }
+      }).catch(err => {
+        console.error('获取违约统计失败:', err);
+      });
+    } else {
+      // 管理员用户设置默认统计数据
+      this.setData({
+        'statistics.currentReservations': 0,
+        'statistics.totalReservations': 0,
+        'statistics.completedReservations': 0,
+        'statistics.violationCount': 0
+      });
+    }
   },
 
   /**

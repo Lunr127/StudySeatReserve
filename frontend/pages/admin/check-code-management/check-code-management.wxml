@@ -1,0 +1,143 @@
+<!--pages/admin/check-code-management/check-code-management.wxml-->
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <view class="page-title">签到码管理</view>
+    <view class="page-subtitle">管理各自习室签到码的生成和查看</view>
+  </view>
+
+  <!-- 操作按钮区域 -->
+  <view class="action-section">
+    <view class="action-buttons">
+      <button class="action-btn primary" bindtap="generateTodayCodesForAll">
+        <image class="btn-icon" src="/images/generate.png"></image>
+        <text>生成今日签到码</text>
+      </button>
+      <button class="action-btn secondary" bindtap="generateTomorrowCodesForAll">
+        <image class="btn-icon" src="/images/calendar.png"></image>
+        <text>生成明日签到码</text>
+      </button>
+    </view>
+    
+    <!-- 筛选按钮 -->
+    <view class="filter-section">
+      <button class="filter-btn" bindtap="showFilter">
+        <image class="filter-icon" src="/images/filter.png"></image>
+        <text>筛选</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 签到码列表 -->
+  <view class="check-code-list">
+    <view wx:if="{{loading && !refreshing}}" class="loading-container">
+      <view class="loading-text">加载中...</view>
+    </view>
+    
+    <view wx:elif="{{checkCodeList.length > 0}}" class="list-container">
+      <view class="check-code-item card" wx:for="{{checkCodeList}}" wx:key="id">
+        <view class="item-header">
+          <view class="study-room-name">{{item.studyRoomName}}</view>
+          <view class="status {{item.isActive ? 'active' : 'inactive'}}">
+            {{item.statusText}}
+          </view>
+        </view>
+        
+        <view class="item-content">
+          <view class="info-row">
+            <text class="label">签到码:</text>
+            <text class="value code">{{item.code}}</text>
+            <button class="copy-btn" bindtap="copyCheckCode" data-code="{{item.code}}">
+              复制
+            </button>
+          </view>
+          <view class="info-row">
+            <text class="label">有效日期:</text>
+            <text class="value">{{item.validDate}}</text>
+          </view>
+          <view class="info-row">
+            <text class="label">创建时间:</text>
+            <text class="value">{{formatDateTime(item.createTime)}}</text>
+          </view>
+        </view>
+        
+        <view class="item-actions">
+          <button class="action-btn-small detail" bindtap="viewCheckCodeDetail" data-checkcode="{{item}}">
+            详情
+          </button>
+          <button class="action-btn-small qr-code" bindtap="shareQRCode" data-checkcode="{{item}}">
+            二维码
+          </button>
+        </view>
+      </view>
+    </view>
+    
+    <view wx:else class="empty-container">
+      <image class="empty-icon" src="/images/empty.png"></image>
+      <view class="empty-text">暂无签到码数据</view>
+      <view class="empty-hint">点击上方按钮生成签到码</view>
+    </view>
+  </view>
+
+  <!-- 加载更多 -->
+  <view wx:if="{{hasMoreData && !loading}}" class="load-more" bindtap="onReachBottom">
+    <text>点击加载更多</text>
+  </view>
+  
+  <view wx:if="{{loading && !refreshing}}" class="loading-more">
+    <text>加载中...</text>
+  </view>
+</view>
+
+<!-- 筛选弹窗 -->
+<view class="modal-overlay" wx:if="{{showFilterModal}}" bindtap="hideFilter">
+  <view class="filter-modal" catchtap="">
+    <view class="modal-header">
+      <view class="modal-title">筛选条件</view>
+      <button class="close-btn" bindtap="hideFilter">×</button>
+    </view>
+    
+    <view class="modal-content">
+      <!-- 自习室筛选 -->
+      <view class="filter-group">
+        <view class="filter-label">自习室</view>
+        <view class="study-room-selector">
+          <view wx:if="{{selectedStudyRoom}}" class="selected-room">
+            <text>{{selectedStudyRoom.name}}</text>
+            <button class="clear-btn" bindtap="clearStudyRoomFilter">×</button>
+          </view>
+          <view wx:else class="placeholder">选择自习室</view>
+        </view>
+        <scroll-view class="study-room-list" scroll-y="true">
+          <view class="room-item" 
+                wx:for="{{studyRoomList}}" 
+                wx:key="id"
+                bindtap="selectStudyRoom"
+                data-id="{{item.id}}">
+            {{item.name}}
+          </view>
+        </scroll-view>
+      </view>
+      
+      <!-- 日期筛选 -->
+      <view class="filter-group">
+        <view class="filter-label">有效日期</view>
+        <picker mode="date" 
+                value="{{filters.validDate}}" 
+                bindchange="onDateChange">
+          <view class="date-picker">
+            {{filters.validDate || '选择日期'}}
+          </view>
+        </picker>
+        <button wx:if="{{filters.validDate}}" class="clear-date-btn" bindtap="clearDateFilter">
+          清空日期
+        </button>
+      </view>
+    </view>
+    
+    <view class="modal-footer">
+      <button class="modal-btn reset" bindtap="resetFilter">重置</button>
+      <button class="modal-btn confirm" bindtap="applyFilter">应用</button>
+    </view>
+  </view>
+</view> 

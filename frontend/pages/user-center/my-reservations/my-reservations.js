@@ -15,16 +15,24 @@ Page({
     hasMoreData: true
   },
   
-  onLoad: function() {
-    console.log('页面加载，初始化当前预约数据');
+  onLoad: function(options) {
+    // 检查用户类型，只有学生用户才能访问我的预约页面
+    const userInfo = app.globalData.userInfo || wx.getStorageSync('userInfo');
+    if (!userInfo || userInfo.userType !== 2) {
+      wx.showToast({
+        title: '无访问权限',
+        icon: 'none'
+      });
+      wx.switchTab({
+        url: '/pages/user-center/user-center'
+      });
+      return;
+    }
+    
     this.setData({
-      activeTab: 0, // 确保是数字类型
-      currentReservations: [],
-      historyReservations: [],
-      currentPage: 1,
-      loading: true
+      activeTab: options.tab || 'current'
     });
-    this.loadCurrentReservations();
+    this.loadData();
   },
   
   onShow: function() {

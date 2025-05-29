@@ -293,14 +293,14 @@ const checkCodeApi = {
    * @param {string} validDate 有效日期
    * @returns {Promise} Promise对象
    */
-  generateDailyCode: (studyRoomId, validDate) => post('/api/check-code/generate', { studyRoomId, validDate }),
+  generateDailyCode: (studyRoomId, validDate) => post(`/api/check-code/generate?studyRoomId=${studyRoomId}&validDate=${validDate}`),
 
   /**
    * 批量生成签到码（管理员）
    * @param {string} validDate 有效日期
    * @returns {Promise} Promise对象
    */
-  generateDailyCodesForAllRooms: (validDate) => post('/api/check-code/generate-all', { validDate }),
+  generateDailyCodesForAllRooms: (validDate) => post(`/api/check-code/generate-all?validDate=${validDate}`),
 
   /**
    * 获取签到码列表（管理员）

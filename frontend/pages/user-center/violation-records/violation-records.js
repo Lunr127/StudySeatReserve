@@ -13,6 +13,19 @@ Page({
   },
 
   onLoad: function(options) {
+    // 检查用户类型，只有学生用户才能访问违约记录页面
+    const userInfo = app.globalData.userInfo || wx.getStorageSync('userInfo');
+    if (!userInfo || userInfo.userType !== 2) {
+      wx.showToast({
+        title: '无访问权限',
+        icon: 'none'
+      });
+      wx.switchTab({
+        url: '/pages/user-center/user-center'
+      });
+      return;
+    }
+    
     this.loadViolationRecords();
   },
 

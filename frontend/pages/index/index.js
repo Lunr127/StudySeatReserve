@@ -265,7 +265,8 @@ Page({
    * 获取最近预约
    */
   getRecentReservations: function() {
-    if (this.data.hasLogin) {
+    // 只有学生用户才获取最近预约，管理员不需要
+    if (this.data.hasLogin && this.data.userInfo && this.data.userInfo.userType === 2) {
       // 调用后端API获取当前有效预约
       reservationApi.getCurrentReservations().then(res => {
         if (res.code === 200) {
@@ -333,9 +334,10 @@ Page({
     
     if (hasLogin) {
       // 如果已登录，从后端获取用户信息
-      this.getUserInfo();
-      // 获取最近预约
-      this.getRecentReservations();
+      this.getUserInfo().then(() => {
+        // 获取用户信息后，根据用户类型决定是否获取最近预约
+        this.getRecentReservations();
+      });
     }
   },
 
@@ -343,7 +345,7 @@ Page({
    * 获取用户信息
    */
   getUserInfo: function() {
-    userApi.getUserInfo().then(res => {
+    return userApi.getUserInfo().then(res => {
       if (res.code === 200) {
         const userInfo = res.data;
         this.setData({
@@ -400,6 +402,48 @@ Page({
   },
 
   /**
+   * 跳转到签到码管理页面（管理员功能）
+   */
+  goToCheckCodeManagement: function() {
+    // 检查是否已登录且为管理员
+    if (!this.data.hasLogin) {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      });
+      this.goToLogin();
+      return;
+    }
+    
+    if (!this.data.userInfo || this.data.userInfo.userType !== 1) {
+      wx.showToast({
+        title: '无访问权限',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    // 跳转到签到码管理页面
+    wx.navigateTo({
+      url: '/pages/admin/check-code-management/check-code-management'
+    });
+  },
+
+  /**
+   * 判断是否为管理员
+   */
+  isAdmin: function() {
+    return this.data.hasLogin && this.data.userInfo && this.data.userInfo.userType === 1;
+  },
+
+  /**
+   * 判断是否为学生
+   */
+  isStudent: function() {
+    return this.data.hasLogin && this.data.userInfo && this.data.userInfo.userType === 2;
+  },
+
+  /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
@@ -414,8 +458,5 @@ Page({
     // 每次页面显示时更新登录状态和数据
     this.checkLoginStatus();
     this.getStudyRoomList();
-    if (this.data.hasLogin) {
-      this.getRecentReservations();
-    }
   }
 }); 
