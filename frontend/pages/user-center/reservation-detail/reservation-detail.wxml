@@ -1,12 +1,4 @@
  <view class="container">
-  <!-- 返回按钮 -->
-  <view class="nav-bar">
-    <view class="back-btn" bindtap="goBack">
-      <image src="/images/icon-back.png" mode="aspectFit"></image>
-    </view>
-    <view class="page-title">预约详情</view>
-  </view>
-  
   <!-- 加载状态 -->
   <view wx:if="{{loading}}" class="loading-container">
     <view class="loading-spinner"></view>

@@ -187,13 +187,6 @@ Page({
   },
 
   /**
-   * 返回上一页
-   */
-  goBack: function() {
-    wx.navigateBack();
-  },
-
-  /**
    * 获取状态文本
    */
   getStatusText: function(status) {
