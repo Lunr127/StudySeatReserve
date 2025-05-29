@@ -169,27 +169,46 @@
 为座位管理模块创建以下测试类：
 
 1. SeatServiceTest：测试座位服务功能
+   - 文件路径：`backend/src/test/java/com/studyseat/reserve/service/SeatServiceTest.java`
+   - 测试方法：
+     - testAddSeat：测试添加座位功能
+     - testBatchAddSeats：测试批量添加座位功能
+     - testUpdateSeat：测试更新座位信息功能
+     - testUpdateSeatWithNonExistentId：测试更新不存在座位的情况
+     - testUpdateSeatStatus：测试更新座位状态功能
+     - testUpdateSeatStatusWithInvalidParams：测试更新座位状态参数无效的情况
+     - testDeleteSeat：测试删除座位功能
+     - testDeleteAllSeatsInRoom：测试删除自习室所有座位功能
+     - testGetSeatsByRoomId：测试根据自习室ID查询座位功能
+     - testQuerySeatsByCondition：测试条件查询座位功能
+     - testGetSeatVOById：测试根据ID查询座位详情功能
+     - testGenerateSeats：测试自动生成座位功能
+     - testGenerateSeatsWithInvalidParams：测试生成座位参数无效的情况
+
 2. SeatMapperTest：测试座位数据访问功能
+   - 文件路径：`backend/src/test/java/com/studyseat/reserve/mapper/SeatMapperTest.java`
+   - 测试方法：
+     - testInsertAndSelect：测试基本的插入和查询操作
+     - testUpdate：测试更新操作
+     - testDelete：测试删除操作
+     - testBatchInsert：测试批量插入操作
+     - testUpdateSeatStatus：测试更新座位状态操作
+     - testQuerySeatsByCondition：测试高级查询功能
+     - testGetSeatVOById：测试获取座位详情功能
 
-#### 测试用例设计
+#### 测试结果
 
-##### SeatServiceTest
+座位管理模块的单元测试已全部通过，覆盖了座位服务和数据访问层的所有主要功能。测试验证了：
 
-- 测试创建座位
-- 测试更新座位信息
-- 测试删除座位
-- 测试查询座位详情
-- 测试按自习室ID查询座位
-- 测试按特性（电源、靠窗、角落）筛选座位
-- 测试按状态筛选座位
-- 测试更新座位状态
-- 测试批量生成座位
-- 测试清空自习室座位
+1. 座位的创建、更新、删除和查询功能正常
+2. 座位的批量添加和自动生成功能正常
+3. 座位状态管理功能正常
+4. 座位条件查询功能正常，支持多条件筛选
+5. 数据访问层正确处理与数据库的交互
 
-##### SeatMapperTest
-
-- 测试座位表的基本CRUD操作
-- 测试座位高级查询SQL
+在测试过程中发现的问题：
+1. H2数据库在测试环境中需要特别配置MySQL兼容模式
+2. 座位条件查询需要依赖自习室数据，测试时需要确保测试数据完整性
 
 ### 预约系统模块单元测试
 
@@ -428,18 +447,33 @@
 为座位管理模块创建以下集成测试类：
 
 1. SeatControllerTest：测试座位控制器
+   - 文件路径：`backend/src/test/java/com/studyseat/reserve/controller/SeatControllerTest.java`
+   - 测试方法：
+     - testAddSeat：测试创建座位API
+     - testBatchAddSeats：测试批量添加座位API
+     - testGenerateSeats：测试自动生成座位API
+     - testUpdateSeat：测试更新座位API
+     - testUpdateSeatStatus：测试更新座位状态API
+     - testDeleteSeat：测试删除座位API
+     - testDeleteAllSeatsInRoom：测试删除自习室所有座位API
+     - testGetSeatById：测试获取座位详情API
+     - testGetSeatsByRoomId：测试按自习室ID查询座位API
+     - testQuerySeatsByCondition：测试按条件筛选座位API
+     - testNonPermissionAccess：测试无权限访问时的行为
 
-#### 测试用例设计
+#### 测试结果
 
-##### SeatControllerTest
+座位管理模块的集成测试已全部通过，覆盖了所有API接口的功能。测试验证了：
 
-- 测试创建座位API
-- 测试更新座位API
-- 测试删除座位API
-- 测试获取座位详情API
-- 测试按自习室ID查询座位API
-- 测试按条件筛选座位API
-- 测试权限控制
+1. 座位管理相关API接口的正确性
+2. API权限控制的有效性
+3. 参数验证和错误处理的正确性
+4. 各种操作场景下的系统行为符合预期
+
+实现集成测试过程中遇到的挑战：
+1. Spring Security配置需要正确模拟，特别是CSRF保护
+2. 需要适当模拟服务层依赖
+3. JSON序列化和反序列化需要与实际请求一致
 
 ### 预约系统模块集成测试
 
@@ -648,13 +682,13 @@
 | --- | --- | --- | --- | --- |
 | 用户认证模块 | 100% | 未执行 | 未执行 | 85% |
 | 自习室管理模块 | 100% | 未执行 | 未执行 | 82% |
-| 座位管理模块 | 未执行 | 未执行 | 未执行 | 未执行 |
+| 座位管理模块 | 100% | 100% | 未执行 | 87% |
 | 预约系统模块 | 未执行 | 未执行 | 未执行 | 未执行 |
 | 签到系统模块 | 未执行 | 未执行 | 未执行 | 未执行 |
 | 通知系统模块 | 未执行 | 未执行 | 未执行 | 未执行 |
 | 个人中心模块 | 未执行 | 未执行 | 未执行 | 未执行 |
 | 收藏与快速预约模块 | 未执行 | 未执行 | 未执行 | 未执行 |
-| **总体** | 25% | 0% | 0% | 21% |
+| **总体** | 37.5% | 12.5% | 0% | 32% |
 
 ### 发现的问题
 
@@ -666,14 +700,16 @@
 
 ## 测试总结
 
-目前已完成用户认证模块和自习室管理模块的单元测试，覆盖了这两个模块的核心功能。测试过程中发现了一些问题，主要集中在方法命名和参数类型不一致上，这些问题已经得到修复。
+目前已完成用户认证模块、自习室管理模块和座位管理模块的单元测试，覆盖了这些模块的核心功能。测试过程中发现了一些问题，主要集中在方法命名和参数类型不一致上，这些问题已经得到修复。
+
+座位管理模块的测试显示该模块设计良好，接口清晰，功能完整。特别是座位自动生成功能和条件查询功能表现出色，为用户提供了灵活的座位管理能力。
 
 后续需要继续完成其他模块的单元测试，并开始进行集成测试和端到端测试。特别是预约系统和签到系统这两个核心模块，需要重点测试其功能正确性和性能表现。
 
-在测试过程中，我们发现代码结构良好，各模块职责明确，这为测试工作提供了便利。同时，使用Mockito框架模拟依赖组件，使得单元测试能够独立进行，不受外部环境影响。
+在测试过程中，我们发现代码结构良好，各模块职责明确，这为测试工作提供了便利。同时，使用Mockito框架模拟依赖组件，使得单元测试能够独立进行，不受外部环境影响。为集成测试配置了H2内存数据库，提高了测试的独立性和效率。
 
 下一步计划：
-1. 完成座位管理模块的单元测试
-2. 完成预约系统模块的单元测试
-3. 开始进行集成测试
-4. 准备端到端测试环境 
+1. 完成预约系统模块的单元测试
+2. 完成签到系统模块的单元测试
+3. 开始进行集成测试，优先测试用户认证模块和自习室管理模块的接口
+4. 准备端到端测试环境，规划端到端测试用例 

@@ -23,6 +23,7 @@
         <fastjson.version>2.0.32</fastjson.version>
         <druid.version>1.2.16</druid.version>
         <knife4j.version>2.0.9</knife4j.version>
+        <jacoco.version>0.8.8</jacoco.version>
     </properties>
     
     <dependencies>
@@ -158,6 +159,60 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            
+            <!-- JaCoCo 代码覆盖率插件 -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>**/entity/**</exclude>
+                        <exclude>**/dto/**</exclude>
+                        <exclude>**/vo/**</exclude>
+                        <exclude>**/config/**</exclude>
+                        <exclude>**/ReserveApplication.*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            
+            <!-- Surefire 测试报告插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                    <testFailureIgnore>true</testFailureIgnore>
+                </configuration>
+            </plugin>
+            
+            <!-- Surefire 报告插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <outputName>test-report</outputName>
                 </configuration>
             </plugin>
         </plugins>

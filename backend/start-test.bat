@@ -1,28 +1,47 @@
 @echo off
-echo 开始测试Spring Boot应用是否能正常启动...
+echo ==============================================
+echo 自习座位预约系统测试脚本
+echo ==============================================
 echo.
 
-rem 使用Maven编译项目并跳过测试
-echo 正在编译项目...
-call mvn clean package -DskipTests
+REM 设置Java环境变量
+set JAVA_HOME=D:\Java\JDK
+set PATH=%JAVA_HOME%\bin;%PATH%
 
-if %ERRORLEVEL% NEQ 0 (
-    echo 编译失败，请检查错误信息！
-    pause
-    exit /b %ERRORLEVEL%
-)
-
-echo.
-echo 编译成功！现在尝试启动应用...
+echo 当前Java版本:
+java -version
 echo.
 
-rem 使用java命令启动应用，设置超时时间为20秒
-echo 正在启动应用，将在20秒后自动关闭...
-java -jar target\reserve-0.0.1-SNAPSHOT.jar --spring.profiles.active=test
+echo 清理并编译项目...
+call mvn clean compile
+echo.
 
+echo 运行单元测试...
+call mvn test
 echo.
-echo 启动测试完成！
-echo 如果没有看到错误信息，并且应用成功启动，则说明Spring Boot应用配置正确！
+
+echo 生成测试报告...
+call mvn surefire-report:report
 echo.
+
+echo 测试报告已生成，路径: target/site/surefire-report.html
+echo.
+
+echo 生成代码覆盖率报告...
+call mvn jacoco:report
+echo.
+
+echo 代码覆盖率报告已生成，路径: target/site/jacoco/index.html
+echo.
+
+echo ==============================================
+echo 测试完成
+echo ==============================================
+
+REM 打开测试报告
+start "" "target\site\surefire-report.html"
+
+REM 打开覆盖率报告
+start "" "target\site\jacoco\index.html"
 
 pause 
