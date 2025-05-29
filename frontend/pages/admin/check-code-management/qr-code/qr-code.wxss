@@ -1,59 +1,21 @@
 /* pages/admin/check-code-management/qr-code/qr-code.wxss */
 .container {
-  padding: 20rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 30rpx 20rpx;
+  background: linear-gradient(135deg, #3A7AF2 0%, #6C9EFF 100%);
   min-height: 100vh;
-}
-
-/* 页面头部 */
-.page-header {
-  margin-bottom: 30rpx;
-}
-
-.header-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20rpx 0;
-}
-
-.back-btn {
-  width: 80rpx;
-  height: 80rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  backdrop-filter: blur(10rpx);
-}
-
-.back-icon {
-  width: 40rpx;
-  height: 40rpx;
-}
-
-.page-title {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: white;
-  text-align: center;
-}
-
-.placeholder {
-  width: 80rpx;
 }
 
 /* 二维码展示区域 */
 .qr-code-section {
   background-color: white;
-  border-radius: 30rpx;
+  border-radius: 20rpx;
   padding: 40rpx;
   margin-bottom: 30rpx;
-  box-shadow: 0 20rpx 40rpx rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10rpx 20rpx rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 20rpx; /* 添加上边距，弥补删除头部后的空间 */
 }
 
 .qr-code-container {
@@ -65,8 +27,8 @@
 }
 
 .loading-container {
-  width: 500rpx;
-  height: 500rpx;
+  width: 300rpx;
+  height: 300rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,6 +40,37 @@
 .loading-text {
   font-size: 28rpx;
   color: #6c757d;
+}
+
+/* 错误状态容器 */
+.error-container {
+  width: 300rpx;
+  height: 300rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  border-radius: 20rpx;
+  border: 3rpx dashed #dc3545;
+  padding: 20rpx;
+}
+
+.error-text {
+  font-size: 24rpx;
+  color: #dc3545;
+  text-align: center;
+  margin-bottom: 20rpx;
+}
+
+.retry-btn {
+  padding: 10rpx 30rpx;
+  background-color: #3A7AF2;
+  color: white;
+  border-radius: 50rpx;
+  font-size: 24rpx;
+  border: none;
+  box-shadow: 0 4rpx 10rpx rgba(58, 122, 242, 0.3);
 }
 
 .qr-code-content {
@@ -97,8 +90,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 500rpx;
-  height: 500rpx;
+  width: 300rpx;
+  height: 300rpx;
   border: 3rpx solid #e9ecef;
   border-radius: 20rpx;
   background-color: white;
@@ -111,7 +104,7 @@
   padding: 20rpx;
   background-color: #f8f9fa;
   border-radius: 20rpx;
-  border-left: 6rpx solid #007bff;
+  border-left: 6rpx solid #3A7AF2;
 }
 
 .hint-icon {
@@ -129,10 +122,10 @@
 /* 信息卡片 */
 .info-card {
   background-color: white;
-  border-radius: 30rpx;
+  border-radius: 20rpx;
   padding: 30rpx;
   margin-bottom: 30rpx;
-  box-shadow: 0 20rpx 40rpx rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10rpx 20rpx rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
@@ -196,12 +189,12 @@
 
 .copy-btn {
   padding: 8rpx 20rpx;
-  background: linear-gradient(135deg, #007bff, #0056b3);
+  background: linear-gradient(135deg, #3A7AF2, #1F5FC8);
   color: white;
   border: none;
   border-radius: 20rpx;
   font-size: 24rpx;
-  box-shadow: 0 4rpx 10rpx rgba(0, 123, 255, 0.3);
+  box-shadow: 0 4rpx 10rpx rgba(58, 122, 242, 0.3);
 }
 
 .status {
@@ -224,10 +217,10 @@
 /* 使用说明 */
 .usage-guide {
   background-color: white;
-  border-radius: 30rpx;
+  border-radius: 20rpx;
   padding: 30rpx;
   margin-bottom: 30rpx;
-  box-shadow: 0 20rpx 40rpx rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10rpx 20rpx rgba(0, 0, 0, 0.1);
 }
 
 .guide-header {
@@ -269,7 +262,7 @@
 .step-number {
   width: 60rpx;
   height: 60rpx;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #3A7AF2, #1F5FC8);
   color: white;
   border-radius: 50%;
   display: flex;
@@ -302,9 +295,9 @@
   align-items: center;
   padding: 30rpx 20rpx;
   margin: 0 10rpx;
-  border-radius: 25rpx;
+  border-radius: 20rpx;
   border: none;
-  box-shadow: 0 10rpx 25rpx rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10rpx 20rpx rgba(0, 0, 0, 0.1);
   font-size: 28rpx;
   font-weight: 600;
 }
@@ -315,7 +308,7 @@
 }
 
 .action-btn.secondary {
-  background: linear-gradient(135deg, #ffc107, #fd7e14);
+  background: linear-gradient(135deg, #3A7AF2, #1F5FC8);
   color: white;
 }
 

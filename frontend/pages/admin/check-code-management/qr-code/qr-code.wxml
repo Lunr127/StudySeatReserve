@@ -1,16 +1,5 @@
 <!--pages/admin/check-code-management/qr-code/qr-code.wxml-->
 <view class="container">
-  <!-- 页面头部 -->
-  <view class="page-header">
-    <view class="header-top">
-      <view class="back-btn" bindtap="goBack">
-        <image class="back-icon" src="/images/back.png"></image>
-      </view>
-      <view class="page-title">签到二维码</view>
-      <view class="placeholder"></view>
-    </view>
-  </view>
-
   <!-- 二维码展示区域 -->
   <view class="qr-code-section">
     <view class="qr-code-container">
@@ -18,11 +7,18 @@
         <view class="loading-text">生成二维码中...</view>
       </view>
       
+      <view wx:elif="{{errorMsg}}" class="error-container">
+        <view class="error-text">{{errorMsg}}</view>
+        <button class="retry-btn" bindtap="retryGenerateQRCode">重试</button>
+      </view>
+      
       <view wx:else class="qr-code-content">
-        <!-- Canvas二维码 -->
+        <!-- Canvas二维码 - 注意添加了id属性 -->
         <canvas 
+          id="qrCodeCanvas" 
           canvas-id="qrCodeCanvas" 
           class="qr-canvas"
+          type="2d"
           style="width: {{canvasWidth}}rpx; height: {{canvasHeight}}rpx;">
         </canvas>
         

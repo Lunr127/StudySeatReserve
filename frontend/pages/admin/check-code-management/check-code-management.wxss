@@ -49,12 +49,12 @@
 }
 
 .action-btn.primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3A7AF2 0%, #6C9EFF 100%);
   color: white;
 }
 
 .action-btn.secondary {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #3A7AF2 0%, #1F5FC8 100%);
   color: white;
 }
 
@@ -74,11 +74,11 @@
   align-items: center;
   padding: 15rpx 25rpx;
   background-color: white;
-  border: 2rpx solid #3498db;
+  border: 2rpx solid #3A7AF2;
   border-radius: 50rpx;
-  color: #3498db;
+  color: #3A7AF2;
   font-size: 26rpx;
-  box-shadow: 0 2rpx 8rpx rgba(52, 152, 219, 0.2);
+  box-shadow: 0 2rpx 8rpx rgba(58, 122, 242, 0.2);
 }
 
 .filter-icon {
@@ -129,7 +129,7 @@
   padding: 30rpx;
   margin-bottom: 20rpx;
   box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.08);
-  border-left: 8rpx solid #3498db;
+  border-left: 8rpx solid #3A7AF2;
 }
 
 .item-header {
@@ -202,7 +202,7 @@
 
 .copy-btn {
   padding: 8rpx 16rpx;
-  background-color: #3498db;
+  background-color: #3A7AF2;
   color: white;
   border-radius: 8rpx;
   font-size: 24rpx;
@@ -224,7 +224,7 @@
 }
 
 .action-btn-small.detail {
-  background-color: #17a2b8;
+  background-color: #3A7AF2;
   color: white;
 }
 
@@ -286,7 +286,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 30rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3A7AF2 0%, #6C9EFF 100%);
   color: white;
 }
 
@@ -424,7 +424,7 @@
 }
 
 .modal-btn.confirm {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3A7AF2 0%, #6C9EFF 100%);
   color: white;
   margin-left: 15rpx;
 }
