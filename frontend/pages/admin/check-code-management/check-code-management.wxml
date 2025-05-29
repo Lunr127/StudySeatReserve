@@ -68,6 +68,18 @@
           <button class="action-btn-small qr-code" bindtap="shareQRCode" data-checkcode="{{item}}">
             二维码
           </button>
+          <button wx:if="{{item.isActive}}" 
+                  class="action-btn-small disable" 
+                  bindtap="disableCheckCode" 
+                  data-id="{{item.id}}">
+            禁用
+          </button>
+          <button wx:else 
+                  class="action-btn-small enable" 
+                  bindtap="enableCheckCode" 
+                  data-id="{{item.id}}">
+            启用
+          </button>
         </view>
       </view>
     </view>

@@ -173,6 +173,29 @@ public class CheckCodeServiceImpl extends ServiceImpl<CheckCodeMapper, CheckCode
         return result > 0;
     }
     
+    @Override
+    public CheckCodeVO getCheckCodeById(Long id) {
+        CheckCode checkCode = checkCodeMapper.selectById(id);
+        if (checkCode == null) {
+            return null;
+        }
+        
+        // 获取自习室信息
+        StudyRoom studyRoom = studyRoomMapper.selectById(checkCode.getStudyRoomId());
+        
+        CheckCodeVO vo = new CheckCodeVO();
+        vo.setId(checkCode.getId());
+        vo.setStudyRoomId(checkCode.getStudyRoomId());
+        vo.setStudyRoomName(studyRoom != null ? studyRoom.getName() : "未知自习室");
+        vo.setCode(checkCode.getCode());
+        vo.setValidDate(checkCode.getValidDate());
+        vo.setIsActive(checkCode.getIsActive());
+        vo.setStatusText(checkCode.getIsActive() == 1 ? "有效" : "无效");
+        vo.setCreateTime(checkCode.getCreateTime());
+        
+        return vo;
+    }
+    
     /**
      * 生成6位随机数字签到码
      */

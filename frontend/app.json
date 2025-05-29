@@ -20,7 +20,8 @@
     "pages/notifications/notifications",
     "pages/admin/study-rooms/manage/manage",
     "pages/admin/study-rooms/edit/edit",
-    "pages/admin/check-code-management/check-code-management"
+    "pages/admin/check-code-management/check-code-management",
+    "pages/admin/check-code-management/qr-code/qr-code"
   ],
   "window": {
     "backgroundTextStyle": "light",

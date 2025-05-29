@@ -347,10 +347,132 @@ Page({
   shareQRCode: function(e) {
     const checkCode = e.currentTarget.dataset.checkcode;
     
-    // 这里可以生成二维码图片或者跳转到二维码展示页面
-    wx.showToast({
-      title: '二维码功能开发中',
-      icon: 'none'
+    if (!checkCode) {
+      wx.showToast({
+        title: '签到码信息错误',
+        icon: 'error'
+      });
+      return;
+    }
+    
+    // 跳转到二维码展示页面
+    const checkCodeStr = encodeURIComponent(JSON.stringify(checkCode));
+    wx.navigateTo({
+      url: `/pages/admin/check-code-management/qr-code/qr-code?checkCode=${checkCodeStr}`
+    });
+  },
+
+  /**
+   * 禁用签到码
+   */
+  disableCheckCode: function(e) {
+    const id = e.currentTarget.dataset.id;
+    
+    if (!id) {
+      wx.showToast({
+        title: '参数错误',
+        icon: 'error'
+      });
+      return;
+    }
+    
+    wx.showModal({
+      title: '确认操作',
+      content: '确定要禁用此签到码吗？禁用后学生将无法使用此签到码签到。',
+      success: (res) => {
+        if (res.confirm) {
+          this.doDisableCheckCode(id);
+        }
+      }
+    });
+  },
+
+  /**
+   * 执行禁用签到码
+   */
+  doDisableCheckCode: function(id) {
+    wx.showLoading({
+      title: '处理中...'
+    });
+
+    checkCodeApi.disableCheckCode(id).then(res => {
+      wx.hideLoading();
+      if (res.code === 200) {
+        wx.showToast({
+          title: '禁用成功',
+          icon: 'success'
+        });
+        this.refreshData();
+      } else {
+        wx.showToast({
+          title: res.message || '禁用失败',
+          icon: 'error'
+        });
+      }
+    }).catch(err => {
+      wx.hideLoading();
+      console.error('禁用签到码错误:', err);
+      wx.showToast({
+        title: '操作失败',
+        icon: 'error'
+      });
+    });
+  },
+
+  /**
+   * 启用签到码
+   */
+  enableCheckCode: function(e) {
+    const id = e.currentTarget.dataset.id;
+    
+    if (!id) {
+      wx.showToast({
+        title: '参数错误',
+        icon: 'error'
+      });
+      return;
+    }
+    
+    wx.showModal({
+      title: '确认操作',
+      content: '确定要启用此签到码吗？',
+      success: (res) => {
+        if (res.confirm) {
+          this.doEnableCheckCode(id);
+        }
+      }
+    });
+  },
+
+  /**
+   * 执行启用签到码
+   */
+  doEnableCheckCode: function(id) {
+    wx.showLoading({
+      title: '处理中...'
+    });
+
+    checkCodeApi.enableCheckCode(id).then(res => {
+      wx.hideLoading();
+      if (res.code === 200) {
+        wx.showToast({
+          title: '启用成功',
+          icon: 'success'
+        });
+        this.refreshData();
+      } else {
+        wx.showToast({
+          title: res.message || '启用失败',
+          icon: 'error'
+        });
+      }
+    }).catch(err => {
+      wx.hideLoading();
+      console.error('启用签到码错误:', err);
+      wx.showToast({
+        title: '操作失败',
+        icon: 'error'
+      });
     });
   },
 

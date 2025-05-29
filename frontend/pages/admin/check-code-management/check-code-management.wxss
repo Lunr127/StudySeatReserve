@@ -233,6 +233,16 @@
   color: white;
 }
 
+.action-btn-small.disable {
+  background-color: #dc3545;
+  color: white;
+}
+
+.action-btn-small.enable {
+  background-color: #28a745;
+  color: white;
+}
+
 /* 加载更多 */
 .load-more, .loading-more {
   text-align: center;

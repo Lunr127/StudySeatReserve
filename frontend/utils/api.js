@@ -307,7 +307,28 @@ const checkCodeApi = {
    * @param {Object} params 查询参数
    * @returns {Promise} Promise对象
    */
-  getCheckCodeList: (params) => get('/api/check-code', params)
+  getCheckCodeList: (params) => get('/api/check-code', params),
+
+  /**
+   * 获取签到码的二维码数据（管理员）
+   * @param {string|number} id 签到码ID
+   * @returns {Promise} Promise对象
+   */
+  getQRCodeData: (id) => get(`/api/check-code/qr-data/${String(id)}`),
+
+  /**
+   * 禁用签到码（管理员）
+   * @param {string|number} id 签到码ID
+   * @returns {Promise} Promise对象
+   */
+  disableCheckCode: (id) => post(`/api/check-code/disable/${String(id)}`),
+
+  /**
+   * 启用签到码（管理员）
+   * @param {string|number} id 签到码ID
+   * @returns {Promise} Promise对象
+   */
+  enableCheckCode: (id) => post(`/api/check-code/enable/${String(id)}`)
 };
 
 /**

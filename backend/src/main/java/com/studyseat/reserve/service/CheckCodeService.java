@@ -48,6 +48,14 @@ public interface CheckCodeService {
     CheckCodeVO getTodayCheckCode(Long studyRoomId, LocalDate date);
     
     /**
+     * 根据ID获取签到码详情
+     * 
+     * @param id 签到码ID
+     * @return 签到码详情
+     */
+    CheckCodeVO getCheckCodeById(Long id);
+    
+    /**
      * 分页查询签到码
      * 
      * @param page 分页参数

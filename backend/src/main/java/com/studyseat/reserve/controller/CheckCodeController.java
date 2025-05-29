@@ -2,6 +2,8 @@ package com.studyseat.reserve.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.studyseat.reserve.common.Result;
 import com.studyseat.reserve.service.CheckCodeService;
 import com.studyseat.reserve.vo.CheckCodeVO;
@@ -12,6 +14,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 签到码控制器
@@ -124,6 +128,40 @@ public class CheckCodeController {
     public Result<Boolean> enableCheckCode(@PathVariable Long id) {
         boolean result = checkCodeService.enableCheckCode(id);
         return Result.ok(result, "签到码已启用");
+    }
+    
+    /**
+     * 获取签到码的二维码数据
+     * 
+     * @param id 签到码ID
+     * @return 二维码数据
+     */
+    @GetMapping("/qr-data/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Result<String> getQRCodeData(@PathVariable Long id) {
+        CheckCodeVO checkCodeVO = checkCodeService.getCheckCodeById(id);
+        if (checkCodeVO == null) {
+            return Result.error("签到码不存在");
+        }
+        
+        // 构造二维码数据
+        Map<String, Object> qrData = new HashMap<>();
+        qrData.put("code", checkCodeVO.getCode());
+        qrData.put("studyRoomId", checkCodeVO.getStudyRoomId());
+        qrData.put("studyRoomName", checkCodeVO.getStudyRoomName());
+        qrData.put("validDate", checkCodeVO.getValidDate());
+        qrData.put("type", "check_in_code");
+        
+        // 转换为JSON字符串
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            String qrDataJson = objectMapper.writeValueAsString(qrData);
+            return Result.ok(qrDataJson, "获取二维码数据成功");
+        } catch (Exception e) {
+            log.error("生成二维码数据失败", e);
+            return Result.error("生成二维码数据失败");
+        }
     }
     
     /**
