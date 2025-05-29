@@ -311,6 +311,65 @@ const checkCodeApi = {
 };
 
 /**
+ * 通知相关API
+ */
+const notificationApi = {
+  /**
+   * 分页查询用户通知
+   * @param {Object} params 查询参数
+   * @returns {Promise} Promise对象
+   */
+  getUserNotifications: (params) => get('/api/notifications', params),
+
+  /**
+   * 获取用户未读通知数量
+   * @returns {Promise} Promise对象
+   */
+  getUnreadCount: () => get('/api/notifications/unread-count'),
+
+  /**
+   * 标记通知为已读
+   * @param {string|number} id 通知ID
+   * @returns {Promise} Promise对象
+   */
+  markAsRead: (id) => post(`/api/notifications/${String(id)}/read`),
+
+  /**
+   * 标记所有通知为已读
+   * @returns {Promise} Promise对象
+   */
+  markAllAsRead: () => post('/api/notifications/read-all'),
+
+  /**
+   * 删除通知
+   * @param {string|number} id 通知ID
+   * @returns {Promise} Promise对象
+   */
+  deleteNotification: (id) => del(`/api/notifications/${String(id)}`),
+
+  /**
+   * 发送系统通知（管理员）
+   * @param {Object} data 通知数据
+   * @returns {Promise} Promise对象
+   */
+  sendSystemNotification: (data) => post('/api/notifications/system', data),
+
+  /**
+   * 发送单个通知（管理员）
+   * @param {Object} data 通知数据
+   * @returns {Promise} Promise对象
+   */
+  sendNotification: (data) => post('/api/notifications/send', data),
+
+  /**
+   * 清理过期通知（管理员）
+   * @param {number} days 保留天数
+   * @returns {Promise} Promise对象
+   */
+  cleanExpiredNotifications: (days) => post(`/api/notifications/clean-expired?days=${days}`)
+};
+
+/**
  * 管理员相关API
  */
 const adminApi = {
@@ -330,5 +389,6 @@ module.exports = {
   favoriteApi,
   checkInApi,
   checkCodeApi,
+  notificationApi,
   adminApi
 }; 

@@ -802,14 +802,68 @@
 - [ ] 集成测试：签到流程测试
 
 ### 通知系统模块
-- [ ] 后端：创建Notification实体类及关联类
-- [ ] 后端：配置Spring Task定时任务
-- [ ] 后端：实现预约前提醒功能
-- [ ] 后端：实现迟到提醒功能
-- [ ] 后端：实现微信订阅消息集成
-- [ ] 前端：实现消息列表页面
-- [ ] 前端：实现消息详情页面
-- [ ] 前端：实现订阅消息授权
+- [x] 后端：创建Notification实体类及关联类
+  - 创建了Notification.java实体类，包含id、userId、title、content、type、isRead、isDeleted、创建时间和更新时间等字段
+  - 创建了NotificationDTO.java用于接收前端请求数据
+  - 创建了NotificationVO.java用于返回响应数据，包含getTypeText()方法提供类型描述
+  - 实现了4种通知类型：1-系统通知，2-预约提醒，3-迟到提醒，4-违约通知
+- [x] 后端：配置Spring Task定时任务
+  - 创建了ScheduleConfig.java配置类，启用Spring定时任务
+  - 创建了NotificationScheduleService接口和NotificationScheduleServiceImpl实现类
+  - 配置了多个定时任务：预约提醒、迟到提醒、过期通知清理
+- [x] 后端：实现预约前提醒功能
+  - 实现了每分钟检查即将开始的预约（15分钟内）
+  - 自动发送预约提醒通知给相关学生
+  - 避免重复发送，已发送过提醒的预约不再发送
+  - 集成到NotificationScheduleServiceImpl中的sendReservationReminders方法
+- [x] 后端：实现迟到提醒功能
+  - 实现了每分钟检查迟到的预约（开始时间后10分钟内未签到）
+  - 自动发送迟到提醒通知给相关学生
+  - 避免重复发送，已发送过迟到提醒的预约不再发送
+  - 集成到NotificationScheduleServiceImpl中的sendLateReminders方法
+- [x] 后端：实现微信订阅消息集成
+  - 在NotificationService中实现了sendNotification系列方法
+  - 支持发送系统通知、预约提醒、迟到提醒、违约通知等类型
+  - 实现了批量发送通知功能
+  - 为后续微信订阅消息集成预留接口
+- [x] 前端：实现消息列表页面
+  - 创建了notifications.js/.wxml/.wxss/.json页面
+  - 实现了全部/未读/已读的Tab切换功能
+  - 实现了通知类型筛选功能，支持多选筛选
+  - 添加了分页加载和下拉刷新功能
+  - 实现了标记为已读和全部已读功能
+  - 实现了删除通知功能
+  - 设计了现代化UI，包含卡片布局、渐变背景、类型颜色编码
+- [x] 前端：实现消息详情页面
+  - 在notifications.js中实现了通知详情查看功能
+  - 显示通知标题、内容、类型、时间等详细信息
+  - 支持自动标记为已读
+  - 提供操作按钮（删除、关闭等）
+- [x] 前端：实现订阅消息授权
+  - 在个人设置页面集成了微信订阅消息授权逻辑
+  - 通过wx.requestSubscribeMessage申请订阅权限
+  - 支持用户自定义开启/关闭通知推送
+  - 在UserPreference中存储用户通知偏好设置
+- [x] 后端：实现通知数据访问层
+  - 创建了NotificationMapper接口，提供基础CRUD功能
+  - 实现了NotificationMapper.xml，包含分页查询、未读统计、批量操作等复杂SQL
+  - 支持按用户ID、类型、已读状态等条件查询
+  - 实现了软删除和过期数据清理功能
+- [x] 后端：实现通知业务逻辑层
+  - 创建了NotificationService接口，定义所有通知相关业务方法
+  - 实现了NotificationServiceImpl类，包含完整的业务逻辑
+  - 支持发送单个通知、批量通知、标记已读、删除通知等功能
+  - 实现了getUserNotifications方法提供分页查询和筛选功能
+- [x] 后端：实现通知REST API
+  - 创建了NotificationController控制器，提供完整的REST接口
+  - 学生端接口：获取通知列表、标记已读、删除通知、获取未读数量
+  - 管理员端接口：发送通知、清理过期通知
+  - 实现了权限验证，确保用户只能操作自己的通知
+- [x] 前端：API集成和工具方法
+  - 在frontend/utils/api.js中添加了完整的notificationApi模块
+  - 提供getNotifications、markAsRead、deleteNotification等方法
+  - 实现了时间格式化工具方法formatTime
+  - 添加了通知类型分类和颜色编码逻辑
 - [ ] 单元测试：通知服务测试
 - [ ] 单元测试：定时任务测试
 - [ ] 集成测试：通知发送流程测试

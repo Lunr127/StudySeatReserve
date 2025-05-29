@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.studyseat.reserve.mapper.NotificationMapper">
+
+    <!-- 分页查询用户通知列表 -->
+    <select id="selectNotificationsByUserId" 
+            parameterType="map" 
+            resultType="com.studyseat.reserve.vo.NotificationVO">
+        SELECT 
+            id,
+            user_id AS userId,
+            title,
+            content,
+            type,
+            is_read AS isRead,
+            create_time AS createTime,
+            update_time AS updateTime
+        FROM notification
+        WHERE user_id = #{userId}
+          AND is_deleted = 0
+        <if test="type != null">
+            AND type = #{type}
+        </if>
+        <if test="isRead != null">
+            AND is_read = #{isRead}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 查询用户未读通知数量 -->
+    <select id="countUnreadByUserId" parameterType="java.lang.Long" resultType="int">
+        SELECT COUNT(*)
+        FROM notification
+        WHERE user_id = #{userId}
+          AND is_read = 0
+          AND is_deleted = 0
+    </select>
+
+    <!-- 标记用户的所有通知为已读 -->
+    <update id="markAllAsRead" parameterType="java.lang.Long">
+        UPDATE notification
+        SET is_read = 1,
+            update_time = NOW()
+        WHERE user_id = #{userId}
+          AND is_read = 0
+          AND is_deleted = 0
+    </update>
+
+    <!-- 批量插入通知 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO notification (user_id, title, content, type, is_read, is_deleted, create_time, update_time)
+        VALUES
+        <foreach collection="notifications" item="item" separator=",">
+            (#{item.userId}, #{item.title}, #{item.content}, #{item.type}, 
+             #{item.isRead}, #{item.isDeleted}, #{item.createTime}, #{item.updateTime})
+        </foreach>
+    </insert>
+
+    <!-- 删除过期通知（软删除） -->
+    <update id="deleteExpiredNotifications" parameterType="int">
+        UPDATE notification
+        SET is_deleted = 1,
+            update_time = NOW()
+        WHERE is_deleted = 0
+          AND DATEDIFF(NOW(), create_time) > #{days}
+    </update>
+
+</mapper> 
