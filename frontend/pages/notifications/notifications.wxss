@@ -7,7 +7,7 @@
 
 /* 页面头部 */
 .page-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3A7AF2 0%, #6C9EFF 100%);
   padding: 20rpx 30rpx 30rpx;
   color: white;
   position: sticky;
@@ -83,7 +83,7 @@
 }
 
 .tab-item.active {
-  color: #667eea;
+  color: #3A7AF2;
   font-weight: 600;
 }
 
@@ -95,7 +95,7 @@
   transform: translateX(-50%);
   width: 60rpx;
   height: 4rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3A7AF2 0%, #6C9EFF 100%);
   border-radius: 2rpx;
 }
 
@@ -164,8 +164,8 @@
 }
 
 .notification-item.unread {
-  border-left: 6rpx solid #667eea;
-  background: linear-gradient(45deg, rgba(102, 126, 234, 0.05) 0%, rgba(255, 255, 255, 1) 100%);
+  border-left: 6rpx solid #3A7AF2;
+  background: linear-gradient(45deg, rgba(58, 122, 242, 0.05) 0%, rgba(255, 255, 255, 1) 100%);
 }
 
 .notification-content {
@@ -188,7 +188,7 @@
 
 .type-system {
   background-color: #e3f2fd;
-  color: #1976d2;
+  color: #3A7AF2;
 }
 
 .type-reservation {
@@ -250,33 +250,40 @@
 }
 
 .unread-dot {
-  color: #667eea;
-  font-size: 16rpx;
-  margin-right: 8rpx;
+  color: #3A7AF2;
+  font-size: 24rpx;
+  margin-right: 6rpx;
+}
+
+.status-text {
+  color: #adb5bd;
 }
 
 .notification-actions {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin-left: 20rpx;
+  position: absolute;
+  right: 20rpx;
+  top: 20rpx;
 }
 
 .delete-btn {
-  background-color: #ff4757;
-  border: none;
-  border-radius: 50%;
   width: 60rpx;
   height: 60rpx;
+  background: none;
+  border: none;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
 }
 
 .delete-icon {
   width: 30rpx;
   height: 30rpx;
+  opacity: 0.5;
+}
+
+.delete-btn:hover .delete-icon {
+  opacity: 0.8;
 }
 
 /* 加载更多 */
@@ -290,8 +297,8 @@
 .load-more {
   background-color: white;
   border-radius: 20rpx;
-  margin: 20rpx 0;
-  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+  margin: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.08);
 }
 
 /* 筛选弹窗 */
@@ -310,7 +317,7 @@
 
 .filter-modal {
   width: 80%;
-  max-width: 500rpx;
+  max-width: 600rpx;
   background-color: white;
   border-radius: 20rpx;
   overflow: hidden;
@@ -322,7 +329,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 30rpx;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3A7AF2 0%, #6C9EFF 100%);
   color: white;
 }
 
@@ -346,35 +353,27 @@
 
 .modal-content {
   padding: 20rpx 0;
-  max-height: 500rpx;
+  max-height: 60vh;
   overflow-y: auto;
 }
 
 .type-option {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   padding: 25rpx 30rpx;
   font-size: 28rpx;
   color: #495057;
-  border-bottom: 1rpx solid #f8f9fa;
-  transition: all 0.3s ease;
-}
-
-.type-option:last-child {
-  border-bottom: none;
 }
 
 .type-option.selected {
-  background-color: #f8f9fa;
-  color: #667eea;
-  font-weight: 600;
+  color: #3A7AF2;
+  background-color: rgba(58, 122, 242, 0.05);
 }
 
 .check-icon {
-  color: #667eea;
+  color: #3A7AF2;
   font-weight: bold;
-  font-size: 24rpx;
 }
 
 /* 响应式设计 */
