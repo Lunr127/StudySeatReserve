@@ -1,1 +1,7 @@
-E:\Git\StudySeatReserve\backend\src\test\java\com\studyseat\reserve\ReserveApplicationTests.java
+/Users/lixinghan/Documents/Git/StudySeatReserve/backend/src/test/java/com/studyseat/reserve/controller/SeatControllerTest.java
+/Users/lixinghan/Documents/Git/StudySeatReserve/backend/src/test/java/com/studyseat/reserve/service/StudyRoomServiceTest.java
+/Users/lixinghan/Documents/Git/StudySeatReserve/backend/src/test/java/com/studyseat/reserve/util/JwtUtilTest.java
+/Users/lixinghan/Documents/Git/StudySeatReserve/backend/src/test/java/com/studyseat/reserve/service/AuthServiceTest.java
+/Users/lixinghan/Documents/Git/StudySeatReserve/backend/src/test/java/com/studyseat/reserve/service/SeatServiceTest.java
+/Users/lixinghan/Documents/Git/StudySeatReserve/backend/src/test/java/com/studyseat/reserve/mapper/SeatMapperTest.java
+/Users/lixinghan/Documents/Git/StudySeatReserve/backend/src/test/java/com/studyseat/reserve/ReserveApplicationTests.java

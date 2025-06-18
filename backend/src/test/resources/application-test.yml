@@ -35,6 +35,25 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
       
+# JWT配置
+jwt:
+  tokenHeader: Authorization
+  secret: studyseat-secret-test
+  expiration: 86400
+  tokenHead: Bearer
+
+# 微信小程序配置
+wx:
+  appid: test-appid
+  secret: test-secret
+
+# 自定义系统配置  
+system:
+  checkinTimeout: 15
+  maxReserveHours: 4
+  enableViolation: true
+  advanceReserveDays: 7
+
 # 日志配置
 logging:
   level:

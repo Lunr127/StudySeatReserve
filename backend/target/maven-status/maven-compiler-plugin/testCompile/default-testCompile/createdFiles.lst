@@ -1,1 +1,7 @@
-com\studyseat\reserve\ReserveApplicationTests.class
+com/studyseat/reserve/service/SeatServiceTest.class
+com/studyseat/reserve/controller/SeatControllerTest.class
+com/studyseat/reserve/util/JwtUtilTest.class
+com/studyseat/reserve/service/AuthServiceTest.class
+com/studyseat/reserve/mapper/SeatMapperTest.class
+com/studyseat/reserve/service/StudyRoomServiceTest.class
+com/studyseat/reserve/ReserveApplicationTests.class
