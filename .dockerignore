@@ -1,0 +1,42 @@
+# Git相关
+.git
+.gitignore
+.gitattributes
+
+# IDE相关
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS相关
+.DS_Store
+Thumbs.db
+
+# 文档和说明
+*.md
+docs/
+image_description.md
+
+# 测试和构建临时文件
+target/
+node_modules/
+npm-debug.log*
+
+# 日志文件
+*.log
+logs/
+
+# 环境变量文件
+.env
+.env.local
+.env.production
+
+# 备份文件
+*.backup
+*.bak
+
+# 临时文件
+tmp/
+temp/ 

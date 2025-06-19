@@ -1,0 +1,88 @@
+spring:
+  # 数据源配置 - 生产环境
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:study_seat_reserve}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:root}
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: SpringBootJPAHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+
+  # Redis配置
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    timeout: 5000ms
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+
+# JWT配置 - 生产环境
+jwt:
+  secret: ${JWT_SECRET:studyseat-secret-prod}
+  expiration: 86400
+  tokenHeader: Authorization
+  tokenHead: Bearer
+
+# 微信小程序配置 - 生产环境
+wx:
+  appid: ${WX_APPID:wxc6fccec452e4f0c2}
+  secret: ${WX_SECRET:cb304768896e6e7a707203ab96660580}
+
+# 日志配置 - 生产环境
+logging:
+  level:
+    root: info
+    com.studyseat.reserve: info
+    org.springframework.security: warn
+    org.springframework.web: warn
+    org.hibernate: warn
+    com.zaxxer.hikari: warn
+    com.alibaba.druid: warn
+  file:
+    name: /app/logs/studyseat.log
+  logback:
+    rollingpolicy:
+      max-file-size: 100MB
+      max-history: 30
+      total-size-cap: 3GB
+
+# 服务器配置 - 生产环境
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  tomcat:
+    uri-encoding: UTF-8
+    accept-count: 1000
+    threads:
+      max: 800
+      min-spare: 100
+
+# 管理端点配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# Knife4j配置 - 生产环境
+knife4j:
+  enable: false  # 生产环境关闭API文档
+  setting:
+    language: zh-CN 

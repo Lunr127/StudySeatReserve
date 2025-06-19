@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  # 数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: studyseat-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123456}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-study_seat_reserve}
+      MYSQL_USER: ${MYSQL_USER:-studyseat}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-studyseat123}
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - ./mysql.conf:/etc/mysql/conf.d/mysql.conf:ro
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    networks:
+      - studyseat-network
+
+  # Redis缓存服务
+  redis:
+    image: redis:7-alpine
+    container_name: studyseat-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis123456}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      timeout: 10s
+      retries: 5
+    networks:
+      - studyseat-network
+
+  # 后端服务 - 使用预构建镜像
+  backend:
+    image: ${DOCKER_REGISTRY:-}${DOCKER_NAMESPACE:-studyseat}/studyseat-backend:${VERSION:-latest}
+    container_name: studyseat-backend
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-study_seat_reserve}
+      MYSQL_USERNAME: ${MYSQL_USER:-studyseat}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-studyseat123}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis123456}
+      JWT_SECRET: ${JWT_SECRET:-studyseat-jwt-secret-key-2024}
+      WX_APPID: ${WX_APPID:-your-wechat-appid}
+      WX_SECRET: ${WX_SECRET:-your-wechat-secret}
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    volumes:
+      - backend_logs:/app/logs
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - studyseat-network
+
+  # 前端服务 - 使用预构建镜像
+  frontend:
+    image: ${DOCKER_REGISTRY:-}${DOCKER_NAMESPACE:-studyseat}/studyseat-frontend:${VERSION:-latest}
+    container_name: studyseat-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      timeout: 10s
+      retries: 3
+    networks:
+      - studyseat-network
+
+# 数据持久化卷
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  backend_logs:
+    driver: local
+
+# 网络配置
+networks:
+  studyseat-network:
+    driver: bridge 

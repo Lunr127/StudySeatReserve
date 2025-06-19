@@ -163,6 +163,54 @@
    - 数据库连接失败：检查MySQL服务状态和连接参数
    - 小程序网络错误：检查小程序合法域名配置
 
+## Docker 容器化部署
+
+### 🐳 快速使用 Docker 部署
+
+如果您想快速体验系统，推荐使用 Docker 部署方式：
+
+```bash
+# 1. 克隆项目
+git clone <repository-url>
+cd StudySeatReserve
+
+# 2. 配置环境变量
+cp env.example .env
+# 编辑 .env 文件，修改微信小程序 AppID 等配置
+
+# 3. 一键启动所有服务
+./scripts/deploy.sh start
+```
+
+启动后访问：
+- 前端: http://localhost:80
+- 后端API: http://localhost:8080
+- API文档: http://localhost:8080/doc.html
+
+详细的 Docker 部署说明请参考：[Docker 部署指南](DOCKER_DEPLOYMENT.md)
+
+### Docker 相关命令
+
+```bash
+# 构建镜像
+./scripts/build.sh [版本号]
+
+# 启动服务
+./scripts/deploy.sh start
+
+# 查看状态
+./scripts/deploy.sh status
+
+# 查看日志
+./scripts/deploy.sh logs [服务名]
+
+# 停止服务
+./scripts/deploy.sh stop
+
+# 发布镜像
+./scripts/publish.sh [版本号] [仓库地址]
+```
+
 ## 编译和自动化测试流程
 
 ### 编译项目
