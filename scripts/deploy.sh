@@ -40,7 +40,7 @@ check_dependencies() {
         exit 1
     fi
 
-    if ! command -v docker-compose &> /dev/null; then
+    if ! docker compose version &> /dev/null; then
         log_error "Docker Compose 未安装或不在 PATH 中"
         exit 1
     fi
@@ -72,11 +72,11 @@ start_services() {
     
     # 拉取最新镜像（如果使用远程镜像）
     log_info "拉取依赖镜像..."
-    docker-compose pull mysql redis
+    docker compose pull mysql redis
     
     # 启动服务
     log_info "启动所有服务..."
-    docker-compose up -d
+    docker compose up -d
     
     # 等待服务启动
     log_info "等待服务启动完成..."
@@ -91,7 +91,7 @@ stop_services() {
     cd "$PROJECT_ROOT"
     
     log_info "停止自习座位预约系统..."
-    docker-compose down
+    docker compose down
     
     log_success "服务已停止"
 }
@@ -136,7 +136,7 @@ show_status() {
     cd "$PROJECT_ROOT"
     
     log_info "服务运行状态:"
-    docker-compose ps
+    docker compose ps
     
     echo ""
     log_info "容器资源使用情况:"
@@ -152,10 +152,10 @@ show_logs() {
     
     if [ -n "$service" ]; then
         log_info "显示 $service 服务日志:"
-        docker-compose logs -f --tail=100 "$service"
+        docker compose logs -f --tail=100 "$service"
     else
         log_info "显示所有服务日志:"
-        docker-compose logs -f --tail=50
+        docker compose logs -f --tail=50
     fi
 }
 
@@ -169,7 +169,7 @@ cleanup() {
     
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         log_info "清理 Docker 资源..."
-        docker-compose down --remove-orphans
+        docker compose down --remove-orphans
         docker system prune -f
         log_success "清理完成"
     else

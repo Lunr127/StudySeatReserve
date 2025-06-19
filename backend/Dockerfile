@@ -4,6 +4,9 @@ FROM openjdk:11-jre-slim
 # 设置工作目录
 WORKDIR /app
 
+# 安装curl用于健康检查
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 # 创建应用用户（安全最佳实践）
 RUN groupadd -r spring && useradd -r -g spring spring
 

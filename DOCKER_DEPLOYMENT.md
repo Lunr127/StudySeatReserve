@@ -77,8 +77,8 @@ MYSQL_PORT=3306
 # 使用部署脚本
 ./scripts/deploy.sh start
 
-# 或手动使用 docker-compose
-docker-compose up -d
+# 或手动使用 docker compose
+docker compose up -d
 ```
 
 ## 服务访问
@@ -112,17 +112,17 @@ docker-compose up -d
 
 ```bash
 # 查看服务状态
-docker-compose ps
+docker compose ps
 
 # 查看特定服务日志
-docker-compose logs -f backend
+docker compose logs -f backend
 
 # 重启特定服务
-docker-compose restart backend
+docker compose restart backend
 
 # 更新镜像
-docker-compose pull
-docker-compose up -d
+docker compose pull
+docker compose up -d
 ```
 
 ## 数据管理
