@@ -992,6 +992,4 @@ npm run build
 ## 联系与支持
 
 如有问题，请联系开发团队：
-- 邮箱：support@studyseat.example.com
-- 问题反馈：https://github.com/your-username/StudySeatReserve/issues 
-- 文档Wiki：https://github.com/your-username/StudySeatReserve/wiki
+- 问题反馈：https://github.com/Lunr127/StudySeatReserve/issues 
